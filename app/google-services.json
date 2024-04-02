@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "863909651064",
+    "project_id": "lokcet-2fa6b",
+    "storage_bucket": "lokcet-2fa6b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:863909651064:android:43f79843a710da5500438d",
+        "android_client_info": {
+          "package_name": "com.grouptwo.lokcet"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "863909651064-5cv6n6ln8cc8osldp08qgo8dekvr07vn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.grouptwo.lokcet",
+            "certificate_hash": "c84674c22e778b97b83ddbae6ad10c7a8a74d29f"
+          }
+        },
+        {
+          "client_id": "863909651064-bqerih7t7odgtfe904lkvjpkm1hvn940.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDWNxrr8vn3n-OElVzgi7tEXcrWCLwMxhw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "863909651064-bqerih7t7odgtfe904lkvjpkm1hvn940.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
