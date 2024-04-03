@@ -2,8 +2,8 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     id 'com.google.gms.google-services'
+    id 'dagger.hilt.android.plugin'
     id 'kotlin-kapt'
-    id 'com.google.dagger.hilt.android'
 
 }
 apply plugin: 'kotlin-kapt'
@@ -30,6 +30,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -48,14 +49,17 @@ android {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
         }
     }
+
 }
 
 dependencies {
     implementation libs.hilt.android
     implementation(libs.moshi.kotlin)
     implementation libs.androidx.navigation.compose
+    implementation libs.firebase.auth.ktx
     kapt libs.hilt.compiler
     implementation libs.glide
+    implementation libs.gson
     kapt libs.glide.compiler
     implementation libs.androidx.core.ktx
     implementation libs.androidx.ui.text.google.fonts
@@ -78,6 +82,12 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics'
     //noinspection UseTomlInstead
     implementation("com.google.firebase:firebase-firestore")
+    implementation libs.androidx.animation
+    implementation libs.androidx.animation.core
+    implementation libs.androidx.animation.graphics
+
+
+
 }
 
 // Allow references to generated code

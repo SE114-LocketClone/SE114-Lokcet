@@ -4,7 +4,7 @@ sealed class Screen(val route: String){
     // Splash Screen
     object SplashScreen: Screen("splash_screen")
     // Intro Screen
-    object IntroScreen: Screen("intro_screen")
+    object WelcomeScreen: Screen("welcome_screen")
     // Login Screen
     object LoginScreen: Screen("login_screen")
     // Register Screen

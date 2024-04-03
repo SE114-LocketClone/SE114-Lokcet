@@ -50,7 +50,7 @@ fun SplashScreen(
             // Clear previous routes
             navController.popBackStack()
             // Navigate to the next screen after the splash screen (IntroScreen)
-//            navController.navigate(Screen.IntroScreen.route)
+            navController.navigate(Screen.WelcomeScreen.route)
         }
     }
     // Define the SplashScreen layout

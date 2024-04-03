@@ -18,7 +18,7 @@ private val provider = GoogleFont.Provider(
 
 // Define a GoogleFont family
 // Define a GoogleFont family
-private val fontFamily = FontFamily(
+val fontFamily = FontFamily(
     Font(
         googleFont = GoogleFont("Baloo Bhai 2"), fontProvider = provider
     )
