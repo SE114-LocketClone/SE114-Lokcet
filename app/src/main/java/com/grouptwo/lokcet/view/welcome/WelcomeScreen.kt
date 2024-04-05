@@ -11,22 +11,26 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Button
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.grouptwo.lokcet.ui.component.global.BasicTextButton
 import com.grouptwo.lokcet.ui.component.welcome.AutoScrollImage
 import com.grouptwo.lokcet.ui.theme.BlackSecondary
-import com.grouptwo.lokcet.ui.theme.YellowPrimary
 import com.grouptwo.lokcet.ui.theme.fontFamily
+import com.grouptwo.lokcet.R.string as WelcomeString
 
 @Composable
 fun WelcomeScreen() {
@@ -36,6 +40,7 @@ fun WelcomeScreen() {
         com.grouptwo.lokcet.R.drawable.miniphone_1,
         com.grouptwo.lokcet.R.drawable.miniphone_2,
     )
+    // Fill the screen with the welcome screen content
     Box(modifier = Modifier.fillMaxSize()) {
         // Display the welcome
         Column(
@@ -45,7 +50,10 @@ fun WelcomeScreen() {
                 .fillMaxSize()
                 .padding(top = 50.dp, bottom = 15.dp)
         ) {
-            AutoScrollImage(images = images, duration = 1000L)
+
+            // Auto Scroll Image
+            AutoScrollImage(images = images, duration = 3000L)
+
             // Logo Icon and Logo Name
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -60,20 +68,20 @@ fun WelcomeScreen() {
                     modifier = Modifier.size(50.dp)
                 )
                 Text(
-                    text = "Lokcet",
-                    style = TextStyle(
+                    text = stringResource(id = WelcomeString.app_name), style = TextStyle(
                         color = androidx.compose.ui.graphics.Color.White,
                         fontSize = 34.sp,
+                        fontWeight = FontWeight.Bold,
                         fontFamily = fontFamily
-                    ),
-                    modifier = Modifier.padding(start = 8.dp)
+                    ), modifier = Modifier.padding(start = 8.dp)
                 )
             }
             Text(
-                text = "Ảnh trực tiếp từ bạn bè,\nngay trên màn hình chính",
+                text = stringResource(id = WelcomeString.welcome_text),
                 style = TextStyle(
                     fontSize = 20.sp,
                     fontFamily = fontFamily,
+                    fontWeight = FontWeight.Bold,
                     color = Color(0xFFB8B8B8),
                     textAlign = TextAlign.Center,
                 ),
@@ -82,37 +90,36 @@ fun WelcomeScreen() {
                     .padding(top = 16.dp, bottom = 32.dp)
                     .fillMaxWidth()
             )
-            Button(
-                onClick = { /*TODO*/ },
-                colors = androidx.compose.material3.ButtonDefaults.buttonColors(
-                    YellowPrimary,
 
-                    ),
+            // Create Account Button
+            BasicTextButton(
+                stringResource = WelcomeString.create_account,
                 modifier = Modifier
                     .width(300.dp)
                     .padding(8.dp)
-
-            ) {
-                Text(
-                    text = "Tạo một tài khoản",
-                    style = TextStyle(
-                        fontSize = 16.sp,
-                        fontFamily = fontFamily,
-                        color = BlackSecondary,
+                    .clip(
+                        shape = RoundedCornerShape(50)
                     ),
-                )
-            }
-            Surface(
-                 color = Color.Transparent,
+                action = { /*TODO*/ },
+                textStyle = TextStyle(
+                    fontSize = 20.sp,
+                    fontFamily = fontFamily,
+                    color = BlackSecondary,
+                    fontWeight = FontWeight.Bold
+                ),
+            )
+
+            // Login Touchable
+            Surface(color = Color.Transparent,
                 modifier = Modifier
                     .clickable { /*TODO*/ }
-                    .padding(top = 16.dp).fillMaxWidth()
-            ) {
+                    .padding(top = 20.dp)
+                    .fillMaxWidth()) {
                 Text(
-                    text = "Đăng nhập",
-                    style = TextStyle(
-                        fontSize = 16.sp,
+                    text = stringResource(id = WelcomeString.login), style = TextStyle(
+                        fontSize = 20.sp,
                         fontFamily = fontFamily,
+                        fontWeight = FontWeight.Bold,
                         color = Color(0xFF8D8D8D),
                         textAlign = TextAlign.Center,
                     )

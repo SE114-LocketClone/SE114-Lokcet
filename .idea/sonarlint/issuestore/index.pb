@@ -17,8 +17,6 @@ g
 7app/src/main/java/com/grouptwo/lokcet/ui/theme/Theme.kt,c/9/c900307bc278aba31b86a976dde93c6a9848f954
 f
 6app/src/main/java/com/grouptwo/lokcet/ui/theme/Type.kt,a/3/a32cb83732bc6a42f185ffbd85e619fd6914790b
-b
-2app/src/main/java/com/grouptwo/lokcet/LokcetApp.kt,6/3/632f72824d5fcbd9ad52c9d8939aea09ed3fd5fb
 j
 :app/src/main/java/com/grouptwo/lokcet/navigation/Screen.kt,e/7/e7b72875ef132c6c3ee00a1fc57586a45e1bd548
 n
@@ -37,8 +35,6 @@ l
 <app/src/main/java/com/grouptwo/lokcet/di/module/AppModule.kt,4/2/4201997efd314d03cd3323fdfb4d2bc23ae5e2a0
 s
 Capp/src/main/java/com/grouptwo/lokcet/view/welcome/WelcomeScreen.kt,5/5/5537bf05e3150276bbf1c09529c2034c9f47beff
-x
-Happ/src/main/java/com/grouptwo/lokcet/ui/component/welcome/IntroImage.kt,f/e/fe8c88453606265e7b147fbff29665be6d5f3194
 }
 Mapp/src/main/java/com/grouptwo/lokcet/ui/component/welcome/AutoScrollImage.kt,6/d/6df834e84fd82dabc2b8333bbec8d50210e83f6f
 @
@@ -51,3 +47,7 @@ Mapp/src/main/java/com/grouptwo/lokcet/ui/component/welcome/AutoScrollImage.kt,
 gradlew,5/b/5bbfa66edb4db3c7c33c5181f43510990d3307f9
 A
 gradle.properties,2/a/2afbb999f001938c88fa43fc2ef52abf0f8213e4
+}
+Mapp/src/main/java/com/grouptwo/lokcet/ui/component/global/ButtonComposable.kt,d/1/d1ff165d95cd27e40d03ad30e9798c02d43d450a
+f
+6app/src/main/java/com/grouptwo/lokcet/LokcetHiltApp.kt,6/7/67a2739d4015212bcf095e877909bb4e1cb62834
