@@ -47,7 +47,15 @@ Mapp/src/main/java/com/grouptwo/lokcet/ui/component/welcome/AutoScrollImage.kt,
 gradlew,5/b/5bbfa66edb4db3c7c33c5181f43510990d3307f9
 A
 gradle.properties,2/a/2afbb999f001938c88fa43fc2ef52abf0f8213e4
-}
-Mapp/src/main/java/com/grouptwo/lokcet/ui/component/global/ButtonComposable.kt,d/1/d1ff165d95cd27e40d03ad30e9798c02d43d450a
 f
 6app/src/main/java/com/grouptwo/lokcet/LokcetHiltApp.kt,6/7/67a2739d4015212bcf095e877909bb4e1cb62834
+…
+Uapp/src/main/java/com/grouptwo/lokcet/ui/component/global/snackbar/SnackbarManager.kt,b/0/b03b793aca800dc7a83e1a5ce31fe40a7a2b0d39
+…
+Uapp/src/main/java/com/grouptwo/lokcet/ui/component/global/snackbar/SnackbarMessage.kt,c/f/cffe8fb67910bc6d638bbce9a674fa6cd624aebe
+g
+7app/src/main/java/com/grouptwo/lokcet/LokcetActivity.kt,1/3/1351c20421487202d55aca34759bb6993cce233c
+g
+7app/src/main/java/com/grouptwo/lokcet/LokcetAppState.kt,f/3/f3d4418e3f76634faceab21b8fc1d5bcbf344ff7
+b
+2app/src/main/java/com/grouptwo/lokcet/LokcetApp.kt,6/3/632f72824d5fcbd9ad52c9d8939aea09ed3fd5fb

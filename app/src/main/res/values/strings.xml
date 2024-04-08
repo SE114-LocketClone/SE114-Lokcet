@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Lokcet</string>
+    <!-- General -->
+    <string name="generic_error">Đã xảy ra lỗi. Vui lòng thử lại</string>
     <!-- Welcome Screen -->
         <string name="welcome_text">Ảnh trực tiếp từ bạn bè,\nngay trên màn hình chính</string>
         <string name="create_account">Tạo một tài khoản</string>

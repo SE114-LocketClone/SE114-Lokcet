@@ -85,6 +85,7 @@ dependencies {
     implementation libs.androidx.animation
     implementation libs.androidx.animation.core
     implementation libs.androidx.animation.graphics
+    implementation libs.accompanist.permissions
 
 
 

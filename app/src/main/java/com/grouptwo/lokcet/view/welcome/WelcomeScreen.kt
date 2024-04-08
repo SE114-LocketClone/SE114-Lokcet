@@ -26,7 +26,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.grouptwo.lokcet.ui.component.global.BasicTextButton
+import com.grouptwo.lokcet.ui.component.global.composable.BasicTextButton
 import com.grouptwo.lokcet.ui.component.welcome.AutoScrollImage
 import com.grouptwo.lokcet.ui.theme.BlackSecondary
 import com.grouptwo.lokcet.ui.theme.fontFamily

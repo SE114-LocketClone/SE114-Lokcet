@@ -1,4 +1,4 @@
-package com.grouptwo.lokcet.ui.component.global
+package com.grouptwo.lokcet.ui.component.global.composable
 
 import androidx.annotation.StringRes
 import androidx.compose.material3.Button
