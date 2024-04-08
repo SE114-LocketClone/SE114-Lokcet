@@ -1,7 +1,10 @@
 package com.grouptwo.lokcet.di.module
 
+import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.firestore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -12,7 +15,9 @@ import dagger.hilt.components.SingletonComponent
 object FirebaseModule {
     // Firebase Auth
     @Provides
-    fun provideFirebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
+    fun provideFirebaseAuth(): FirebaseAuth = Firebase.auth
+
     // Firebase Firestore
-    @Provides fun provideFirebaseFirestore(): FirebaseFirestore = FirebaseFirestore.getInstance()
+    @Provides
+    fun provideFirebaseFirestore(): FirebaseFirestore = Firebase.firestore
 }

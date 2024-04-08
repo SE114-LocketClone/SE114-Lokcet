@@ -1,9 +1,16 @@
 <resources>
     <string name="app_name">Lokcet</string>
+    <string name="ok">OK</string>
     <!-- General -->
     <string name="generic_error">Đã xảy ra lỗi. Vui lòng thử lại</string>
     <!-- Welcome Screen -->
         <string name="welcome_text">Ảnh trực tiếp từ bạn bè,\nngay trên màn hình chính</string>
         <string name="create_account">Tạo một tài khoản</string>
         <string name="login">Đăng nhập</string>
+    <!-- FCM -->
+    <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
+    <string name="request_notification_permission">Yêu cầu quyền</string>
+    <string name="notification_permission_title">Quyền thông báo</string>
+    <string name="notification_permission_description">Quyền thông báo quan trọng cho ứng dụng này. Vui lòng cấp quyền.</string>
+    <string name="notification_permission_settings">Quyền thông báo quan trọng cho ứng dụng này. Vui lòng đến cài đặt và cấp quyền thông báo cho Lokcet.</string>
 </resources>

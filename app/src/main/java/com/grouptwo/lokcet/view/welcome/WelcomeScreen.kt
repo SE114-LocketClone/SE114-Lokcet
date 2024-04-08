@@ -48,7 +48,7 @@ fun WelcomeScreen() {
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 50.dp, bottom = 15.dp)
+                .padding(top = 30.dp, bottom = 15.dp)
         ) {
 
             // Auto Scroll Image

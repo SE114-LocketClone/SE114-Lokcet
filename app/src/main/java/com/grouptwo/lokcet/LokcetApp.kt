@@ -23,25 +23,33 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
+import com.google.accompanist.permissions.shouldShowRationale
 import com.grouptwo.lokcet.ui.theme.LokcetTheme
 import com.grouptwo.lokcet.navigation.Screen
+import com.grouptwo.lokcet.ui.component.global.composable.PermissionDialog
+import com.grouptwo.lokcet.ui.component.global.composable.RationaleDialog
 import com.grouptwo.lokcet.ui.component.global.snackbar.SnackbarManager
 import com.grouptwo.lokcet.ui.theme.BlackSecondary
 import com.grouptwo.lokcet.ui.theme.YellowPrimary
 import com.grouptwo.lokcet.view.splash.SplashScreen
 import com.grouptwo.lokcet.view.welcome.WelcomeScreen
 import kotlinx.coroutines.CoroutineScope
+import android.Manifest
 
 @Composable
 fun LokcetApp() {
     LokcetTheme {
         // Check if use Android 13 - Tiramisu then must request notification permission
-//        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
-//            // Request notification permission
-//            RequestNotificationPermission()
-//        }
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+            // Request notification permission
+            RequestNotificationPermission()
+        }
         Surface(
-            color = BlackSecondary
+            color = BlackSecondary,
+            modifier = Modifier.fillMaxSize()
         ) {
             val appState = rememberAppState()
 
@@ -101,15 +109,15 @@ fun NavGraphBuilder.LokcetGraph(appState: LokcetAppState) {
 
 }
 
-//@RequiresApi(Build.VERSION_CODES.TIRAMISU)
-//@OptIn(ExperimentalPermissionsApi::class)
-//@Composable
-//fun RequestNotificationPermission() {
-//    // Request notification permission
-//    val permissionState = rememberPermissionState(permission = Manifest.permission.POST_NOTIFICATIONS)
-//
-//    if (!permissionState.status.isGranted) {
-//        if (permissionState.status.shouldShowRationale) RationaleDialog()
-//        else PermissionDialog { permissionState.launchPermissionRequest() }
-//    }
-//}
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
+@OptIn(ExperimentalPermissionsApi::class)
+@Composable
+fun RequestNotificationPermission() {
+    // Request notification permission
+    val permissionState = rememberPermissionState(permission = Manifest.permission.POST_NOTIFICATIONS)
+
+    if (!permissionState.status.isGranted) {
+        if (permissionState.status.shouldShowRationale) RationaleDialog()
+        else PermissionDialog { permissionState.launchPermissionRequest() }
+    }
+}
