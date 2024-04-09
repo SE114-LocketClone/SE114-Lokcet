@@ -4,6 +4,8 @@ plugins {
     id 'com.google.gms.google-services'
     id 'dagger.hilt.android.plugin'
     id 'kotlin-kapt'
+    id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
+
 
 }
 apply plugin: 'kotlin-kapt'
@@ -86,6 +88,9 @@ dependencies {
     implementation libs.androidx.animation.core
     implementation libs.androidx.animation.graphics
     implementation libs.accompanist.permissions
+    implementation libs.play.services.location
+    implementation libs.maps.compose
+    implementation libs.play.services.maps
 
 
 

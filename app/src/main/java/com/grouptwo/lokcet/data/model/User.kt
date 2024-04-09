@@ -1,6 +1,7 @@
 package com.grouptwo.lokcet.data.model
 
 import com.google.type.DateTime
+import java.time.LocalDateTime
 
 data class User(
     val id: String = "",
@@ -8,7 +9,6 @@ data class User(
     val lastName: String = "",
     val email: String = "",
     val password: String = "",
-    val gender: String = "",
     val phoneNumber: String = "",
     val profilePicture: String = "",
     val friends: List<String> = emptyList(),
@@ -16,5 +16,6 @@ data class User(
     val isOnline: Boolean = false,
     val isBannded: Boolean = false,
     val isDeleted: Boolean = false,
-
+    val createdAt: LocalDateTime = LocalDateTime.now(),
+    val lastSeen: LocalDateTime = LocalDateTime.now(),
 )

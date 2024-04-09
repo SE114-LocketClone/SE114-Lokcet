@@ -1,6 +1,4 @@
 
-e
-5app/src/main/java/com/grouptwo/lokcet/MainActivity.kt,b/7/b7a68654effcac183404bdfd2808f4754cbd2b92
 <
 build.gradle,f/0/f07866736216be0ee2aba49e392191aeae700a35
 P
@@ -19,8 +17,6 @@ f
 6app/src/main/java/com/grouptwo/lokcet/ui/theme/Type.kt,a/3/a32cb83732bc6a42f185ffbd85e619fd6914790b
 j
 :app/src/main/java/com/grouptwo/lokcet/navigation/Screen.kt,e/7/e7b72875ef132c6c3ee00a1fc57586a45e1bd548
-n
->app/src/main/java/com/grouptwo/lokcet/navigation/Navigation.kt,8/5/85185471fb494eabebd9aec4bcbe254e61e8a8d1
 q
 Aapp/src/main/java/com/grouptwo/lokcet/view/splash/SplashScreen.kt,9/e/9e5ce7f69527831d0f52edfd0aaf605cf33876a0
 h
@@ -67,3 +63,7 @@ h
 8app/src/main/java/com/grouptwo/lokcet/data/model/User.kt,3/a/3a9a022b57e337fc3126fe3ac5378fbe459458c0
 o
 ?app/src/main/java/com/grouptwo/lokcet/data/model/UploadImage.kt,2/7/27ff70dae48004c8b834f25d806e85c7579a60c7
+B
+secrets.properties,4/1/4117a40ac446e6d331063f729af6fa5868a63cc7
+s
+Capp/src/main/java/com/grouptwo/lokcet/di/impl/AccountServiceImpl.kt,9/2/92f42878b7decefe36de2560a726ca234fe4bbfc
