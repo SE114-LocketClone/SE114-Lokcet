@@ -32,12 +32,13 @@ class AccountServiceImpl @Inject constructor(
                 val firebaseUser = auth.currentUser
                 if (firebaseUser != null) {
                     val uid = firebaseUser.uid
-                    val docRef = FirebaseFirestore.getInstance().collection("users").document(uid)
+                    val docRef = firestore.collection("users").document(uid)
                     docRef.get().addOnSuccessListener { documentSnapshot ->
                         val user = documentSnapshot.toObject(User::class.java)
                         user?.let { this.trySend(it) }
                     }
                 } else {
+                    //  If not logged in, send an empty user object (null)
                     this.trySend(User())
                 }
             }

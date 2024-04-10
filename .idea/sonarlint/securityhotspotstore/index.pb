@@ -67,3 +67,13 @@ B
 secrets.properties,4/1/4117a40ac446e6d331063f729af6fa5868a63cc7
 s
 Capp/src/main/java/com/grouptwo/lokcet/di/impl/AccountServiceImpl.kt,9/2/92f42878b7decefe36de2560a726ca234fe4bbfc
+r
+Bapp/src/main/java/com/grouptwo/lokcet/di/service/StorageService.kt,4/f/4f39e7dae57e3ac925e247da83bae3720abc534e
+o
+?app/src/main/java/com/grouptwo/lokcet/di/impl/StorageService.kt,0/d/0d72618fd08f8124a05558c192396b0fc9953c4c
+p
+@app/src/main/java/com/grouptwo/lokcet/di/module/ServiceModule.kt,4/5/45b394118de0be5e1a1bd85789e161b43b9fd1dc
+n
+>app/src/main/java/com/grouptwo/lokcet/di/service/LogService.kt,7/7/77064b63d6b653848afa0f2165dc86998d10bdc7
+m
+=app/src/main/java/com/grouptwo/lokcet/view/LokcetViewModel.kt,1/2/121226e06663a2f7b9d26a00038c13a56c2e4c9e

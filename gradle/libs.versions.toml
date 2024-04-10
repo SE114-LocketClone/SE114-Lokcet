@@ -1,6 +1,6 @@
 [versions]
 accompanistPermissions = "0.34.0"
-agp = "8.3.1"
+agp = "8.3.2"
 animation = "1.6.4"
 compiler = "4.14.2"
 firebaseBom = "32.8.0"
