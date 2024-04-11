@@ -11,7 +11,6 @@ interface AccountService {
     suspend fun sendEmailVerify(
         email: String
     )
-
     suspend fun signIn(email: String, password: String)
     suspend fun signOut()
     suspend fun sendPasswordResetEmail(email: String)

@@ -73,7 +73,11 @@ o
 ?app/src/main/java/com/grouptwo/lokcet/di/impl/StorageService.kt,0/d/0d72618fd08f8124a05558c192396b0fc9953c4c
 p
 @app/src/main/java/com/grouptwo/lokcet/di/module/ServiceModule.kt,4/5/45b394118de0be5e1a1bd85789e161b43b9fd1dc
-n
->app/src/main/java/com/grouptwo/lokcet/di/service/LogService.kt,7/7/77064b63d6b653848afa0f2165dc86998d10bdc7
 m
 =app/src/main/java/com/grouptwo/lokcet/view/LokcetViewModel.kt,1/2/121226e06663a2f7b9d26a00038c13a56c2e4c9e
+q
+Aapp/src/main/java/com/grouptwo/lokcet/di/module/LocationModule.kt,8/3/830d31e62a7239d6cdd90966296389c7bee0936f
+s
+Capp/src/main/java/com/grouptwo/lokcet/di/service/LocationService.kt,d/b/db85a671e8990e9def553dc72fc749441f49a9e2
+t
+Dapp/src/main/java/com/grouptwo/lokcet/di/impl/LocationServiceImpl.kt,f/e/fe7067bc10383c058beef804517d3d5d7224080c
