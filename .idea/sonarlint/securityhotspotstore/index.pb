@@ -83,3 +83,11 @@ t
 Dapp/src/main/java/com/grouptwo/lokcet/di/impl/LocationServiceImpl.kt,f/e/fe7067bc10383c058beef804517d3d5d7224080c
 ‰
 Yapp/src/main/java/com/grouptwo/lokcet/ui/component/global/permission/PermissionRequest.kt,4/6/468ba10380c346d2e7ad64da1695417e5899a1d9
+n
+>app/src/main/java/com/grouptwo/lokcet/data/model/WidgetItem.kt,b/a/bafedde098d6c70870045da7a46cc3f3a9bcb5ec
+t
+Dapp/src/main/java/com/grouptwo/lokcet/view/widget/AddWidgetScreen.kt,2/4/24f380cf1f82d56a50032feb019007eceee1b86b
+v
+Fapp/src/main/java/com/grouptwo/lokcet/view/widget/AddWidgetTutorial.kt,8/4/8447c1f752ff8e1f778654d434893abcb7973be7
+‹
+[app/src/main/java/com/grouptwo/lokcet/ui/component/global/pager/HorizontalPagerIndicator.kt,f/1/f1a1d20102ce80bfe9decd2dc7e385e588d1ae4f

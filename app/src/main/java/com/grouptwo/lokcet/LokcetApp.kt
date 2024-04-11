@@ -1,8 +1,6 @@
 package com.grouptwo.lokcet
 
 import android.content.res.Resources
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -23,21 +21,15 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.isGranted
-import com.google.accompanist.permissions.rememberPermissionState
-import com.google.accompanist.permissions.shouldShowRationale
-import com.grouptwo.lokcet.ui.theme.LokcetTheme
 import com.grouptwo.lokcet.navigation.Screen
-import com.grouptwo.lokcet.ui.component.global.composable.PermissionDialog
-import com.grouptwo.lokcet.ui.component.global.composable.RationaleDialog
 import com.grouptwo.lokcet.ui.component.global.snackbar.SnackbarManager
 import com.grouptwo.lokcet.ui.theme.BlackSecondary
+import com.grouptwo.lokcet.ui.theme.LokcetTheme
 import com.grouptwo.lokcet.ui.theme.YellowPrimary
 import com.grouptwo.lokcet.view.splash.SplashScreen
 import com.grouptwo.lokcet.view.welcome.WelcomeScreen
+import com.grouptwo.lokcet.view.widget.AddWidgetScreen
 import kotlinx.coroutines.CoroutineScope
-import android.Manifest
 
 @Composable
 fun LokcetApp() {
@@ -93,13 +85,15 @@ fun resources(): Resources {
 }
 
 
-
 fun NavGraphBuilder.LokcetGraph(appState: LokcetAppState) {
-    composable(Screen.SplashScreen.route){
-       SplashScreen(appState.navController)
+    composable(Screen.SplashScreen.route) {
+        SplashScreen(appState.navController)
     }
     composable(Screen.WelcomeScreen.route) {
         WelcomeScreen()
+    }
+    composable(Screen.AddWidgetTutorialScreen.route) {
+        AddWidgetScreen()
     }
 
 }
