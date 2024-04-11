@@ -81,3 +81,5 @@ s
 Capp/src/main/java/com/grouptwo/lokcet/di/service/LocationService.kt,d/b/db85a671e8990e9def553dc72fc749441f49a9e2
 t
 Dapp/src/main/java/com/grouptwo/lokcet/di/impl/LocationServiceImpl.kt,f/e/fe7067bc10383c058beef804517d3d5d7224080c
+‰
+Yapp/src/main/java/com/grouptwo/lokcet/ui/component/global/permission/PermissionRequest.kt,4/6/468ba10380c346d2e7ad64da1695417e5899a1d9

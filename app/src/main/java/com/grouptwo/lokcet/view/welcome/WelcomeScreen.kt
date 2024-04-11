@@ -1,5 +1,6 @@
 package com.grouptwo.lokcet.view.welcome
 
+import android.os.Build
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -27,6 +28,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.grouptwo.lokcet.ui.component.global.composable.BasicTextButton
+import com.grouptwo.lokcet.ui.component.global.permission.RequestNotificationPermission
 import com.grouptwo.lokcet.ui.component.welcome.AutoScrollImage
 import com.grouptwo.lokcet.ui.theme.BlackSecondary
 import com.grouptwo.lokcet.ui.theme.fontFamily
@@ -34,6 +36,11 @@ import com.grouptwo.lokcet.R.string as WelcomeString
 
 @Composable
 fun WelcomeScreen() {
+    // Check if use Android 13 - Tiramisu then must request notification permission
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        // Request notification permission
+        RequestNotificationPermission()
+    }
     // Welcome Screen
     // Display the welcome screen
     val images = listOf(

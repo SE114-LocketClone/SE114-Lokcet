@@ -42,11 +42,6 @@ import android.Manifest
 @Composable
 fun LokcetApp() {
     LokcetTheme {
-        // Check if use Android 13 - Tiramisu then must request notification permission
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
-            // Request notification permission
-            RequestNotificationPermission()
-        }
         Surface(
             color = BlackSecondary,
             modifier = Modifier.fillMaxSize()
@@ -109,15 +104,3 @@ fun NavGraphBuilder.LokcetGraph(appState: LokcetAppState) {
 
 }
 
-@RequiresApi(Build.VERSION_CODES.TIRAMISU)
-@OptIn(ExperimentalPermissionsApi::class)
-@Composable
-fun RequestNotificationPermission() {
-    // Request notification permission
-    val permissionState = rememberPermissionState(permission = Manifest.permission.POST_NOTIFICATIONS)
-
-    if (!permissionState.status.isGranted) {
-        if (permissionState.status.shouldShowRationale) RationaleDialog()
-        else PermissionDialog { permissionState.launchPermissionRequest() }
-    }
-}
