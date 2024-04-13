@@ -1,6 +1,14 @@
 package com.grouptwo.lokcet.navigation
 
 sealed class Screen(val route: String){
+    // Addfriend Screen
+    object  AddfriendScreen: Screen("addfriend_screen")
+    // Addfriend Screen 1
+    object AddfriendScreen1: Screen("addfriend_screen1")
+    // Addfriend Screen 2
+    object AddfriendScreen2: Screen("addfriend_screen2")
+    // Addfriend Screen 3
+    object AddfriendScreen3: Screen("addfriend_screen3")
     // Splash Screen
     object SplashScreen: Screen("splash_screen")
     // Intro Screen
