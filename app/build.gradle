@@ -93,6 +93,9 @@ dependencies {
     implementation libs.play.services.maps
     implementation libs.accompanist.pager
     implementation libs.google.accompanist.pager.indicators
+    implementation libs.androidx.hilt.navigation.compose
+    implementation libs.accompanist.insets
+
 }
 
 // Allow references to generated code

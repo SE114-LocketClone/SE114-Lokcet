@@ -36,10 +36,14 @@ class LokcetAppState(
         navController.popBackStack()
     }
 
+    // Back to previous screen with custom back button
+
     // Navigate to a new screen
     fun navigate(route: String) {
         navController.navigate(route)
     }
+
+    // Back to previous screen
 
     // Navigate to a new screen and clear the specified route from the back stack
     fun navigateAndPopUp(route: String, popUp: String) {

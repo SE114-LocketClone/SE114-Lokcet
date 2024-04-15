@@ -91,3 +91,17 @@ v
 Fapp/src/main/java/com/grouptwo/lokcet/view/widget/AddWidgetTutorial.kt,8/4/8447c1f752ff8e1f778654d434893abcb7973be7
 ‹
 [app/src/main/java/com/grouptwo/lokcet/ui/component/global/pager/HorizontalPagerIndicator.kt,f/1/f1a1d20102ce80bfe9decd2dc7e385e588d1ae4f
+x
+Happ/src/main/java/com/grouptwo/lokcet/view/register/RegisterViewModel.kt,9/3/93ccee708eb8e05ab6525eef38bccddc3d9f10a2
+v
+Fapp/src/main/java/com/grouptwo/lokcet/view/register/RegisterUiState.kt,2/6/26b58205e01a7cb6031a021a25f433c9961e4c48
+w
+Gapp/src/main/java/com/grouptwo/lokcet/view/register/RegisterScreen_1.kt,9/0/904cbb496546b05d105ce8249d110a3cfb86af7e
+|
+Lapp/src/main/java/com/grouptwo/lokcet/ui/component/global/ime/ImeListener.kt,5/8/584d71902f2453b97c09650e45efc8964ae17df0
+t
+Dapp/src/main/java/com/grouptwo/lokcet/view/splash/SplashViewModel.kt,4/f/4f243c6945e3b6cd947b19ed442436bb70c8b1ad
+v
+Fapp/src/main/java/com/grouptwo/lokcet/view/welcome/WelcomeViewModel.kt,2/1/21b7a459022d12f8c763155113c9811d705af9f8
+ˆ
+Xapp/src/main/java/com/grouptwo/lokcet/ui/component/global/composable/ButtonComposable.kt,c/d/cd918c67205f8c55ca8b7c84b4659b66bcf6e528

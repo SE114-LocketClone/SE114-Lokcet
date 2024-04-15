@@ -7,8 +7,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -27,6 +29,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.grouptwo.lokcet.ui.component.global.composable.BasicTextButton
 import com.grouptwo.lokcet.ui.component.global.permission.RequestNotificationPermission
 import com.grouptwo.lokcet.ui.component.welcome.AutoScrollImage
@@ -35,7 +38,9 @@ import com.grouptwo.lokcet.ui.theme.fontFamily
 import com.grouptwo.lokcet.R.string as WelcomeString
 
 @Composable
-fun WelcomeScreen() {
+fun WelcomeScreen(
+    navigate: (String) -> Unit, viewModel: WelcomeViewModel = hiltViewModel()
+) {
     // Check if use Android 13 - Tiramisu then must request notification permission
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         // Request notification permission
@@ -55,12 +60,12 @@ fun WelcomeScreen() {
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 30.dp, bottom = 15.dp)
-        ) {
+                .padding(horizontal = 16.dp)
 
+        ) {
+            Spacer(modifier = Modifier.height(30.dp))
             // Auto Scroll Image
             AutoScrollImage(images = images, duration = 3000L)
-
             // Logo Icon and Logo Name
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -107,7 +112,7 @@ fun WelcomeScreen() {
                     .clip(
                         shape = RoundedCornerShape(50)
                     ),
-                action = { /*TODO*/ },
+                action = { viewModel.onRegisterClick(navigate) },
                 textStyle = TextStyle(
                     fontSize = 20.sp,
                     fontFamily = fontFamily,
@@ -115,13 +120,13 @@ fun WelcomeScreen() {
                     fontWeight = FontWeight.Bold
                 ),
             )
-
             // Login Touchable
-            Surface(color = Color.Transparent,
-                modifier = Modifier
-                    .clickable { /*TODO*/ }
-                    .padding(top = 20.dp)
-                    .fillMaxWidth()) {
+            Surface(color = Color.Transparent, modifier = Modifier
+                .clickable {
+                    viewModel.onLoginClick(navigate)
+                }
+                .padding(top = 20.dp)
+                .fillMaxWidth()) {
                 Text(
                     text = stringResource(id = WelcomeString.login), style = TextStyle(
                         fontSize = 20.sp,

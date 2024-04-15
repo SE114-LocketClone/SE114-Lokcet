@@ -13,4 +13,13 @@
     <string name="notification_permission_title">Quyền thông báo</string>
     <string name="notification_permission_description">Quyền thông báo quan trọng cho ứng dụng này. Vui lòng cấp quyền.</string>
     <string name="notification_permission_settings">Quyền thông báo quan trọng cho ứng dụng này. Vui lòng đến cài đặt và cấp quyền thông báo cho Lokcet.</string>
+    <!-- Register -->
+    <string name="email_invalid">Email không hợp lệ</string>
+    <string name="password_invalid">Mật khẩu phải có ít nhất 6 ký tự</string>
+    <string name="password_not_match">Mật khẩu không khớp</string>
+    <string name="register">Đăng ký</string>
+    <string name="register_success">Đăng ký thành công</string>
+    <string name="register_failed">Đăng ký thất bại</string>
+    <string name="register_failed_email_exist">Email đã tồn tại</string>
+    <string name="name_invalid">Tên không hợp lệ</string>
 </resources>

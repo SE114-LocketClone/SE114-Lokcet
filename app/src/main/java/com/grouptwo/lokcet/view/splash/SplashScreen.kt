@@ -12,20 +12,20 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import com.grouptwo.lokcet.navigation.Screen
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.grouptwo.lokcet.R
 import com.grouptwo.lokcet.utils.Constants
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
-import  com.grouptwo.lokcet.R
+
 @Composable
 fun SplashScreen(
-    navController: NavController,
+    openAndPopUp: (String, String) -> Unit,
+    viewModel: SplashViewModel = hiltViewModel(),
     dispatcher: CoroutineDispatcher = Dispatchers.Main
 ) {
     val scale = remember {
@@ -45,17 +45,18 @@ fun SplashScreen(
                     }
                 )
             )
+
             // Use delay to wait for the animation to finish
             delay(Constants.SPLASH_SCREEN_DURATION)
-            // Clear previous routes
-            navController.popBackStack()
-            // Navigate to the next screen after the splash screen (IntroScreen)
-            navController.navigate(Screen.WelcomeScreen.route)
+            // While the animation is running, the SplashViewModel will determine the next screen to navigate to
+            viewModel.onAppStart(openAndPopUp)
         }
     }
     // Define the SplashScreen layout
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center, ) {
-        Image(painter = painterResource(id = R.drawable.app_logo), contentDescription = "Lokcet Logo",
-            modifier = Modifier.size(300.dp),)
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Image(
+            painter = painterResource(id = R.drawable.app_logo), contentDescription = "Lokcet Logo",
+            modifier = Modifier.size(300.dp),
+        )
     }
 }
