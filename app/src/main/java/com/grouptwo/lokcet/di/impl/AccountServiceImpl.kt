@@ -47,6 +47,7 @@ class AccountServiceImpl @Inject constructor(
                 auth.removeAuthStateListener(listener)
             }
         }
+
     // Create an account
     override suspend fun createAccount(email: String, password: String) {
         try {
@@ -116,5 +117,10 @@ class AccountServiceImpl @Inject constructor(
 
     override suspend fun sendPasswordResetEmail(email: String) {
         auth.sendPasswordResetEmail(email).await()
+    }
+
+    override suspend fun isEmailUsed(email: String): Boolean {
+        val docRef = firestore.collection("users").whereEqualTo("email", email).get().await()
+        return !docRef.isEmpty
     }
 }

@@ -5,17 +5,19 @@ import android.util.Patterns
 // Define validate function for app
 fun String.isValidEmail(): Boolean {
     // Check if the email is not blank and matches the email pattern
-    return this.isNotBlank() &&  Patterns.EMAIL_ADDRESS.matcher(this).matches()
+    return this.isNotBlank() && Patterns.EMAIL_ADDRESS.matcher(this).matches()
 }
 
 private const val MIN_PASSWORD_LENGTH = 6
+
 // Password must contain at least one uppercase letter,
 // one lowercase letter, one number, and no whitespace.
-private val PASSWORD_PATTERN = Regex("^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=\\S+$).{6,}$")
+private val PASSWORD_PATTERN =
+    Regex("^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#\$%^&*()_+=|<>?{}\\\\[\\\\]~-])(?=\\S+$)")
 
 fun String.isValidPassword(): Boolean {
     // Check if the password is not blank and matches the password pattern
-    return this.isNotBlank() && this.length >= MIN_PASSWORD_LENGTH && PASSWORD_PATTERN.matches(this)
+    return this.isNotBlank() && this.length >= MIN_PASSWORD_LENGTH
 }
 
 fun String.isValidName(): Boolean {

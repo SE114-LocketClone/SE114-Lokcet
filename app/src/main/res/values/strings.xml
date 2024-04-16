@@ -22,4 +22,5 @@
     <string name="register_failed">Đăng ký thất bại</string>
     <string name="register_failed_email_exist">Email đã tồn tại</string>
     <string name="name_invalid">Tên không hợp lệ</string>
+    <string name="email_used">Email đã được sử dụng</string>
 </resources>

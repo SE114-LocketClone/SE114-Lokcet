@@ -1,7 +1,11 @@
 package com.grouptwo.lokcet
 
+import android.annotation.SuppressLint
 import android.content.res.Resources
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
@@ -15,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -26,6 +31,8 @@ import com.grouptwo.lokcet.ui.theme.BlackSecondary
 import com.grouptwo.lokcet.ui.theme.LokcetTheme
 import com.grouptwo.lokcet.ui.theme.YellowPrimary
 import com.grouptwo.lokcet.view.register.RegisterScreen1
+import com.grouptwo.lokcet.view.register.RegisterScreen2
+import com.grouptwo.lokcet.view.register.RegisterViewModel
 import com.grouptwo.lokcet.view.splash.SplashScreen
 import com.grouptwo.lokcet.view.welcome.WelcomeScreen
 import com.grouptwo.lokcet.view.widget.AddWidgetScreen
@@ -36,11 +43,16 @@ fun LokcetApp() {
     LokcetTheme {
         Surface {
             val appState = rememberAppState()
+
             Scaffold(
                 containerColor = BlackSecondary,
                 snackbarHost = {
                     SnackbarHost(hostState = appState.snackbarHostState,
-                        modifier = Modifier.padding(8.dp),
+                        modifier = Modifier
+                            .statusBarsPadding()
+                            .navigationBarsPadding()
+                            .imePadding()
+                            .padding(8.dp),
                         snackbar = { snackbarData ->
                             Snackbar(snackbarData = snackbarData, contentColor = YellowPrimary)
                         })
@@ -56,9 +68,9 @@ fun LokcetApp() {
             }
 
         }
-
     }
 }
+
 
 @Composable
 fun rememberAppState(
@@ -79,6 +91,7 @@ fun resources(): Resources {
 }
 
 
+@SuppressLint("UnrememberedGetBackStackEntry")
 fun NavGraphBuilder.LokcetGraph(appState: LokcetAppState) {
     composable(Screen.SplashScreen.route) {
         SplashScreen(openAndPopUp = { route, popUp ->
@@ -94,8 +107,17 @@ fun NavGraphBuilder.LokcetGraph(appState: LokcetAppState) {
         AddWidgetScreen()
     }
     composable(Screen.RegisterScreen_1.route) {
-        RegisterScreen1(popUp = { appState.popUp() })
+        RegisterScreen1(popUp = { appState.popUp() }, navigate = { route ->
+            appState.navigate(route)
+        })
     }
-
+    composable(Screen.RegisterScreen_2.route) { backStackEntry ->
+        // Share parent viewmodel with given route
+        val parentEntry = remember(backStackEntry) {
+            appState.navController.getBackStackEntry(Screen.RegisterScreen_1.route)
+        }
+        val vm = hiltViewModel<RegisterViewModel>(parentEntry)
+        RegisterScreen2(popUp = { appState.popUp() }, viewModel = vm)
+    }
 }
 

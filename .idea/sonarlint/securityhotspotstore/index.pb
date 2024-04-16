@@ -105,3 +105,5 @@ v
 Fapp/src/main/java/com/grouptwo/lokcet/view/welcome/WelcomeViewModel.kt,2/1/21b7a459022d12f8c763155113c9811d705af9f8
 ˆ
 Xapp/src/main/java/com/grouptwo/lokcet/ui/component/global/composable/ButtonComposable.kt,c/d/cd918c67205f8c55ca8b7c84b4659b66bcf6e528
+w
+Gapp/src/main/java/com/grouptwo/lokcet/view/register/RegisterScreen_2.kt,6/e/6e85fef17d54c487f79273fb4776aa697886d869
