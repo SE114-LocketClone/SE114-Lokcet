@@ -4,9 +4,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import com.grouptwo.lokcet.R
 import com.grouptwo.lokcet.di.service.AccountService
+import com.grouptwo.lokcet.di.service.LocationService
 import com.grouptwo.lokcet.navigation.Screen
 import com.grouptwo.lokcet.ui.component.global.snackbar.SnackbarManager
 import com.grouptwo.lokcet.utils.isValidEmail
+import com.grouptwo.lokcet.utils.isValidName
 import com.grouptwo.lokcet.utils.isValidPassword
 import com.grouptwo.lokcet.view.LokcetViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,6 +17,7 @@ import javax.inject.Inject
 @HiltViewModel
 class RegisterViewModel @Inject constructor(
     private val accountService: AccountService,
+    private val locationService: LocationService,
     private val savedStateHandle: SavedStateHandle,
 ) : LokcetViewModel() {
     // Initialize the state of the register screen
@@ -32,10 +35,10 @@ class RegisterViewModel @Inject constructor(
     private val password get() = uiState.value.password
     private val lastName get() = uiState.value.lastName
     private val firstName get() = uiState.value.firstName
+    private val location get() = uiState.value.location
     private val isButtonEmailEnable get() = uiState.value.isButtonEmailEnable
     private val isButtonPasswordEnable get() = uiState.value.isButtonPasswordEnable
     private val isButtonNameEnable get() = uiState.value.isButtonNameEnable
-
     private val isCheckingEmail get() = uiState.value.isCheckingEmail
 
     fun onEmailChange(email: String) {
@@ -96,13 +99,37 @@ class RegisterViewModel @Inject constructor(
         }
     }
 
-    fun onPasswordClick() {
+    fun onPasswordClick(navigate: (String) -> Unit) {
         if (!isButtonPasswordEnable) {
             return
         }
         if (!password.isValidPassword()) {
             SnackbarManager.showMessage(R.string.password_invalid)
             return
+        }
+        // Navigate to the next screen if the password is valid
+        navigate(Screen.RegisterScreen_3.route)
+    }
+
+    fun onNameClick() {
+        if (!isButtonNameEnable) {
+            return
+        }
+        if (!lastName.isValidName() || !firstName.isValidName()) {
+            SnackbarManager.showMessage(R.string.name_invalid)
+            return
+        }
+        // Call location service to get the current location
+        launchCatching {
+            uiState.value = uiState.value.copy(location = locationService.getCurrentLocation())
+            // Create an account if the name is valid
+            accountService.createAccount(
+                email,
+                password,
+                firstName,
+                lastName,
+                location
+            )
         }
     }
 }

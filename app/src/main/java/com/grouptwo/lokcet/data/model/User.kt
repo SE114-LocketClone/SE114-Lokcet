@@ -1,8 +1,6 @@
 package com.grouptwo.lokcet.data.model
 
 import com.google.firebase.firestore.GeoPoint
-import com.google.type.DateTime
-import java.time.LocalDateTime
 
 data class User(
     val id: String = "",
@@ -18,6 +16,6 @@ data class User(
     val isOnline: Boolean = false,
     val isBannded: Boolean = false,
     val isDeleted: Boolean = false,
-    val createdAt: LocalDateTime = LocalDateTime.now(),
-    val lastSeen: LocalDateTime = LocalDateTime.now(),
+    val createdAt: Any = Any(),
+    val lastSeen: Any = Any()
 )

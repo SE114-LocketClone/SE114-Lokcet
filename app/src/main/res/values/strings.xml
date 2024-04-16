@@ -9,10 +9,16 @@
         <string name="login">Đăng nhập</string>
     <!-- FCM -->
     <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
-    <string name="request_notification_permission">Yêu cầu quyền</string>
+    <string name="request_notification_permission">Cho phép</string>
     <string name="notification_permission_title">Quyền thông báo</string>
     <string name="notification_permission_description">Quyền thông báo quan trọng cho ứng dụng này. Vui lòng cấp quyền.</string>
     <string name="notification_permission_settings">Quyền thông báo quan trọng cho ứng dụng này. Vui lòng đến cài đặt và cấp quyền thông báo cho Lokcet.</string>
+    <!-- Location -->
+    <string name="request_location_permission">Cho phép</string>
+    <string name="location_permission_title">Quyền vị trí</string>
+    <string name="location_permission_description">Quyền vị trí quan trọng cho ứng dụng này. Vui lòng cấp quyền.</string>
+    <string name="location_permission_settings">Quyền vị trí quan trọng cho ứng dụng này. Vui lòng đến cài đặt và cấp quyền vị trí cho Lokcet.</string>
+
     <!-- Register -->
     <string name="email_invalid">Email không hợp lệ</string>
     <string name="password_invalid">Mật khẩu phải có ít nhất 6 ký tự</string>

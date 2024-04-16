@@ -1,5 +1,6 @@
 package com.grouptwo.lokcet.ui.component.global.composable
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
@@ -15,59 +16,92 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.grouptwo.lokcet.ui.theme.BlackSecondary
 import com.grouptwo.lokcet.ui.theme.YellowPrimary
-import com.grouptwo.lokcet.R.string as strimgResource
 
 @Composable
-fun PermissionDialog(onRequestPermission: () -> Unit) {
+fun PermissionDialog(
+    onRequestPermission: () -> Unit,
+    @StringRes request: Int,
+    @StringRes title: Int,
+    @StringRes description: Int
+) {
     var showWarningDialog by remember { mutableStateOf(true) }
     if (showWarningDialog) {
-        AlertDialog(
-
-            modifier = Modifier
-                .wrapContentWidth()
-                .wrapContentHeight(),
+        AlertDialog(modifier = Modifier
+            .wrapContentWidth()
+            .wrapContentHeight(),
             onDismissRequest = { /*TODO*/ },
             confirmButton = {
                 TextButton(
                     onClick = {
                         onRequestPermission()
                         showWarningDialog = false
-                    },
-                    colors = ButtonDefaults.buttonColors(
+                    }, colors = ButtonDefaults.buttonColors(
                         YellowPrimary
                     ), modifier = Modifier.padding(8.dp)
                 ) {
-                    Text(text = stringResource(id = strimgResource.request_notification_permission))
+                    Text(text = stringResource(id = request), color = BlackSecondary)
                 }
             },
-            title = { Text(text = stringResource(id = strimgResource.notification_permission_title)) },
-            text = { Text(text = stringResource(id = strimgResource.notification_permission_description)) })
+            title = { Text(text = stringResource(id = title)) },
+            text = { Text(text = stringResource(id = description)) })
     }
 }
 
+//@Composable
+//fun RationaleDialog(
+//    @StringRes ok: Int,
+//    @StringRes title: Int,
+//    @StringRes description: Int
+//)
+// {
+//    var showWarningDialog by remember { mutableStateOf(true) }
+//    if (showWarningDialog) {
+//        AlertDialog(
+//            modifier = Modifier
+//                .wrapContentWidth()
+//                .wrapContentHeight(),
+//            onDismissRequest = { showWarningDialog = false },
+//            confirmButton = {
+//                TextButton(
+//                    onClick = {
+//                        showWarningDialog = false
+//                    },
+//                    colors = ButtonDefaults.buttonColors(
+//                        YellowPrimary
+//                    ), modifier = Modifier.padding(8.dp)
+//                ) {
+//                    Text(text = stringResource(id = strimgResource.ok))
+//                }
+//            },
+//            title = { Text(stringResource(id = strimgResource.notification_permission_title)) },
+//            text = { Text(stringResource(id = strimgResource.notification_permission_settings)) })
+//    }
+//}
+
 @Composable
-fun RationaleDialog() {
+fun RationaleDialog(
+    @StringRes ok: Int, @StringRes title: Int, @StringRes description: Int
+) {
     var showWarningDialog by remember { mutableStateOf(true) }
     if (showWarningDialog) {
-        AlertDialog(
-            modifier = Modifier
-                .wrapContentWidth()
-                .wrapContentHeight(),
+        AlertDialog(modifier = Modifier
+            .wrapContentWidth()
+            .wrapContentHeight(),
             onDismissRequest = { showWarningDialog = false },
             confirmButton = {
                 TextButton(
                     onClick = {
                         showWarningDialog = false
-                    },
-                    colors = ButtonDefaults.buttonColors(
+                    }, colors = ButtonDefaults.buttonColors(
                         YellowPrimary
                     ), modifier = Modifier.padding(8.dp)
                 ) {
-                    Text(text = stringResource(id = strimgResource.ok))
+                    Text(text = stringResource(id = ok), color = BlackSecondary)
                 }
             },
-            title = { Text(stringResource(id = strimgResource.notification_permission_title)) },
-            text = { Text(stringResource(id = strimgResource.notification_permission_settings)) })
+            title = { Text(stringResource(id = title)) },
+            text = { Text(stringResource(id = description)) })
     }
 }

@@ -5,7 +5,9 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.GeoPoint
 import com.grouptwo.lokcet.data.model.User
 import com.grouptwo.lokcet.di.service.AccountService
 import kotlinx.coroutines.channels.awaitClose
@@ -49,10 +51,23 @@ class AccountServiceImpl @Inject constructor(
         }
 
     // Create an account
-    override suspend fun createAccount(email: String, password: String) {
+    override suspend fun createAccount(
+        email: String, password: String, firstName: String, lastName: String, location: GeoPoint
+    ) {
         try {
             val result = auth.createUserWithEmailAndPassword(email, password).await()
             val user = result.user
+            // Save the user information to the database
+            val userObject = User(
+                id = user?.uid.orEmpty(),
+                email = email,
+                firstName = firstName,
+                lastName = lastName,
+                location = location,
+                createdAt = FieldValue.serverTimestamp(),
+                lastSeen = FieldValue.serverTimestamp()
+            )
+            firestore.collection("users").document(user?.uid.orEmpty()).set(userObject).await()
             user?.sendEmailVerification()?.await()
         } catch (e: Exception) {
             when (e) {

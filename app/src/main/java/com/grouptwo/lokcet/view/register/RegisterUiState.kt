@@ -1,6 +1,7 @@
 package com.grouptwo.lokcet.view.register
 
 import android.provider.ContactsContract.CommonDataKinds.Email
+import com.google.firebase.firestore.GeoPoint
 
 // Define state object for email, password, last name, and first name in the register screen
 
@@ -13,4 +14,5 @@ data class RegisterUiState(
     val isButtonPasswordEnable: Boolean = false,
     val isButtonNameEnable: Boolean = false,
     val isCheckingEmail: Boolean = false,
+    val location : GeoPoint = GeoPoint(0.0, 0.0)
 )

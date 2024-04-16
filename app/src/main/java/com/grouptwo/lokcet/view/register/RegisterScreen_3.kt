@@ -20,7 +20,6 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -34,31 +33,26 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.grouptwo.lokcet.R
 import com.grouptwo.lokcet.ui.component.global.composable.BasicIconButton
 import com.grouptwo.lokcet.ui.component.global.ime.rememberImeState
+import com.grouptwo.lokcet.ui.component.global.permission.RequestLocationPermission
 import com.grouptwo.lokcet.ui.theme.BlackSecondary
 import com.grouptwo.lokcet.ui.theme.YellowPrimary
 import com.grouptwo.lokcet.ui.theme.fontFamily
 
 
 @Composable
-fun RegisterScreen2(
+fun RegisterScreen3(
     popUp: () -> Unit,
-    navigate: (String) -> Unit,
     viewModel: RegisterViewModel = hiltViewModel(),
 ) {
+    RequestLocationPermission()
     val uiState by viewModel.uiState
     val imeState = rememberImeState()
     val scrollState = rememberScrollState()
@@ -69,33 +63,7 @@ fun RegisterScreen2(
         }
     }
 
-    val annotatedString = buildAnnotatedString {
-        withStyle(
-            style = SpanStyle(
-                fontSize = 15.sp,
-                fontFamily = fontFamily,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFFB8B8B8)
-            )
-        )
-        {
-            append("Mật khẩu của bạn phải dài tối thiểu")
-        }
-        withStyle(
-            style = SpanStyle(
-                fontSize = 15.sp,
-                fontFamily = fontFamily,
-                fontWeight = FontWeight.Bold,
-                color = YellowPrimary
-            )
-        )
-        {
-            append(" 6 ký tự")
-        }
-    }
-
-    Box(modifier = Modifier.fillMaxSize())
-    {
+    Box(modifier = Modifier.fillMaxSize()) {
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -107,8 +75,7 @@ fun RegisterScreen2(
                 .padding(start = 16.dp, end = 16.dp)
                 .verticalScroll(scrollState)
 
-        )
-        {
+        ) {
             BasicIconButton(
                 drawableResource = R.drawable.arrow_left,
                 modifier = Modifier
@@ -121,14 +88,15 @@ fun RegisterScreen2(
             )
             Spacer(modifier = Modifier.weight(0.1f))
             Text(
-                text = "Chọn một mật khẩu",
+                text = "Tên bạn là gì",
                 style = TextStyle(
                     fontSize = 26.sp,
                     fontFamily = fontFamily,
-                    fontWeight = FontWeight(400),
-                    color = Color.White,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFFFFFFFF)
                 ),
             )
+            Spacer(modifier = Modifier.weight(0.02f))
 
             val textFieldColors = TextFieldDefaults.colors(
                 focusedContainerColor = Color(0xFF272626),
@@ -138,54 +106,67 @@ fun RegisterScreen2(
             )
 
             TextField(
-                value = uiState.password,
+                value = uiState.firstName,
                 singleLine = true,
-                onValueChange = { viewModel.onPasswordChange(it) },
+                onValueChange = { viewModel.onFirstNameChange(it) },
                 textStyle = TextStyle(
                     fontSize = 23.sp,
                     fontFamily = fontFamily,
                     fontWeight = FontWeight.Bold,
                     color = Color.White
                 ),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                visualTransformation = PasswordVisualTransformation(),
                 placeholder = {
                     Text(
-                        text = "Mật khẩu",
-                        style = TextStyle(
+                        text = "Tên", style = TextStyle(
                             color = Color(0xFF737070),
                             fontFamily = fontFamily,
-                            fontSize = 23.sp,
                             fontWeight = FontWeight.Bold,
+                            fontSize = 23.sp
                         )
                     )
                 },
+                modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(18.dp),
-                colors = textFieldColors, modifier = Modifier
-                    .fillMaxWidth()
-                    .heightIn(min = 62.dp)
+                colors = textFieldColors
             )
             Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = annotatedString,
-                style = TextStyle.Default.copy(textAlign = TextAlign.Center),
+            TextField(
+                value = uiState.lastName,
+                singleLine = true,
+                onValueChange = { viewModel.onLastNameChange(it) },
+                textStyle = TextStyle(
+                    fontSize = 23.sp,
+                    fontFamily = fontFamily,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                ),
+                placeholder = {
+                    Text(
+                        text = "Họ", style = TextStyle(
+                            color = Color(0xFF737070),
+                            fontFamily = fontFamily,
+                            fontSize = 23.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    )
+                },
                 modifier = Modifier.fillMaxWidth(),
-                minLines = 1,
+                shape = RoundedCornerShape(18.dp),
+                colors = textFieldColors
             )
             Spacer(modifier = Modifier.weight(0.1f))
             val buttonColor = ButtonDefaults.buttonColors(
-                if (uiState.isButtonPasswordEnable) YellowPrimary else Color(0xFF272626)
+                if (uiState.isButtonNameEnable) YellowPrimary else Color(0xFF272626)
             )
             Button(
-                onClick = { viewModel.onPasswordClick(navigate) },
+                onClick = { viewModel.onNameClick() },
                 modifier = Modifier
                     .width(294.dp)
                     .heightIn(min = 46.dp),
                 colors = buttonColor
             ) {
                 Row(
-                    modifier = Modifier
-                        .fillMaxSize(),
+                    modifier = Modifier.fillMaxSize(),
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {

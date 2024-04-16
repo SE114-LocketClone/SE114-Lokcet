@@ -1,31 +1,44 @@
 package com.grouptwo.lokcet.navigation
 
-sealed class Screen(val route: String){
+sealed class Screen(val route: String) {
     // Splash Screen
-    object SplashScreen: Screen("splash_screen")
+    object SplashScreen : Screen("splash_screen")
+
     // Intro Screen
-    object WelcomeScreen: Screen("welcome_screen")
+    object WelcomeScreen : Screen("welcome_screen")
+
     // Add Widget Tutorial Screen
-    object AddWidgetTutorialScreen: Screen("add_widget_tutorial_screen")
+    object AddWidgetTutorialScreen : Screen("add_widget_tutorial_screen")
+
     // Login Screen
-    object LoginScreen: Screen("login_screen")
+    object LoginScreen : Screen("login_screen")
+
     // Register Screen
-    object RegisterScreen_1: Screen("register_screen_1")
-    object RegisterScreen_2: Screen("register_screen_2")
+    object RegisterScreen_1 : Screen("register_screen_1")
+    object RegisterScreen_2 : Screen("register_screen_2")
+    object RegisterScreen_3 : Screen("register_screen_3")
+
     // Forgot Password Screen
-    object ForgotPasswordScreen: Screen("forgot_password_screen")
+    object ForgotPasswordScreen : Screen("forgot_password_screen")
+
     // Reset Password Screen
-    object ResetPasswordScreen: Screen("reset_password_screen")
+    object ResetPasswordScreen : Screen("reset_password_screen")
+
     // Verify Email Screen (Mail)
-    object VerifyEmailScreen: Screen("verify_email_screen")
+    object VerifyEmailScreen : Screen("verify_email_screen")
+
     // Verify Phone Screen (OTP)
-    object VerifyPhoneScreen: Screen("verify_phone_screen")
+    object VerifyPhoneScreen : Screen("verify_phone_screen")
+
     // Home Screen
-    object HomeScreen: Screen("home_screen")
+    object HomeScreen : Screen("home_screen")
+
     // Profile Screen
-    object ProfileScreen: Screen("profile_screen")
+    object ProfileScreen : Screen("profile_screen")
+
     // Settings Screen
-    object SettingsScreen: Screen("settings_screen")
+    object SettingsScreen : Screen("settings_screen")
+
     // Friends List Screen
-    object FriendsListScreen: Screen("friends_list_screen")
+    object FriendsListScreen : Screen("friends_list_screen")
 }
