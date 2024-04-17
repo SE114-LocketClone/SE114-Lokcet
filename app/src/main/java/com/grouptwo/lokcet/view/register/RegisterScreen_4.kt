@@ -20,9 +20,14 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -33,27 +38,38 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.OffsetMapping
+import androidx.compose.ui.text.input.TransformedText
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.grouptwo.lokcet.R
 import com.grouptwo.lokcet.ui.component.global.composable.BasicIconButton
 import com.grouptwo.lokcet.ui.component.global.ime.rememberImeState
-import com.grouptwo.lokcet.ui.component.global.permission.RequestLocationPermission
 import com.grouptwo.lokcet.ui.theme.BlackSecondary
 import com.grouptwo.lokcet.ui.theme.YellowPrimary
 import com.grouptwo.lokcet.ui.theme.fontFamily
 
+class PhoneNumberVisualTransformation : VisualTransformation {
+    override fun filter(text: AnnotatedString): TransformedText {
+        return TransformedText(AnnotatedString("+84" + text.text), object : OffsetMapping {
+            override fun originalToTransformed(offset: Int): Int = offset + 3
+            override fun transformedToOriginal(offset: Int): Int = if (offset < 3) 0 else offset - 3
+        })
+    }
+}
 
 @Composable
-fun RegisterScreen3(
+fun RegisterScreen4(
     popUp: () -> Unit,
     navigate: (String) -> Unit,
     viewModel: RegisterViewModel = hiltViewModel(),
 ) {
-    RequestLocationPermission()
     val uiState by viewModel.uiState
     val imeState = rememberImeState()
     val scrollState = rememberScrollState()
@@ -66,8 +82,8 @@ fun RegisterScreen3(
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
-            verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
             modifier = Modifier
                 .fillMaxSize()
                 .statusBarsPadding()
@@ -89,107 +105,102 @@ fun RegisterScreen3(
             )
             Spacer(modifier = Modifier.weight(0.1f))
             Text(
-                text = "Tên bạn là gì",
+                text = "Số điện thoại của bạn là gì?",
                 style = TextStyle(
                     fontSize = 26.sp,
                     fontFamily = fontFamily,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFFFFFFFF)
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold
                 ),
             )
-            Spacer(modifier = Modifier.weight(0.02f))
-
+            Spacer(modifier = Modifier.height(16.dp))
             val textFieldColors = TextFieldDefaults.colors(
                 focusedContainerColor = Color(0xFF272626),
                 unfocusedContainerColor = Color(0xFF272626),
                 unfocusedIndicatorColor = Color.Black,
                 focusedIndicatorColor = Color.Black,
             )
-
             TextField(
-                value = uiState.firstName,
-                singleLine = true,
-                onValueChange = { viewModel.onFirstNameChange(it) },
-                textStyle = TextStyle(
-                    fontSize = 23.sp,
-                    fontFamily = fontFamily,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White
-                ),
-                placeholder = {
-                    Text(
-                        text = "Tên", style = TextStyle(
-                            color = Color(0xFF737070),
-                            fontFamily = fontFamily,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 23.sp
-                        )
+                value = uiState.phoneNumber,
+                onValueChange = {
+                    if (!it.startsWith("0") && it.length <= 12) {
+                        viewModel.onPhoneNumberChange(it)
+                    }
+                },
+                leadingIcon = {
+                    Icon(
+                        Icons.Filled.Phone,
+                        contentDescription = "Phone icon",
+                        modifier = Modifier.size(24.dp),
+                        tint = YellowPrimary
                     )
                 },
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(18.dp),
-                colors = textFieldColors
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            TextField(
-                value = uiState.lastName,
                 singleLine = true,
-                onValueChange = { viewModel.onLastNameChange(it) },
                 textStyle = TextStyle(
                     fontSize = 23.sp,
                     fontFamily = fontFamily,
                     fontWeight = FontWeight.Bold,
-                    color = Color.White
+                    color = Color.White,
                 ),
+                visualTransformation = PhoneNumberVisualTransformation(),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
                 placeholder = {
-                    Text(
-                        text = "Họ", style = TextStyle(
-                            color = Color(0xFF737070),
+                    if (uiState.phoneNumber.isEmpty()) Text(
+                        text = "+84", style = TextStyle(
+                            color = Color.White,
                             fontFamily = fontFamily,
                             fontSize = 23.sp,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
                         )
                     )
                 },
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = 62.dp),
                 shape = RoundedCornerShape(18.dp),
-                colors = textFieldColors
+                colors = textFieldColors,
             )
             Spacer(modifier = Modifier.weight(0.1f))
             val buttonColor = ButtonDefaults.buttonColors(
-                if (uiState.isButtonNameEnable) YellowPrimary else Color(0xFF272626)
+                if (uiState.isButtonPhoneEnable) YellowPrimary else Color(0xFF272626)
             )
             Button(
-                onClick = { viewModel.onNameClick(navigate) },
-                modifier = Modifier
+                onClick = {
+                    viewModel.onPhoneNumberClick()
+                }, modifier = Modifier
                     .width(294.dp)
-                    .heightIn(min = 46.dp),
-                colors = buttonColor
+                    .heightIn(min = 46.dp), colors = buttonColor
             ) {
                 Row(
                     modifier = Modifier.fillMaxSize(),
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Text(
-                        text = "Tiếp tục", style = TextStyle(
-                            fontSize = 24.sp,
-                            fontFamily = fontFamily,
-                            color = BlackSecondary,
-                            fontWeight = FontWeight.Bold
-                        ), modifier = Modifier.align(Alignment.CenterVertically)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Image(
-                        painter = painterResource(id = R.drawable.arrow_right),
-                        contentDescription = "image description",
-                        modifier = Modifier
-                            .fillMaxHeight()
-                            .align(Alignment.CenterVertically)
-                    )
+                    if (uiState.isCheckingPhone) {
+                        // Show loading icon
+                        CircularProgressIndicator(
+                            color = BlackSecondary, modifier = Modifier.size(40.dp)
+                        )
+                    } else {
+                        Text(
+                            text = "Tiếp tục", style = TextStyle(
+                                fontSize = 24.sp,
+                                fontFamily = fontFamily,
+                                color = BlackSecondary,
+                                fontWeight = FontWeight.Bold
+                            ), modifier = Modifier.align(Alignment.CenterVertically)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Image(
+                            painter = painterResource(id = R.drawable.arrow_right),
+                            contentDescription = "image description",
+                            modifier = Modifier
+                                .fillMaxHeight()
+                                .align(Alignment.CenterVertically)
+                        )
+                    }
                 }
             }
         }
     }
-
 }

@@ -109,3 +109,5 @@ w
 Gapp/src/main/java/com/grouptwo/lokcet/view/register/RegisterScreen_2.kt,6/e/6e85fef17d54c487f79273fb4776aa697886d869
 w
 Gapp/src/main/java/com/grouptwo/lokcet/view/register/RegisterScreen_3.kt,d/6/d6da55a279c5a7b98724e3193d3828c961f8eb91
+w
+Gapp/src/main/java/com/grouptwo/lokcet/view/register/RegisterScreen_4.kt,a/d/adf65140b3358f3c8948cbec157cfaa7fd2f7409

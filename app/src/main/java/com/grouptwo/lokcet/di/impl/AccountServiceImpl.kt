@@ -52,7 +52,12 @@ class AccountServiceImpl @Inject constructor(
 
     // Create an account
     override suspend fun createAccount(
-        email: String, password: String, firstName: String, lastName: String, location: GeoPoint
+        email: String,
+        password: String,
+        firstName: String,
+        lastName: String,
+        location: GeoPoint,
+        phoneNumber: String
     ) {
         try {
             val result = auth.createUserWithEmailAndPassword(email, password).await()
@@ -64,10 +69,12 @@ class AccountServiceImpl @Inject constructor(
                 firstName = firstName,
                 lastName = lastName,
                 location = location,
+                phoneNumber = phoneNumber,
                 createdAt = FieldValue.serverTimestamp(),
                 lastSeen = FieldValue.serverTimestamp()
             )
             firestore.collection("users").document(user?.uid.orEmpty()).set(userObject).await()
+            // If the account is created, send a verification email
             user?.sendEmailVerification()?.await()
         } catch (e: Exception) {
             when (e) {
@@ -87,7 +94,6 @@ class AccountServiceImpl @Inject constructor(
             }
         }
     }
-    // If the account is created, send a verification email
 
 
     // Send a verification email
@@ -136,6 +142,11 @@ class AccountServiceImpl @Inject constructor(
 
     override suspend fun isEmailUsed(email: String): Boolean {
         val docRef = firestore.collection("users").whereEqualTo("email", email).get().await()
+        return !docRef.isEmpty
+    }
+
+    override suspend fun isPhoneUsed(phone: String): Boolean {
+        val docRef = firestore.collection("users").whereEqualTo("phoneNumber", phone).get().await()
         return !docRef.isEmpty
     }
 }

@@ -1,5 +1,6 @@
 package com.grouptwo.lokcet.view.register
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import com.grouptwo.lokcet.R
@@ -10,6 +11,7 @@ import com.grouptwo.lokcet.ui.component.global.snackbar.SnackbarManager
 import com.grouptwo.lokcet.utils.isValidEmail
 import com.grouptwo.lokcet.utils.isValidName
 import com.grouptwo.lokcet.utils.isValidPassword
+import com.grouptwo.lokcet.utils.isValidPhoneNumber
 import com.grouptwo.lokcet.view.LokcetViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -27,6 +29,7 @@ class RegisterViewModel @Inject constructor(
             password = savedStateHandle["password"] ?: "",
             lastName = savedStateHandle["lastName"] ?: "",
             firstName = savedStateHandle["firstName"] ?: "",
+            phoneNumber = savedStateHandle["phoneNumber"] ?: "",
         )
     )
         private set
@@ -36,10 +39,14 @@ class RegisterViewModel @Inject constructor(
     private val lastName get() = uiState.value.lastName
     private val firstName get() = uiState.value.firstName
     private val location get() = uiState.value.location
+    private val phoneNumber get() = uiState.value.phoneNumber
     private val isButtonEmailEnable get() = uiState.value.isButtonEmailEnable
     private val isButtonPasswordEnable get() = uiState.value.isButtonPasswordEnable
     private val isButtonNameEnable get() = uiState.value.isButtonNameEnable
+    private val isButtonPhoneEnable get() = uiState.value.isButtonPhoneEnable
     private val isCheckingEmail get() = uiState.value.isCheckingEmail
+    private val isCheckingPhone get() = uiState.value.isCheckingPhone
+
 
     fun onEmailChange(email: String) {
         uiState.value = uiState.value.copy(email = email, isButtonEmailEnable = email.isNotBlank())
@@ -70,6 +77,15 @@ class RegisterViewModel @Inject constructor(
 
     fun onBackClick(popUp: () -> Unit) {
         popUp()
+    }
+
+    fun onPhoneNumberChange(phoneNumber: String) {
+
+        uiState.value = uiState.value.copy(
+            phoneNumber = phoneNumber,
+            isButtonPhoneEnable = phoneNumber.isNotBlank()
+        )
+        savedStateHandle["phoneNumber"] = phoneNumber
     }
 
     fun onMailClick(navigate: (String) -> Unit) {
@@ -111,7 +127,7 @@ class RegisterViewModel @Inject constructor(
         navigate(Screen.RegisterScreen_3.route)
     }
 
-    fun onNameClick() {
+    fun onNameClick(navigate: (String) -> Unit) {
         if (!isButtonNameEnable) {
             return
         }
@@ -122,14 +138,44 @@ class RegisterViewModel @Inject constructor(
         // Call location service to get the current location
         launchCatching {
             uiState.value = uiState.value.copy(location = locationService.getCurrentLocation())
-            // Create an account if the name is valid
-            accountService.createAccount(
-                email,
-                password,
-                firstName,
-                lastName,
-                location
-            )
+            // After getting the location, navigate to the next screen
+            navigate(Screen.RegisterScreen_4.route)
         }
+    }
+
+    fun onPhoneNumberClick() {
+        if (!isButtonPhoneEnable) {
+            return
+        }
+        if (!phoneNumber.isValidPhoneNumber()) {
+            SnackbarManager.showMessage(R.string.phone_invalid)
+            return
+        }
+        launchCatching {
+            try {
+                uiState.value = uiState.value.copy(isCheckingPhone = true)
+                // Check if the email is already used
+                if (accountService.isPhoneUsed(phoneNumber)) {
+                    SnackbarManager.showMessage(R.string.phone_used)
+                } else {
+                    Log.d("RegisterViewModel", "Phone number: $phoneNumber")
+                    // Call create account function
+                    accountService.createAccount(
+                        email = email,
+                        password = password,
+                        firstName = firstName,
+                        lastName = lastName,
+                        location = location,
+                        phoneNumber = phoneNumber
+                    )
+                    // Navigate to the next screen if the email is valid
+                    Log.d("RegisterViewModel", "Navigate to the next screen")
+//                    navigate(Screen.RegisterScreen_2.route)
+                }
+            } finally {
+                uiState.value = uiState.value.copy(isCheckingPhone = false)
+            }
+        }
+
     }
 }

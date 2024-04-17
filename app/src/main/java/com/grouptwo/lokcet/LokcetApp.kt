@@ -33,6 +33,7 @@ import com.grouptwo.lokcet.ui.theme.YellowPrimary
 import com.grouptwo.lokcet.view.register.RegisterScreen1
 import com.grouptwo.lokcet.view.register.RegisterScreen2
 import com.grouptwo.lokcet.view.register.RegisterScreen3
+import com.grouptwo.lokcet.view.register.RegisterScreen4
 import com.grouptwo.lokcet.view.register.RegisterViewModel
 import com.grouptwo.lokcet.view.splash.SplashScreen
 import com.grouptwo.lokcet.view.welcome.WelcomeScreen
@@ -128,7 +129,19 @@ fun NavGraphBuilder.LokcetGraph(appState: LokcetAppState) {
             appState.navController.getBackStackEntry(Screen.RegisterScreen_1.route)
         }
         val vm = hiltViewModel<RegisterViewModel>(parentEntry)
-        RegisterScreen3(popUp = { appState.popUp() }, viewModel = vm)
+        RegisterScreen3(popUp = { appState.popUp() }, viewModel = vm, navigate = { route ->
+            appState.navigate(route)
+        })
+    }
+    composable(Screen.RegisterScreen_4.route) { backStackEntry ->
+        // Share parent viewmodel with given route
+        val parentEntry = remember(backStackEntry) {
+            appState.navController.getBackStackEntry(Screen.RegisterScreen_1.route)
+        }
+        val vm = hiltViewModel<RegisterViewModel>(parentEntry)
+        RegisterScreen4(popUp = { appState.popUp() }, viewModel = vm, navigate = { route ->
+            appState.navigate(route)
+        })
     }
 }
 

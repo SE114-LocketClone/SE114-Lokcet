@@ -4,9 +4,9 @@
     <!-- General -->
     <string name="generic_error">Đã xảy ra lỗi. Vui lòng thử lại</string>
     <!-- Welcome Screen -->
-        <string name="welcome_text">Ảnh trực tiếp từ bạn bè,\nngay trên màn hình chính</string>
-        <string name="create_account">Tạo một tài khoản</string>
-        <string name="login">Đăng nhập</string>
+    <string name="welcome_text">Ảnh trực tiếp từ bạn bè,\nngay trên màn hình chính</string>
+    <string name="create_account">Tạo một tài khoản</string>
+    <string name="login">Đăng nhập</string>
     <!-- FCM -->
     <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
     <string name="request_notification_permission">Cho phép</string>
@@ -29,4 +29,6 @@
     <string name="register_failed_email_exist">Email đã tồn tại</string>
     <string name="name_invalid">Tên không hợp lệ</string>
     <string name="email_used">Email đã được sử dụng</string>
+    <string name="phone_invalid">Số điện thoại không hợp lệ</string>
+    <string name="phone_used">Số điện thoại đã được sử dụng</string>
 </resources>

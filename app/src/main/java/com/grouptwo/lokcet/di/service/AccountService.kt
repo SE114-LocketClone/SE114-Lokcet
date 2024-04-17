@@ -13,7 +13,8 @@ interface AccountService {
         password: String,
         firstName: String,
         lastName: String,
-        location: GeoPoint
+        location: GeoPoint,
+        phoneNumber: String
     )
 
     suspend fun sendEmailVerify(
@@ -25,4 +26,5 @@ interface AccountService {
     suspend fun sendPasswordResetEmail(email: String)
 
     suspend fun isEmailUsed(email: String): Boolean
+    suspend fun isPhoneUsed(phone: String): Boolean
 }

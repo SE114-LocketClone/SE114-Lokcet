@@ -25,6 +25,13 @@ fun String.isValidName(): Boolean {
     return this.isNotBlank()
 }
 
+private val MAXIMUM_PHONE_NUMBER_LENGTH = 9
+
+fun String.isValidPhoneNumber(): Boolean {
+    // Check if the phone number is not blank and matches the phone number pattern
+    return this.isNotBlank() && this.length == MAXIMUM_PHONE_NUMBER_LENGTH
+}
+
 fun String.isMatchingPassword(password: String): Boolean {
     // Check if the password matches the confirm password
     return this == password
