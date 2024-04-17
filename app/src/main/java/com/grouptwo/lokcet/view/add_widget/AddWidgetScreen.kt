@@ -1,4 +1,4 @@
-package com.grouptwo.lokcet.view.widget
+package com.grouptwo.lokcet.view.add_widget
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement

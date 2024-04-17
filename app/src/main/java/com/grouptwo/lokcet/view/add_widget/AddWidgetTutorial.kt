@@ -1,4 +1,4 @@
-package com.grouptwo.lokcet.view.widget
+package com.grouptwo.lokcet.view.add_widget
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.gestures.Orientation
@@ -32,7 +32,7 @@ fun AddWidgetTutorial(item: WidgetItem) {
         delta / 2 // Adjust this based on how much you want the scroll to move per swipe
     }
 
-    // Display the widget item
+    // Display the add_widget item
     Column(
         modifier = Modifier
             .fillMaxSize()

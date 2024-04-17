@@ -10,7 +10,7 @@ data class WidgetItem(
     @DrawableRes val image: Int
 )
 
-// Mock data for the widget items list
+// Mock data for the add_widget items list
 val widgetItems = listOf(
     WidgetItem(
         id = 1,

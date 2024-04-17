@@ -18,7 +18,11 @@
     <string name="location_permission_title">Quyền vị trí</string>
     <string name="location_permission_description">Quyền vị trí quan trọng cho ứng dụng này. Vui lòng cấp quyền.</string>
     <string name="location_permission_settings">Quyền vị trí quan trọng cho ứng dụng này. Vui lòng đến cài đặt và cấp quyền vị trí cho Lokcet.</string>
-
+    <!-- Contacts -->
+    <string name="request_contacts_permission">Cho phép</string>
+    <string name="contacts_permission_title">Quyền liên hệ</string>
+    <string name="contacts_permission_description">Quyền liên hệ quan trọng cho ứng dụng này. Vui lòng cấp quyền.</string>
+    <string name="contacts_permission_settings">Quyền liên hệ quan trọng cho ứng dụng này. Vui lòng đến cài đặt và cấp quyền liên hệ cho Lokcet.</string>
     <!-- Register -->
     <string name="email_invalid">Email không hợp lệ</string>
     <string name="password_invalid">Mật khẩu phải có ít nhất 6 ký tự</string>

@@ -1,5 +1,6 @@
 package com.grouptwo.lokcet.view.welcome
 
+import android.Manifest
 import android.os.Build
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -30,21 +31,54 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import com.google.accompanist.permissions.rememberPermissionState
 import com.grouptwo.lokcet.ui.component.global.composable.BasicTextButton
+import com.grouptwo.lokcet.ui.component.global.permission.RequestContactPermission
+import com.grouptwo.lokcet.ui.component.global.permission.RequestLocationPermission
 import com.grouptwo.lokcet.ui.component.global.permission.RequestNotificationPermission
 import com.grouptwo.lokcet.ui.component.welcome.AutoScrollImage
 import com.grouptwo.lokcet.ui.theme.BlackSecondary
 import com.grouptwo.lokcet.ui.theme.fontFamily
 import com.grouptwo.lokcet.R.string as WelcomeString
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun WelcomeScreen(
     navigate: (String) -> Unit, viewModel: WelcomeViewModel = hiltViewModel()
 ) {
-    // Check if use Android 13 - Tiramisu then must request notification permission
+    // Ask for permissions
+    val locationPermissionState = rememberMultiplePermissionsState(
+        permissions = listOf(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        )
+    )
+    val contactPermissionState =
+        rememberPermissionState(permission = Manifest.permission.READ_CONTACTS)
+
+    // If user is on Android 13 or higher, ask for notification permission as well
+    // Using if else statement to show the permission dialog sequentially
+    // Not call directly to avoid multiple permission dialog at the same time
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-        // Request notification permission
-        RequestNotificationPermission()
+        val notificationPermissionState =
+            rememberPermissionState(permission = Manifest.permission.POST_NOTIFICATIONS)
+        if (notificationPermissionState.status.isGranted.not()) {
+            RequestNotificationPermission()
+        } else if (locationPermissionState.allPermissionsGranted.not()) {
+            RequestLocationPermission()
+        } else if (contactPermissionState.status.isGranted.not()) {
+            RequestContactPermission()
+        }
+    } else {
+        // If user is on Android 12 or lower, ask for location and contact permission
+        if (locationPermissionState.allPermissionsGranted.not()) {
+            RequestLocationPermission()
+        } else if (contactPermissionState.status.isGranted.not()) {
+            RequestContactPermission()
+        }
     }
     // Welcome Screen
     // Display the welcome screen

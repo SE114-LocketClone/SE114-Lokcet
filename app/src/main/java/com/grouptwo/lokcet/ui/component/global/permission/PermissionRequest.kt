@@ -59,3 +59,23 @@ fun RequestLocationPermission() {
         )
     }
 }
+
+@OptIn(ExperimentalPermissionsApi::class)
+@Composable
+fun RequestContactPermission() {
+    // Request contact permission
+    val permissionState = rememberPermissionState(permission = Manifest.permission.READ_CONTACTS)
+    if (!permissionState.status.isGranted) {
+        if (permissionState.status.shouldShowRationale) RationaleDialog(
+            ok = R.string.ok,
+            title = R.string.contacts_permission_title,
+            description = R.string.contacts_permission_description
+        )
+        else PermissionDialog(
+            onRequestPermission = { permissionState.launchPermissionRequest() },
+            request = R.string.request_contacts_permission,
+            title = R.string.contacts_permission_title,
+            description = R.string.contacts_permission_description
+        )
+    }
+}

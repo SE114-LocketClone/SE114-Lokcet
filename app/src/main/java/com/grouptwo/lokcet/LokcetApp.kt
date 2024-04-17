@@ -37,7 +37,7 @@ import com.grouptwo.lokcet.view.register.RegisterScreen4
 import com.grouptwo.lokcet.view.register.RegisterViewModel
 import com.grouptwo.lokcet.view.splash.SplashScreen
 import com.grouptwo.lokcet.view.welcome.WelcomeScreen
-import com.grouptwo.lokcet.view.widget.AddWidgetScreen
+import com.grouptwo.lokcet.view.add_widget.AddWidgetScreen
 import kotlinx.coroutines.CoroutineScope
 
 @Composable

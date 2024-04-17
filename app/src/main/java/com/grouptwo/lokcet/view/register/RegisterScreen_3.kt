@@ -53,7 +53,7 @@ fun RegisterScreen3(
     navigate: (String) -> Unit,
     viewModel: RegisterViewModel = hiltViewModel(),
 ) {
-    RequestLocationPermission()
+
     val uiState by viewModel.uiState
     val imeState = rememberImeState()
     val scrollState = rememberScrollState()
