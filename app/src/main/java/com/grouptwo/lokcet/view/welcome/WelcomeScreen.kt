@@ -52,8 +52,7 @@ fun WelcomeScreen(
     // Ask for permissions
     val locationPermissionState = rememberMultiplePermissionsState(
         permissions = listOf(
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION
+            Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION
         )
     )
     val contactPermissionState =
@@ -67,16 +66,19 @@ fun WelcomeScreen(
             rememberPermissionState(permission = Manifest.permission.POST_NOTIFICATIONS)
         if (notificationPermissionState.status.isGranted.not()) {
             RequestNotificationPermission()
-        } else if (locationPermissionState.allPermissionsGranted.not()) {
+        }
+        if (locationPermissionState.allPermissionsGranted.not()) {
             RequestLocationPermission()
-        } else if (contactPermissionState.status.isGranted.not()) {
+        }
+        if (contactPermissionState.status.isGranted.not()) {
             RequestContactPermission()
         }
     } else {
         // If user is on Android 12 or lower, ask for location and contact permission
         if (locationPermissionState.allPermissionsGranted.not()) {
             RequestLocationPermission()
-        } else if (contactPermissionState.status.isGranted.not()) {
+        }
+        if (contactPermissionState.status.isGranted.not()) {
             RequestContactPermission()
         }
     }
