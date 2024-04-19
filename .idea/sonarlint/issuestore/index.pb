@@ -121,8 +121,6 @@ h
 8app/src/main/java/com/grouptwo/lokcet/utils/DataState.kt,a/e/ae48343afd06c76f7dfc6c67393bac8f12bc82c3
 {
 Kapp/src/main/java/com/grouptwo/lokcet/view/add_friend/AddFriendViewModel.kt,d/a/daca29f435d5ec66a5a8a598dc49b9ecaa941cae
-z
-Japp/src/main/java/com/grouptwo/lokcet/view/add_friend/AddFriendScreen_1.kt,c/6/c6dd83e396f0383d38f7b222cb1ac8022036aed9
 y
 Iapp/src/main/java/com/grouptwo/lokcet/view/add_friend/AddFriendUiState.kt,4/e/4ef5caab890575837199d51f4028f029c883b534
 x

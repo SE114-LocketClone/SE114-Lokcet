@@ -79,3 +79,48 @@ fun RequestContactPermission() {
         )
     }
 }
+
+@OptIn(ExperimentalPermissionsApi::class)
+@Composable
+fun RequestCameraPermission() {
+    // Request camera permission
+    val permissionState = rememberPermissionState(permission = Manifest.permission.CAMERA)
+    if (!permissionState.status.isGranted) {
+        if (permissionState.status.shouldShowRationale) RationaleDialog(
+            ok = R.string.ok,
+            title = R.string.camera_permission_title,
+            description = R.string.camera_permission_description
+        )
+        else PermissionDialog(
+            onRequestPermission = { permissionState.launchPermissionRequest() },
+            request = R.string.request_camera_permission,
+            title = R.string.camera_permission_title,
+            description = R.string.camera_permission_description
+        )
+    }
+}
+
+@OptIn(ExperimentalPermissionsApi::class)
+@Composable
+fun RequestStoragePermission() {
+    // Request storage permission
+    val permissionState = rememberMultiplePermissionsState(
+        permissions = listOf(
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+        )
+    )
+    if (!permissionState.allPermissionsGranted) {
+        if (permissionState.shouldShowRationale) RationaleDialog(
+            ok = R.string.ok,
+            title = R.string.storage_permission_title,
+            description = R.string.storage_permission_description
+        )
+        else PermissionDialog(
+            onRequestPermission = { permissionState.launchMultiplePermissionRequest() },
+            request = R.string.request_storage_permission,
+            title = R.string.storage_permission_title,
+            description = R.string.storage_permission_description
+        )
+    }
+}

@@ -36,9 +36,11 @@ import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.permissions.rememberPermissionState
 import com.grouptwo.lokcet.ui.component.global.composable.BasicTextButton
+import com.grouptwo.lokcet.ui.component.global.permission.RequestCameraPermission
 import com.grouptwo.lokcet.ui.component.global.permission.RequestContactPermission
 import com.grouptwo.lokcet.ui.component.global.permission.RequestLocationPermission
 import com.grouptwo.lokcet.ui.component.global.permission.RequestNotificationPermission
+import com.grouptwo.lokcet.ui.component.global.permission.RequestStoragePermission
 import com.grouptwo.lokcet.ui.component.welcome.AutoScrollImage
 import com.grouptwo.lokcet.ui.theme.BlackSecondary
 import com.grouptwo.lokcet.ui.theme.fontFamily
@@ -58,6 +60,8 @@ fun WelcomeScreen(
     val contactPermissionState =
         rememberPermissionState(permission = Manifest.permission.READ_CONTACTS)
 
+    val cameraPermissionState = rememberPermissionState(permission = Manifest.permission.CAMERA)
+
     // If user is on Android 13 or higher, ask for notification permission as well
     // Using if else statement to show the permission dialog sequentially
     // Not call directly to avoid multiple permission dialog at the same time
@@ -73,13 +77,28 @@ fun WelcomeScreen(
         if (contactPermissionState.status.isGranted.not()) {
             RequestContactPermission()
         }
+        if (cameraPermissionState.status.isGranted.not()) {
+            RequestCameraPermission()
+        }
     } else {
+        val storagePermissionState = rememberMultiplePermissionsState(
+            permissions = listOf(
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.READ_EXTERNAL_STORAGE
+            )
+        )
         // If user is on Android 12 or lower, ask for location and contact permission
         if (locationPermissionState.allPermissionsGranted.not()) {
             RequestLocationPermission()
         }
         if (contactPermissionState.status.isGranted.not()) {
             RequestContactPermission()
+        }
+        if (cameraPermissionState.status.isGranted.not()) {
+            RequestCameraPermission()
+        }
+        if (storagePermissionState.allPermissionsGranted.not()) {
+            RequestStoragePermission()
         }
     }
     // Welcome Screen

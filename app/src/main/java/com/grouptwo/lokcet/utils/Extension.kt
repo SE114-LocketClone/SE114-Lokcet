@@ -1,6 +1,13 @@
 package com.grouptwo.lokcet.utils
 
+import android.annotation.SuppressLint
 import android.util.Patterns
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
 
 // Define validate function for app
 fun String.isValidEmail(): Boolean {
@@ -35,4 +42,16 @@ fun String.isValidPhoneNumber(): Boolean {
 fun String.isMatchingPassword(password: String): Boolean {
     // Check if the password matches the confirm password
     return this == password
+}
+
+@SuppressLint("ModifierFactoryUnreferencedReceiver")
+@Composable
+fun Modifier.noRippleClickable(onClick: () -> Unit): Modifier {
+    return composed {
+        clickable(
+            interactionSource = remember { MutableInteractionSource() },
+            indication = null,
+            onClick = onClick
+        )
+    }
 }
