@@ -143,7 +143,7 @@ class RegisterViewModel @Inject constructor(
         }
     }
 
-    fun onPhoneNumberClick() {
+    fun onPhoneNumberClick(clearAndNavigate: (String) -> Unit) {
         if (!isButtonPhoneEnable) {
             return
         }
@@ -169,8 +169,7 @@ class RegisterViewModel @Inject constructor(
                         phoneNumber = phoneNumber
                     )
                     // Navigate to the next screen if the email is valid
-                    Log.d("RegisterViewModel", "Navigate to the next screen")
-//                    navigate(Screen.RegisterScreen_2.route)
+                    clearAndNavigate(Screen.AddFriendScreen.route)
                 }
             } finally {
                 uiState.value = uiState.value.copy(isCheckingPhone = false)

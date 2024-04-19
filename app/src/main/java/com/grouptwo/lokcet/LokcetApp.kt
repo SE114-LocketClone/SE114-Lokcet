@@ -30,6 +30,9 @@ import com.grouptwo.lokcet.ui.component.global.snackbar.SnackbarManager
 import com.grouptwo.lokcet.ui.theme.BlackSecondary
 import com.grouptwo.lokcet.ui.theme.LokcetTheme
 import com.grouptwo.lokcet.ui.theme.YellowPrimary
+import com.grouptwo.lokcet.view.add_friend.AddFriendScreen
+import com.grouptwo.lokcet.view.add_widget.AddWidgetScreen
+import com.grouptwo.lokcet.view.home.HomeScreen
 import com.grouptwo.lokcet.view.register.RegisterScreen1
 import com.grouptwo.lokcet.view.register.RegisterScreen2
 import com.grouptwo.lokcet.view.register.RegisterScreen3
@@ -37,7 +40,6 @@ import com.grouptwo.lokcet.view.register.RegisterScreen4
 import com.grouptwo.lokcet.view.register.RegisterViewModel
 import com.grouptwo.lokcet.view.splash.SplashScreen
 import com.grouptwo.lokcet.view.welcome.WelcomeScreen
-import com.grouptwo.lokcet.view.add_widget.AddWidgetScreen
 import kotlinx.coroutines.CoroutineScope
 
 @Composable
@@ -106,7 +108,11 @@ fun NavGraphBuilder.LokcetGraph(appState: LokcetAppState) {
         })
     }
     composable(Screen.AddWidgetTutorialScreen.route) {
-        AddWidgetScreen()
+        AddWidgetScreen(
+            clearAndNavigate = { route ->
+                appState.clearAndNavigate(route)
+            }
+        )
     }
     composable(Screen.RegisterScreen_1.route) {
         RegisterScreen1(popUp = { appState.popUp() }, navigate = { route ->
@@ -139,9 +145,19 @@ fun NavGraphBuilder.LokcetGraph(appState: LokcetAppState) {
             appState.navController.getBackStackEntry(Screen.RegisterScreen_1.route)
         }
         val vm = hiltViewModel<RegisterViewModel>(parentEntry)
-        RegisterScreen4(popUp = { appState.popUp() }, viewModel = vm, navigate = { route ->
-            appState.navigate(route)
+        RegisterScreen4(popUp = { appState.popUp() }, viewModel = vm, clearAndNavigate = { route ->
+            appState.clearAndNavigate(route)
         })
+    }
+    composable(Screen.AddFriendScreen.route) {
+        AddFriendScreen(
+            clearAndNavigate = { route ->
+                appState.clearAndNavigate(route)
+            }
+        )
+    }
+    composable(Screen.HomeScreen.route) {
+        HomeScreen()
     }
 }
 

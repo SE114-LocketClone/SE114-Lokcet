@@ -67,7 +67,7 @@ class PhoneNumberVisualTransformation : VisualTransformation {
 @Composable
 fun RegisterScreen4(
     popUp: () -> Unit,
-    navigate: (String) -> Unit,
+    clearAndNavigate: (String) -> Unit,
     viewModel: RegisterViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState
@@ -166,7 +166,7 @@ fun RegisterScreen4(
             )
             Button(
                 onClick = {
-                    viewModel.onPhoneNumberClick()
+                    viewModel.onPhoneNumberClick(clearAndNavigate)
                 }, modifier = Modifier
                     .width(294.dp)
                     .heightIn(min = 46.dp), colors = buttonColor

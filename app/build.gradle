@@ -59,6 +59,7 @@ dependencies {
     implementation(libs.moshi.kotlin)
     implementation libs.androidx.navigation.compose
     implementation libs.firebase.auth.ktx
+    implementation libs.androidx.constraintlayout
     kapt libs.hilt.compiler
     implementation libs.glide
     implementation libs.gson
@@ -95,6 +96,7 @@ dependencies {
     implementation libs.google.accompanist.pager.indicators
     implementation libs.androidx.hilt.navigation.compose
     implementation libs.accompanist.insets
+    implementation libs.landscapist.glide
 
 }
 

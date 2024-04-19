@@ -24,6 +24,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.grouptwo.lokcet.data.model.widgetItems
 import com.grouptwo.lokcet.ui.component.global.pager.HorizontalPagerIndicator
 import com.grouptwo.lokcet.ui.theme.BlackSecondary
@@ -32,7 +33,9 @@ import com.grouptwo.lokcet.ui.theme.fontFamily
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun AddWidgetScreen() {
+fun AddWidgetScreen(
+    clearAndNavigate: (String) -> Unit, viewModel: AddWidgetViewModel = hiltViewModel()
+) {
     // Hold pager state
     val pagerState = rememberPagerState(pageCount = { widgetItems.size })
     Column(
@@ -70,7 +73,9 @@ fun AddWidgetScreen() {
         )
         Spacer(modifier = Modifier.height(20.dp))
         Button(
-            onClick = { /*TODO*/ },
+            onClick = {
+                viewModel.onConfirmClick(clearAndNavigate)
+            },
             modifier = Modifier
                 .width(300.dp)
                 .padding(8.dp)

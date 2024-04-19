@@ -10,6 +10,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.GeoPoint
 import com.grouptwo.lokcet.data.model.User
 import com.grouptwo.lokcet.di.service.AccountService
+import com.grouptwo.lokcet.utils.Constants
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -71,7 +72,8 @@ class AccountServiceImpl @Inject constructor(
                 location = location,
                 phoneNumber = phoneNumber,
                 createdAt = FieldValue.serverTimestamp(),
-                lastSeen = FieldValue.serverTimestamp()
+                lastSeen = FieldValue.serverTimestamp(),
+                profilePicture = Constants.AVATAR_API_URL + "$firstName $lastName"
             )
             firestore.collection("users").document(user?.uid.orEmpty()).set(userObject).await()
             // If the account is created, send a verification email
