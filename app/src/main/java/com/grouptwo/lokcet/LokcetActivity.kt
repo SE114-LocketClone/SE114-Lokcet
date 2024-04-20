@@ -7,6 +7,8 @@ import com.grouptwo.lokcet.view.Addfriend.AddfriendScreen
 import com.grouptwo.lokcet.view.Addfriend.AddfriendScreen1
 import com.grouptwo.lokcet.view.Addfriend.AddfriendScreen2
 import com.grouptwo.lokcet.view.Addfriend.AddfriendScreen3
+import androidx.core.view.WindowCompat
+import com.grouptwo.lokcet.view.setting.SettingScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -23,9 +25,11 @@ class LokcetActivity : ComponentActivity() {
                     LokcetApp()
                 }
             }*/
-            AddfriendScreen3()
 
 
+            // A surface container using the 'background' color from the theme
+            //LokcetApp()
+            SettingScreen()
         }
     }
 }
