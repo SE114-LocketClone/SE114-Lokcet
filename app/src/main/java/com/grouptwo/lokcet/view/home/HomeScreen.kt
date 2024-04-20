@@ -79,7 +79,6 @@ fun HomeScreen(
                 offsetY += dragAmount.y
             }
         }) {
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -195,14 +194,12 @@ fun HomeScreen(
                         })
             }
             Spacer(modifier = Modifier.weight(0.1f))
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
+            Column(horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
                 modifier = Modifier.noRippleClickable {
                     // Navigate to the feed screen
                     viewModel.onSwipeUp(navigate)
-                }
-            ) {
+                }) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center

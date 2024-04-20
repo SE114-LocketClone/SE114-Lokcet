@@ -137,3 +137,5 @@ m
 =app/src/main/java/com/grouptwo/lokcet/view/feed/FeedScreen.kt,6/0/60c9da7b8ea80115a9b761017bd936d57c39d869
 p
 @app/src/main/java/com/grouptwo/lokcet/view/home/HomeViewModel.kt,1/d/1ded135ce3ee7521a7578c39a0eb7f56b117321f
+o
+?app/src/main/java/com/grouptwo/lokcet/view/error/ErrorScreen.kt,c/c/cc2cfeaa421352f11bca4f23c1bc1d8dd8c2881c

@@ -60,6 +60,7 @@ import com.grouptwo.lokcet.ui.theme.BlackSecondary
 import com.grouptwo.lokcet.ui.theme.YellowPrimary
 import com.grouptwo.lokcet.ui.theme.fontFamily
 import com.grouptwo.lokcet.utils.DataState
+import com.grouptwo.lokcet.view.error.ErrorScreen
 
 @Composable
 fun AddFriendScreen(
@@ -67,9 +68,8 @@ fun AddFriendScreen(
     clearAndNavigate: (String) -> Unit
 ) {
     val scrollState = rememberScrollState()
-    val uiState by viewModel.uiState
+    val uiState by viewModel.uiState.collectAsState()
     val imeState = rememberImeState()
-    val suggestedListState = viewModel.suggestedList.collectAsState()
     val focusManager = LocalFocusManager.current
     var isKeyboardVisible by remember { mutableStateOf(false) }
 
@@ -79,7 +79,7 @@ fun AddFriendScreen(
         }
     }
 
-    when (val state = suggestedListState.value) {
+    when (val state = uiState.filteredSuggestedList) {
         is DataState.Loading -> {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 // Display a loading indicator
@@ -339,6 +339,8 @@ fun AddFriendScreen(
             }
         }
 
-        is DataState.Error -> TODO()
+        is DataState.Error -> ErrorScreen(errorMessage = "Lỗi xảy ra khi lấy danh sách bạn bè", onRetry = {
+            viewModel.fetchSuggestFriendList()
+        })
     }
 }
