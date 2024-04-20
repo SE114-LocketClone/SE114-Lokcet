@@ -26,6 +26,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,20 +37,15 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.request.RequestOptions
 import com.grouptwo.lokcet.R
 import com.grouptwo.lokcet.ui.theme.fontFamily
 import com.grouptwo.lokcet.utils.noRippleClickable
-import com.skydoves.landscapist.ImageOptions
-import com.skydoves.landscapist.glide.GlideImage
 
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
@@ -57,6 +53,8 @@ import com.skydoves.landscapist.glide.GlideImage
 fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(), navigate: (String) -> Unit
 ) {
+    val uiState by viewModel.uiState.collectAsState()
+
     // Define the state for the swipe gesture
     var offsetX by remember { mutableStateOf(0f) }
     var offsetY by remember { mutableStateOf(0f) }
@@ -65,6 +63,7 @@ fun HomeScreen(
         .fillMaxSize()
         .pointerInput(Unit) {
             // Update the offset value when the user swipes up
+            // TODO: Need to implement the swipe up gesture (this is a POC)
             detectDragGestures { change, dragAmount ->
                 change.consume()
                 val (x, y) = dragAmount
@@ -144,56 +143,12 @@ fun HomeScreen(
                 }
             }
             Spacer(modifier = Modifier.weight(0.1f))
-            Box(
-                modifier = Modifier
-                    .weight(0.65f)
-                    .fillMaxWidth()
-                    .clip(
-                        RoundedCornerShape(20)
-                    )
-            ) {
-                GlideImage(
-                    imageModel = { "https://picsum.photos/200/300" },
-                    modifier = Modifier.fillMaxSize(),
-                    imageOptions = ImageOptions(
-                        contentScale = ContentScale.Crop, alignment = Alignment.Center
-                    ),
-                    requestOptions = {
-                        RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL).centerCrop()
-                    },
-                )
-            }
+            CameraView(lensFacing = uiState.lensFacing, onImageCapture = {
+                viewModel.onImageCaptured(it)
+            }, modifier = Modifier.weight(0.65f), onSwitchCamera = {
+                viewModel.switchCamera()
+            })
             Spacer(modifier = Modifier.weight(0.05f))
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Image(painter = painterResource(id = R.drawable.upload_picture),
-                    contentDescription = "Upload Picture",
-                    modifier = Modifier
-                        .size(50.dp)
-                        .noRippleClickable {
-                            // Open Image Picker
-                        })
-                Image(painter = painterResource(id = R.drawable.take_picture),
-                    contentDescription = "Take Picture",
-                    modifier = Modifier
-                        .size(75.dp)
-                        .noRippleClickable {
-                            // Take a picture of current viewBox
-                        })
-                Image(painter = painterResource(id = R.drawable.switch_camera),
-                    contentDescription = "Switch Camera",
-                    modifier = Modifier
-                        .size(50.dp)
-                        .noRippleClickable {
-                            // Switch camera to front or back
-                        })
-            }
-            Spacer(modifier = Modifier.weight(0.1f))
             Column(horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
                 modifier = Modifier.noRippleClickable {

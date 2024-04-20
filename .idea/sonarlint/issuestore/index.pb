@@ -139,3 +139,7 @@ p
 @app/src/main/java/com/grouptwo/lokcet/view/home/HomeViewModel.kt,1/d/1ded135ce3ee7521a7578c39a0eb7f56b117321f
 o
 ?app/src/main/java/com/grouptwo/lokcet/view/error/ErrorScreen.kt,c/c/cc2cfeaa421352f11bca4f23c1bc1d8dd8c2881c
+n
+>app/src/main/java/com/grouptwo/lokcet/view/home/HomeUiState.kt,b/f/bf4619c96a502fe394b37f624399781d0b6c52ff
+m
+=app/src/main/java/com/grouptwo/lokcet/view/home/CameraView.kt,e/e/ee9841c90d720e1f629c50db8d4a71f84faf5906
