@@ -133,3 +133,7 @@ m
 =app/src/main/java/com/grouptwo/lokcet/view/home/HomeScreen.kt,4/f/4fa8ccfeab20c9cd661a7dbba9708c4096d37d3d
 x
 Happ/src/main/java/com/grouptwo/lokcet/view/add_friend/AddFriendScreen.kt,9/4/943a5e65b453f3fb69153557b49491382f46314a
+m
+=app/src/main/java/com/grouptwo/lokcet/view/feed/FeedScreen.kt,6/0/60c9da7b8ea80115a9b761017bd936d57c39d869
+p
+@app/src/main/java/com/grouptwo/lokcet/view/home/HomeViewModel.kt,1/d/1ded135ce3ee7521a7578c39a0eb7f56b117321f

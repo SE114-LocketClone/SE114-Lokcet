@@ -36,6 +36,8 @@ sealed class Screen(val route: String) {
 
     // Home Screen
     object HomeScreen : Screen("home_screen")
+    // Feed Screen
+    object FeedScreen : Screen("feed_screen")
 
     // Profile Screen
     object ProfileScreen : Screen("profile_screen")

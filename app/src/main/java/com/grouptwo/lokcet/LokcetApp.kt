@@ -32,6 +32,7 @@ import com.grouptwo.lokcet.ui.theme.LokcetTheme
 import com.grouptwo.lokcet.ui.theme.YellowPrimary
 import com.grouptwo.lokcet.view.add_friend.AddFriendScreen
 import com.grouptwo.lokcet.view.add_widget.AddWidgetScreen
+import com.grouptwo.lokcet.view.feed.FeedScreen
 import com.grouptwo.lokcet.view.home.HomeScreen
 import com.grouptwo.lokcet.view.register.RegisterScreen1
 import com.grouptwo.lokcet.view.register.RegisterScreen2
@@ -157,7 +158,14 @@ fun NavGraphBuilder.LokcetGraph(appState: LokcetAppState) {
         )
     }
     composable(Screen.HomeScreen.route) {
-        HomeScreen()
+        HomeScreen(
+            navigate = { route ->
+                appState.navigate(route)
+            }
+        )
+    }
+    composable(Screen.FeedScreen.route) {
+        FeedScreen()
     }
 }
 
