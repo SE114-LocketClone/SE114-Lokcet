@@ -59,6 +59,7 @@ dependencies {
     implementation(libs.moshi.kotlin)
     implementation libs.androidx.navigation.compose
     implementation libs.firebase.auth.ktx
+    implementation libs.androidx.room.ktx
     kapt libs.hilt.compiler
     implementation libs.glide
     implementation libs.gson
