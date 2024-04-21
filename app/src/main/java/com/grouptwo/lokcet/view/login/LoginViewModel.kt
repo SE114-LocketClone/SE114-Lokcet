@@ -3,6 +3,10 @@ package com.grouptwo.lokcet.view.login
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.room.util.copy
+import com.grouptwo.lokcet.R
+import com.grouptwo.lokcet.navigation.Screen
+import com.grouptwo.lokcet.ui.component.global.snackbar.SnackbarManager
+import com.grouptwo.lokcet.utils.isValidEmail
 import com.grouptwo.lokcet.view.LokcetViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -24,5 +28,20 @@ class LoginViewModel @Inject constructor(private val savedStateHandle: SavedStat
     }
     fun onBackClick(popUp: () -> Unit) {
         popUp()
+    }
+    fun onMailClick(navigate: (String) -> Unit) {
+        // If email is empty then do nothing
+//        if (!isButtonEmailEnable) {
+//            return
+//        }
+//
+//        if (!email.isValidEmail()) {
+//            SnackbarManager.showMessage(R.string.email_invalid)
+//            return
+//        }
+
+        launchCatching {
+            navigate(Screen.LoginScreen_2.route)
+        }
     }
 }

@@ -39,6 +39,7 @@ import com.grouptwo.lokcet.view.splash.SplashScreen
 import com.grouptwo.lokcet.view.welcome.WelcomeScreen
 import com.grouptwo.lokcet.view.add_widget.AddWidgetScreen
 import com.grouptwo.lokcet.view.login.LoginScreen1
+import com.grouptwo.lokcet.view.login.LoginScreen2
 import kotlinx.coroutines.CoroutineScope
 
 @Composable
@@ -116,7 +117,10 @@ fun NavGraphBuilder.LokcetGraph(appState: LokcetAppState) {
     }
 
     composable(Screen.LoginScreen_1.route){
-        LoginScreen1(popUp = { appState.popUp() })
+        LoginScreen1(popUp = { appState.popUp()}, navigate = {route ->appState.navigate(route)})
+    }
+    composable(Screen.LoginScreen_2.route){
+        LoginScreen2(popUp = { appState.popUp()}, navigate = {route ->appState.navigate(route)})
     }
     composable(Screen.RegisterScreen_2.route) { backStackEntry ->
         // Share parent viewmodel with given route

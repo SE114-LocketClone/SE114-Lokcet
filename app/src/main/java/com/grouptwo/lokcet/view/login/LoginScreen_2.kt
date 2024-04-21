@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -19,28 +18,21 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -51,66 +43,8 @@ import com.grouptwo.lokcet.ui.theme.YellowPrimary
 import com.grouptwo.lokcet.ui.theme.fontFamily
 
 @Composable
-fun LoginScreen1(popUp: () -> Unit, viewModel: LoginViewModel = hiltViewModel(),
-                 navigate:(String) -> Unit){
-
-    //Format for policy string
-    val annotatedString = buildAnnotatedString {
-        withStyle(
-            style = SpanStyle(
-                fontSize = 11.sp,
-                fontFamily = fontFamily,
-                fontWeight = FontWeight(400),
-                color = Color(0xFFB8B8B8),
-
-                )
-        ) {
-            append("Thông qua việc chạm vào nút Tiếp tục, bạn đồng ý với các ")
-        }
-        withStyle(
-            style = SpanStyle(
-                fontSize = 11.sp,
-                fontFamily = fontFamily,
-                fontWeight = FontWeight.Bold,
-                color = Color.White,
-            )
-        ) {
-            append("Điều khoản dịch vụ")
-        }
-        withStyle(
-            style = SpanStyle(
-                fontSize = 11.sp,
-                fontFamily = fontFamily,
-                fontWeight = FontWeight(400),
-                color = Color(0xFFB8B8B8),
-
-                )
-        ) {
-            append(" và ")
-        }
-        withStyle(
-            style = SpanStyle(
-                fontSize = 11.sp,
-                fontFamily = fontFamily,
-                fontWeight = FontWeight.Bold,
-                color = Color.White,
-            )
-        ) {
-            append("Chính sách quyền riêng tư")
-        }
-        withStyle(
-            style = SpanStyle(
-                fontSize = 11.sp,
-                fontFamily = fontFamily,
-                fontWeight = FontWeight(400),
-                color = Color(0xFFB8B8B8),
-
-                )
-        ) {
-            append(" của chúng tôi.")
-        }
-    }
-
+fun LoginScreen2(popUp: () -> Unit, viewModel: LoginViewModel = hiltViewModel(),
+                 navigate:(String) -> Unit) {
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -124,6 +58,7 @@ fun LoginScreen1(popUp: () -> Unit, viewModel: LoginViewModel = hiltViewModel(),
             //.verticalScroll(scrollState)
 
         ) {
+
             //--Back button--\\
             BasicIconButton(
                 drawableResource = R.drawable.arrow_left,
@@ -137,9 +72,8 @@ fun LoginScreen1(popUp: () -> Unit, viewModel: LoginViewModel = hiltViewModel(),
             )
             Spacer(modifier = Modifier.weight(0.1f))
 
-            //--Email--\\
-            Text(
-                text = "Email của bạn là gì?",
+            //--Password text--\\
+            Text(text = "Điền mật khẩu của bạn",
                 style = TextStyle(
                     fontSize = 26.sp,
                     fontFamily = fontFamily,
@@ -148,32 +82,27 @@ fun LoginScreen1(popUp: () -> Unit, viewModel: LoginViewModel = hiltViewModel(),
                 )
             )
             Spacer(modifier = Modifier.height(16.dp))
-//            Spacer(modifier = Modifier
-//                .width(342.dp)
-//                .height(79.dp))
-
-            //--Text field for fill email--\\
+            
+            //--Text field for password--\\
             val textFieldColors = TextFieldDefaults.colors(
                 focusedContainerColor = Color(0xFF272626),
                 unfocusedContainerColor = Color(0xFF272626),
                 unfocusedIndicatorColor = Color.Black,
                 focusedIndicatorColor = Color.Black,
             )
-
-            TextField(
-                value = "",
-                onValueChange = { },
-                singleLine = true,
+            TextField(value = ""
+                ,onValueChange = { }
+                ,singleLine = true,
                 textStyle = TextStyle(
                     fontSize = 23.sp,
                     fontFamily = fontFamily,
                     fontWeight = FontWeight.Bold,
                     color = Color(0xFFFFFFFF)
                 ),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                 placeholder = {
                     Text(
-                        text = "Địa chỉ email", style = TextStyle(
+                        text = "Mật khẩu", style = TextStyle(
                             color = Color(0xFF737070),
                             fontFamily = fontFamily,
                             fontSize = 23.sp,
@@ -185,33 +114,35 @@ fun LoginScreen1(popUp: () -> Unit, viewModel: LoginViewModel = hiltViewModel(),
                     .fillMaxWidth()
                     .heightIn(min = 62.dp),
                 shape = RoundedCornerShape(18.dp),
-                colors = textFieldColors,
+                colors =  textFieldColors
             )
+            Spacer(modifier = Modifier.height(16.dp))
+
+            //--Forget password button--\\
+
+            val forgetButtonColor = ButtonDefaults.buttonColors(Color(0xFF272626))
+            Button(
+                onClick = { /*TODO*/ }
+                ,modifier = Modifier
+                    .width(240.dp)
+                    .height(30.dp)
+                ,colors = forgetButtonColor) {
+                Text(text = "Bạn đã quên mật khẩu?"
+                    ,modifier = Modifier.align(Alignment.CenterVertically))
+            }
+
             Spacer(modifier = Modifier.weight(0.1f))
 
-            //--Policy string--\\
-            Text(
-                minLines = 2,
-                text = annotatedString,
-                style = TextStyle.Default.copy(textAlign = TextAlign.Center),
-                modifier = Modifier.fillMaxWidth()
-            )
-            Spacer(modifier = Modifier
-                .height(16.dp))
-
             //--Button--\\
-//            val buttonColor = ButtonDefaults.buttonColors(
-//                if (uiState.isButtonEmailEnable) YellowPrimary else Color(0xFF272626)
-//            )
-            val buttonColor = ButtonDefaults.buttonColors(YellowPrimary)
+            val buttonColor = ButtonDefaults.buttonColors(
+                YellowPrimary
+            )
             Button(
-                onClick = {
-                    viewModel.onMailClick(
-                        navigate)
-                }, modifier = Modifier
-                    .width(294.dp)
-                    , colors = buttonColor
-            ) {
+                onClick = { /*TODO*/ }
+                ,modifier = Modifier.width(294.dp)
+                ,colors = buttonColor
+            )
+            {
                 Row(
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically,
@@ -219,26 +150,23 @@ fun LoginScreen1(popUp: () -> Unit, viewModel: LoginViewModel = hiltViewModel(),
                     Text(
                         text = "Tiếp tục",
                         style = TextStyle(
-                        fontSize = 24.sp,
-                        fontFamily = fontFamily,
-                        color = BlackSecondary,
-                        fontWeight = FontWeight.Bold
+                            fontSize = 24.sp,
+                            fontFamily = fontFamily,
+                            color = BlackSecondary,
+                            fontWeight = FontWeight.Bold
                         ), //modifier = Modifier.align(Alignment.CenterVertically)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Image(
                         painter = painterResource(id = R.drawable.arrow_right),
                         contentDescription = "image description",
-                        modifier = Modifier
-
-                            .align(Alignment.CenterVertically)
+                        modifier = Modifier.align(Alignment.CenterVertically)
                     )
                 }
             }
+
+
+
         }
     }
 }
-
-
-
-
