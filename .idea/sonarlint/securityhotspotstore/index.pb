@@ -69,8 +69,6 @@ s
 Capp/src/main/java/com/grouptwo/lokcet/di/impl/AccountServiceImpl.kt,9/2/92f42878b7decefe36de2560a726ca234fe4bbfc
 r
 Bapp/src/main/java/com/grouptwo/lokcet/di/service/StorageService.kt,4/f/4f39e7dae57e3ac925e247da83bae3720abc534e
-o
-?app/src/main/java/com/grouptwo/lokcet/di/impl/StorageService.kt,0/d/0d72618fd08f8124a05558c192396b0fc9953c4c
 p
 @app/src/main/java/com/grouptwo/lokcet/di/module/ServiceModule.kt,4/5/45b394118de0be5e1a1bd85789e161b43b9fd1dc
 m
@@ -129,8 +127,6 @@ Happ/src/main/java/com/grouptwo/lokcet/view/add_widget/AddWidgetScreen.kt,5/2/5
 Kapp/src/main/java/com/grouptwo/lokcet/view/add_widget/AddWidgetViewModel.kt,c/3/c384f339929583eff03ade0eb1c70bf896841acd
 z
 Japp/src/main/java/com/grouptwo/lokcet/view/add_widget/AddWidgetTutorial.kt,b/c/bc0d44bc0d0b3a717c7534e37139c0f4762e4ec3
-m
-=app/src/main/java/com/grouptwo/lokcet/view/home/HomeScreen.kt,4/f/4fa8ccfeab20c9cd661a7dbba9708c4096d37d3d
 x
 Happ/src/main/java/com/grouptwo/lokcet/view/add_friend/AddFriendScreen.kt,9/4/943a5e65b453f3fb69153557b49491382f46314a
 m
@@ -143,3 +139,15 @@ n
 >app/src/main/java/com/grouptwo/lokcet/view/home/HomeUiState.kt,b/f/bf4619c96a502fe394b37f624399781d0b6c52ff
 m
 =app/src/main/java/com/grouptwo/lokcet/view/home/CameraView.kt,e/e/ee9841c90d720e1f629c50db8d4a71f84faf5906
+s
+Capp/src/main/java/com/grouptwo/lokcet/di/impl/StorageServiceImpl.kt,1/a/1a82a84da821f6d29d5d8cff9f8d204eeda91754
+o
+?app/src/main/java/com/grouptwo/lokcet/view/home/HomeScreen_1.kt,a/a/aa301003fe1a491e78b12ad0ff41fee216321dc6
+o
+?app/src/main/java/com/grouptwo/lokcet/view/home/HomeScreen_2.kt,a/f/afcf819c43453fb9eac114e594dc097f38fd72c2
+n
+>app/src/main/java/com/grouptwo/lokcet/utils/ConnectionState.kt,7/0/709530bd3dd02eaf5f1d04efa7c19b78260292e1
+s
+Capp/src/main/java/com/grouptwo/lokcet/di/service/InternetService.kt,c/6/c63fce6fc91a4987732ee89e7c6fbd0569204162
+t
+Dapp/src/main/java/com/grouptwo/lokcet/di/impl/InternetServiceImpl.kt,5/e/5e5ac7ecbb3ae3305dfaa1c1de9ea12976ceab47

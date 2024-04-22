@@ -2,7 +2,6 @@ package com.grouptwo.lokcet.view.home
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,15 +27,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -50,34 +45,15 @@ import com.grouptwo.lokcet.utils.noRippleClickable
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
 @Composable
-fun HomeScreen(
+fun HomeScreen1(
     viewModel: HomeViewModel = hiltViewModel(), navigate: (String) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
-
-    // Define the state for the swipe gesture
-    var offsetX by remember { mutableStateOf(0f) }
-    var offsetY by remember { mutableStateOf(0f) }
     // Display the home scree
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .pointerInput(Unit) {
-            // Update the offset value when the user swipes up
-            // TODO: Need to implement the swipe up gesture (this is a POC)
-            detectDragGestures { change, dragAmount ->
-                change.consume()
-                val (x, y) = dragAmount
-                when {
-                    // Only allow the user to swipe up and navigate to the feed screen when the user swipes up
-                    // Change in the y direction is negative
-                    y < 0 -> {
-                        viewModel.onSwipeUp(navigate)
-                    }
-                }
-                offsetX += dragAmount.x
-                offsetY += dragAmount.y
-            }
-        }) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -143,8 +119,8 @@ fun HomeScreen(
                 }
             }
             Spacer(modifier = Modifier.weight(0.1f))
-            CameraView(lensFacing = uiState.lensFacing, onImageCapture = {
-                viewModel.onImageCaptured(it)
+            CameraView(lensFacing = uiState.lensFacing, onImageCapture = { image ->
+                viewModel.onImageCaptured(image, navigate)
             }, modifier = Modifier.weight(0.65f), onSwitchCamera = {
                 viewModel.switchCamera()
             })

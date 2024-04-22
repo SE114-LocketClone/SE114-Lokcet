@@ -1,15 +1,20 @@
 package com.grouptwo.lokcet.data.model
 
-import android.database.DatabaseErrorHandler
-import com.google.firebase.Timestamp
-import com.google.type.DateTime
 import java.time.LocalDateTime
 
-data class UploadImage (
+data class EmojiReaction(
+    val emojiId: String = "",
+    val userId: String = "",
+    val imageId: String = "",
+    val createdAt: Any = Any(),
+)
+
+data class UploadImage(
     val imageId: String = "",
     val userId: String = "",
     val imageUrl: String = "",
     val imageCaption: String = "",
     val imageLocation: String = "",
-    val createdAt: LocalDateTime = LocalDateTime.now(),
+    val visibleUserIds: List<String>? = null,
+    val createdAt: Any = Any(),
 )

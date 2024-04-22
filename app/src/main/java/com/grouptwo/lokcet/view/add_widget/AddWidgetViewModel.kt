@@ -11,6 +11,6 @@ class AddWidgetViewModel @Inject constructor() : LokcetViewModel() {
     fun onConfirmClick(
         clearAndNavigate: (String) -> Unit
     ) {
-        clearAndNavigate(Screen.HomeScreen.route)
+        clearAndNavigate(Screen.HomeScreen_1.route)
     }
 }

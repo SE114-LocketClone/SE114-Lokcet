@@ -35,7 +35,8 @@ sealed class Screen(val route: String) {
     object VerifyPhoneScreen : Screen("verify_phone_screen")
 
     // Home Screen
-    object HomeScreen : Screen("home_screen")
+    object HomeScreen_1 : Screen("home_screen_1")
+    object HomeScreen_2 : Screen("home_screen_2")
     // Feed Screen
     object FeedScreen : Screen("feed_screen")
 

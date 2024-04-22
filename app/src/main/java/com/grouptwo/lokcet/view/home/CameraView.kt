@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
@@ -56,8 +57,10 @@ fun CameraView(
     val cameraProviderFuture = remember { ProcessCameraProvider.getInstance(context) }
     val cameraProvider: ProcessCameraProvider by rememberUpdatedState(newValue = cameraProviderFuture.get())
 
-    val preview = remember { Preview.Builder().build() }
-    val imageCapture = remember { ImageCapture.Builder().build() }
+    val preview =
+        remember { Preview.Builder().build() }
+    val imageCapture =
+        remember { ImageCapture.Builder().build() }
     LaunchedEffect(lensFacing) {
         // Check if camera is bound then unbind all use cases
         cameraProvider.unbindAll()
@@ -107,6 +110,7 @@ fun CameraView(
                 .clip(
                     RoundedCornerShape(20)
                 )
+                .requiredHeight(385.dp)
         ) {
             AndroidView(
                 modifier = Modifier.fillMaxSize(),

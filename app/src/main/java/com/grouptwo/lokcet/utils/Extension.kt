@@ -1,6 +1,8 @@
 package com.grouptwo.lokcet.utils
 
 import android.annotation.SuppressLint
+import android.graphics.Bitmap
+import android.graphics.Matrix
 import android.util.Patterns
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -8,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
+import java.io.ByteArrayOutputStream
 
 // Define validate function for app
 fun String.isValidEmail(): Boolean {
@@ -54,4 +57,20 @@ fun Modifier.noRippleClickable(onClick: () -> Unit): Modifier {
             onClick = onClick
         )
     }
+}
+
+fun Bitmap.compressToJpeg(): ByteArray {
+    val stream = ByteArrayOutputStream()
+    // Compress the bitmap to JPEG format at 80% quality
+    this.compress(Bitmap.CompressFormat.JPEG, 80, stream)
+    return stream.toByteArray()
+}
+
+fun Bitmap.rotateBitmap(rotationDegrees: Int): Bitmap {
+    val matrix = Matrix().apply {
+        postRotate(-rotationDegrees.toFloat())
+        postScale(-1f, -1f)
+    }
+
+    return Bitmap.createBitmap(this, 0, 0, width, height, matrix, true)
 }

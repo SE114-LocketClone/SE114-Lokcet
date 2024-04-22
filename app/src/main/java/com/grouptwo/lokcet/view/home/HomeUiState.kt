@@ -1,11 +1,15 @@
 package com.grouptwo.lokcet.view.home
 
 import android.graphics.Bitmap
-import android.net.Uri
 import androidx.camera.core.CameraSelector
-import androidx.camera.core.ExperimentalLensFacing
+import com.grouptwo.lokcet.utils.DataState
 
-data class HomeUiState (
+data class HomeUiState(
     val lensFacing: Int = CameraSelector.LENS_FACING_BACK,
     val capturedImage: Bitmap? = null,
+    val compressedImage: ByteArray? = null,
+    val imageCaption: String = "",
+    val visibleToUserIds: List<String>? = null,
+    val isImageUpload: DataState<Unit>?= null,
+    val isNetworkAvailable: Boolean = false
 )

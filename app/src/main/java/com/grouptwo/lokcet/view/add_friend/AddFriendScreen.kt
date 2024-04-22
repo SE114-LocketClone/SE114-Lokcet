@@ -88,7 +88,7 @@ fun AddFriendScreen(
                         .size(50.dp)
                         .align(
                             Alignment.Center
-                        ), color = Color(0xFFEDEDED)
+                        ), color = YellowPrimary
                 )
             }
         }

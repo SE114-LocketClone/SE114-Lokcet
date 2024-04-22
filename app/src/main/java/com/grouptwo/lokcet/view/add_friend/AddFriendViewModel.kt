@@ -1,5 +1,6 @@
 package com.grouptwo.lokcet.view.add_friend
 
+import com.grouptwo.lokcet.di.service.InternetService
 import com.grouptwo.lokcet.di.service.UserService
 import com.grouptwo.lokcet.navigation.Screen
 import com.grouptwo.lokcet.ui.component.global.snackbar.SnackbarManager
@@ -15,7 +16,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AddFriendViewModel @Inject constructor(
-    private val userService: UserService
+    private val userService: UserService,
+    private val internetService: InternetService
 ) : LokcetViewModel() {
     // Initialize the state of suggest friend list as Loading
     private val _uiState = MutableStateFlow(AddFriendUiState())

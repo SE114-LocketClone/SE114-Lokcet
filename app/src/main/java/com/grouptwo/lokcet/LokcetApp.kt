@@ -33,7 +33,9 @@ import com.grouptwo.lokcet.ui.theme.YellowPrimary
 import com.grouptwo.lokcet.view.add_friend.AddFriendScreen
 import com.grouptwo.lokcet.view.add_widget.AddWidgetScreen
 import com.grouptwo.lokcet.view.feed.FeedScreen
-import com.grouptwo.lokcet.view.home.HomeScreen
+import com.grouptwo.lokcet.view.home.HomeScreen1
+import com.grouptwo.lokcet.view.home.HomeScreen2
+import com.grouptwo.lokcet.view.home.HomeViewModel
 import com.grouptwo.lokcet.view.register.RegisterScreen1
 import com.grouptwo.lokcet.view.register.RegisterScreen2
 import com.grouptwo.lokcet.view.register.RegisterScreen3
@@ -109,11 +111,9 @@ fun NavGraphBuilder.LokcetGraph(appState: LokcetAppState) {
         })
     }
     composable(Screen.AddWidgetTutorialScreen.route) {
-        AddWidgetScreen(
-            clearAndNavigate = { route ->
-                appState.clearAndNavigate(route)
-            }
-        )
+        AddWidgetScreen(clearAndNavigate = { route ->
+            appState.clearAndNavigate(route)
+        })
     }
     composable(Screen.RegisterScreen_1.route) {
         RegisterScreen1(popUp = { appState.popUp() }, navigate = { route ->
@@ -151,17 +151,25 @@ fun NavGraphBuilder.LokcetGraph(appState: LokcetAppState) {
         })
     }
     composable(Screen.AddFriendScreen.route) {
-        AddFriendScreen(
+        AddFriendScreen(clearAndNavigate = { route ->
+            appState.clearAndNavigate(route)
+        })
+    }
+    composable(Screen.HomeScreen_1.route) {
+        HomeScreen1(navigate = { route ->
+            appState.navigate(route)
+        })
+    }
+    composable(Screen.HomeScreen_2.route) { backStackEntry ->
+        // Share parent viewmodel with given route
+        val parentEntry = remember(backStackEntry) {
+            appState.navController.getBackStackEntry(Screen.HomeScreen_1.route)
+        }
+        val vm = hiltViewModel<HomeViewModel>(parentEntry)
+        HomeScreen2(
             clearAndNavigate = { route ->
                 appState.clearAndNavigate(route)
-            }
-        )
-    }
-    composable(Screen.HomeScreen.route) {
-        HomeScreen(
-            navigate = { route ->
-                appState.navigate(route)
-            }
+            }, viewModel = vm
         )
     }
     composable(Screen.FeedScreen.route) {
