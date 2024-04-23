@@ -12,12 +12,14 @@ import com.grouptwo.lokcet.utils.ConnectionState
 import com.grouptwo.lokcet.utils.isValidEmail
 import com.grouptwo.lokcet.utils.isValidPassword
 import com.grouptwo.lokcet.view.LokcetViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@HiltViewModel
 class LoginViewModel @Inject constructor(
     private val accountService: AccountService,
     private val savedStateHandle: SavedStateHandle,
@@ -28,6 +30,16 @@ class LoginViewModel @Inject constructor(
         initialValue = ConnectionState.Unknown,
         started = WhileSubscribed(5000)
     )
+    var uiState = mutableStateOf(
+        LoginUiState(
+            email = savedStateHandle["email"] ?: "",
+            password = savedStateHandle["password"] ?: "",
+        )
+    )
+        private set
+
+    private val email get() = uiState.value.email
+    private val password get() = uiState.value.password
 
     init {
         viewModelScope.launch {
@@ -39,16 +51,6 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    var uiState = mutableStateOf(
-        LoginUiState(
-            email = savedStateHandle["email"] ?: "",
-            password = savedStateHandle["password"] ?: "",
-        )
-    )
-        private set
-
-    private val email get() = uiState.value.email
-    private val password get() = uiState.value.password
 
     fun onEmailChange(email: String) {
         uiState.value = uiState.value.copy(

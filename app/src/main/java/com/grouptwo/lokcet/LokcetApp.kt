@@ -164,7 +164,7 @@ fun NavGraphBuilder.LokcetGraph(appState: LokcetAppState) {
 
     composable(Screen.LoginScreen_2.route) { backStackEntry ->
         val parentEntry = remember(backStackEntry) {
-            appState.navController.getBackStackEntry(Screen.HomeScreen_1.route)
+            appState.navController.getBackStackEntry(Screen.LoginScreen_1.route)
         }
         val vm = hiltViewModel<LoginViewModel>(parentEntry)
         LoginScreen2(

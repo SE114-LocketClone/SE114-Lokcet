@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -37,6 +38,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -120,6 +122,7 @@ fun LoginScreen2(
                     color = Color(0xFFFFFFFF)
                 ),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                visualTransformation = PasswordVisualTransformation(),
                 placeholder = {
                     Text(
                         text = "Mật khẩu", style = TextStyle(
@@ -143,7 +146,7 @@ fun LoginScreen2(
             val forgetButtonColor = ButtonDefaults.buttonColors(Color(0xFF272626))
             if (uiState.hasSentForgetPassword) {
                 Text(
-                    text = "Email đặt lại mật khẩu đã được gửi!", style = TextStyle(
+                    text = "Email đặt lại mật khẩu đã được gửi", style = TextStyle(
                         fontSize = 16.sp,
                         fontFamily = fontFamily,
                         color = Color.White,
@@ -156,7 +159,7 @@ fun LoginScreen2(
                     onClick = { viewModel.onForgetPasswordClick() },
                     modifier = Modifier
                         .width(240.dp)
-                        .height(30.dp),
+                        .wrapContentHeight(),
                     colors = forgetButtonColor
                 ) {
                     if (uiState.isSendingForgetPassword) {
@@ -165,6 +168,9 @@ fun LoginScreen2(
                         )
                     } else Text(
                         text = "Bạn đã quên mật khẩu?",
+                        fontFamily = fontFamily,
+                        fontSize = 16.sp,
+                        color = Color.White,
                         modifier = Modifier.align(Alignment.CenterVertically)
                     )
                 }
@@ -177,7 +183,7 @@ fun LoginScreen2(
             )
             Button(
                 onClick = { viewModel.onLoginClick(clearAndNavigate) },
-                modifier = Modifier.width(294.dp),
+                modifier = Modifier.fillMaxWidth(),
                 colors = buttonColor
             ) {
                 Row(
