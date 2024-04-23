@@ -49,13 +49,19 @@ class RegisterViewModel @Inject constructor(
 
 
     fun onEmailChange(email: String) {
-        uiState.value = uiState.value.copy(email = email, isButtonEmailEnable = email.isNotBlank())
+        uiState.value = uiState.value.copy(
+            email = email,
+            isButtonEmailEnable = email.isNotBlank() && email.isValidEmail()
+        )
         savedStateHandle["email"] = email
     }
 
     fun onPasswordChange(password: String) {
         uiState.value =
-            uiState.value.copy(password = password, isButtonPasswordEnable = password.isNotBlank())
+            uiState.value.copy(
+                password = password,
+                isButtonPasswordEnable = password.isNotBlank() && password.isValidPassword()
+            )
         savedStateHandle["password"] = password
     }
 
@@ -80,10 +86,9 @@ class RegisterViewModel @Inject constructor(
     }
 
     fun onPhoneNumberChange(phoneNumber: String) {
-
         uiState.value = uiState.value.copy(
             phoneNumber = phoneNumber,
-            isButtonPhoneEnable = phoneNumber.isNotBlank()
+            isButtonPhoneEnable = phoneNumber.isNotBlank() && phoneNumber.isValidPhoneNumber()
         )
         savedStateHandle["phoneNumber"] = phoneNumber
     }
@@ -91,14 +96,9 @@ class RegisterViewModel @Inject constructor(
     fun onMailClick(navigate: (String) -> Unit) {
         // If email is empty then do nothing
         if (!isButtonEmailEnable) {
-            return
-        }
-
-        if (!email.isValidEmail()) {
             SnackbarManager.showMessage(R.string.email_invalid)
             return
         }
-
         launchCatching {
             try {
                 uiState.value = uiState.value.copy(isCheckingEmail = true)
@@ -117,9 +117,6 @@ class RegisterViewModel @Inject constructor(
 
     fun onPasswordClick(navigate: (String) -> Unit) {
         if (!isButtonPasswordEnable) {
-            return
-        }
-        if (!password.isValidPassword()) {
             SnackbarManager.showMessage(R.string.password_invalid)
             return
         }
@@ -145,9 +142,6 @@ class RegisterViewModel @Inject constructor(
 
     fun onPhoneNumberClick(clearAndNavigate: (String) -> Unit) {
         if (!isButtonPhoneEnable) {
-            return
-        }
-        if (!phoneNumber.isValidPhoneNumber()) {
             SnackbarManager.showMessage(R.string.phone_invalid)
             return
         }

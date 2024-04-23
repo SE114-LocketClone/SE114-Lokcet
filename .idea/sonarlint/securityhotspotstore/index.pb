@@ -151,3 +151,11 @@ s
 Capp/src/main/java/com/grouptwo/lokcet/di/service/InternetService.kt,c/6/c63fce6fc91a4987732ee89e7c6fbd0569204162
 t
 Dapp/src/main/java/com/grouptwo/lokcet/di/impl/InternetServiceImpl.kt,5/e/5e5ac7ecbb3ae3305dfaa1c1de9ea12976ceab47
+p
+@app/src/main/java/com/grouptwo/lokcet/view/login/LoginUiState.kt,7/4/7472e48ba700cd238a872c9b29bedcf1dfe49f8c
+q
+Aapp/src/main/java/com/grouptwo/lokcet/view/login/LoginScreen_1.kt,4/7/4759b6febc74bc76e502e72eaef3bc8ff5375c6c
+r
+Bapp/src/main/java/com/grouptwo/lokcet/view/login/LoginViewModel.kt,1/c/1c35ab0145760d166eab869c2b7b125069b7e37b
+q
+Aapp/src/main/java/com/grouptwo/lokcet/view/login/LoginScreen_2.kt,a/4/a411a28138705bd8fd10faa957943e6f31bbdb26

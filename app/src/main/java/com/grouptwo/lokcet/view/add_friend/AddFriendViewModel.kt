@@ -1,17 +1,22 @@
 package com.grouptwo.lokcet.view.add_friend
 
+import androidx.lifecycle.viewModelScope
 import com.grouptwo.lokcet.di.service.InternetService
 import com.grouptwo.lokcet.di.service.UserService
 import com.grouptwo.lokcet.navigation.Screen
 import com.grouptwo.lokcet.ui.component.global.snackbar.SnackbarManager
 import com.grouptwo.lokcet.ui.component.global.snackbar.SnackbarMessage.Companion.toSnackbarMessage
+import com.grouptwo.lokcet.utils.ConnectionState
 import com.grouptwo.lokcet.utils.DataState
 import com.grouptwo.lokcet.view.LokcetViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -22,16 +27,32 @@ class AddFriendViewModel @Inject constructor(
     // Initialize the state of suggest friend list as Loading
     private val _uiState = MutableStateFlow(AddFriendUiState())
     val uiState: StateFlow<AddFriendUiState> = _uiState.asStateFlow()
-
+    private val networkStatus: StateFlow<ConnectionState> = internetService.networkStatus.stateIn(
+        scope = viewModelScope,
+        initialValue = ConnectionState.Unknown,
+        started = WhileSubscribed(5000)
+    )
 
     init {
-        fetchSuggestFriendList()
+        viewModelScope.launch {
+            networkStatus.collect { connectionState ->
+                _uiState.update {
+                    it.copy(isNetworkAvailable = connectionState == ConnectionState.Available)
+                }
+                // When the state changes then try to fetch the suggest friend list
+                fetchSuggestFriendList()
+            }
+        }
     }
 
     fun fetchSuggestFriendList() {
         // Fetch the suggest friend list from the server
         launchCatching {
             try {
+                // Check if the network is available
+                if (_uiState.value.isNetworkAvailable.not()) {
+                    throw Exception("Không có kết nối mạng")
+                }
                 userService.getSuggestFriendList().collect { dataState ->
                     when (dataState) {
                         is DataState.Loading -> {

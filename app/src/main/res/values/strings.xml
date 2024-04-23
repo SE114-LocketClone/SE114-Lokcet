@@ -3,6 +3,7 @@
     <string name="ok">OK</string>
     <!-- General -->
     <string name="generic_error">Đã xảy ra lỗi. Vui lòng thử lại</string>
+    <string name="no_internet">Không có kết nối internet</string>
     <!-- Welcome Screen -->
     <string name="welcome_text">Ảnh trực tiếp từ bạn bè,\nngay trên màn hình chính</string>
     <string name="create_account">Tạo một tài khoản</string>
@@ -45,4 +46,8 @@
     <string name="email_used">Email đã được sử dụng</string>
     <string name="phone_invalid">Số điện thoại không hợp lệ</string>
     <string name="phone_used">Số điện thoại đã được sử dụng</string>
+    <!-- Login -->
+    <string name="invalid_email_or_password">Email hoặc mật khẩu không đúng</string>
+    <string name="non_exist_email">Email không tồn tại</string>
+
 </resources>

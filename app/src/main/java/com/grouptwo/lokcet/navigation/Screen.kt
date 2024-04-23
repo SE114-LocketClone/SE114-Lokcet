@@ -11,7 +11,8 @@ sealed class Screen(val route: String) {
     object AddWidgetTutorialScreen : Screen("add_widget_tutorial_screen")
 
     // Login Screen
-    object LoginScreen : Screen("login_screen")
+    object LoginScreen_1 : Screen("login_screen_1")
+    object LoginScreen_2 : Screen("login_screen_2")
 
     // Register Screen
     object RegisterScreen_1 : Screen("register_screen_1")
@@ -37,6 +38,7 @@ sealed class Screen(val route: String) {
     // Home Screen
     object HomeScreen_1 : Screen("home_screen_1")
     object HomeScreen_2 : Screen("home_screen_2")
+
     // Feed Screen
     object FeedScreen : Screen("feed_screen")
 

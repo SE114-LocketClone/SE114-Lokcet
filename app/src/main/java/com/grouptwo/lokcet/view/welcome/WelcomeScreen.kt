@@ -3,7 +3,6 @@ package com.grouptwo.lokcet.view.welcome
 import android.Manifest
 import android.os.Build
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -44,6 +43,7 @@ import com.grouptwo.lokcet.ui.component.global.permission.RequestStoragePermissi
 import com.grouptwo.lokcet.ui.component.welcome.AutoScrollImage
 import com.grouptwo.lokcet.ui.theme.BlackSecondary
 import com.grouptwo.lokcet.ui.theme.fontFamily
+import com.grouptwo.lokcet.utils.noRippleClickable
 import com.grouptwo.lokcet.R.string as WelcomeString
 
 @OptIn(ExperimentalPermissionsApi::class)
@@ -177,7 +177,7 @@ fun WelcomeScreen(
             )
             // Login Touchable
             Surface(color = Color.Transparent, modifier = Modifier
-                .clickable {
+                .noRippleClickable {
                     viewModel.onLoginClick(navigate)
                 }
                 .padding(top = 20.dp)

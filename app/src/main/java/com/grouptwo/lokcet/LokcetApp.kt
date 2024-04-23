@@ -36,6 +36,9 @@ import com.grouptwo.lokcet.view.feed.FeedScreen
 import com.grouptwo.lokcet.view.home.HomeScreen1
 import com.grouptwo.lokcet.view.home.HomeScreen2
 import com.grouptwo.lokcet.view.home.HomeViewModel
+import com.grouptwo.lokcet.view.login.LoginScreen1
+import com.grouptwo.lokcet.view.login.LoginScreen2
+import com.grouptwo.lokcet.view.login.LoginViewModel
 import com.grouptwo.lokcet.view.register.RegisterScreen1
 import com.grouptwo.lokcet.view.register.RegisterScreen2
 import com.grouptwo.lokcet.view.register.RegisterScreen3
@@ -50,7 +53,6 @@ fun LokcetApp() {
     LokcetTheme {
         Surface {
             val appState = rememberAppState()
-
             Scaffold(
                 containerColor = BlackSecondary,
                 snackbarHost = {
@@ -100,21 +102,25 @@ fun resources(): Resources {
 
 @SuppressLint("UnrememberedGetBackStackEntry")
 fun NavGraphBuilder.LokcetGraph(appState: LokcetAppState) {
+    // Splash screen
     composable(Screen.SplashScreen.route) {
         SplashScreen(openAndPopUp = { route, popUp ->
             appState.navigateAndPopUp(route, popUp)
         })
     }
+    // Welcome screen
     composable(Screen.WelcomeScreen.route) {
         WelcomeScreen(navigate = { route ->
             appState.navigate(route)
         })
     }
+    // Add widget screen
     composable(Screen.AddWidgetTutorialScreen.route) {
         AddWidgetScreen(clearAndNavigate = { route ->
             appState.clearAndNavigate(route)
         })
     }
+    // Register screens
     composable(Screen.RegisterScreen_1.route) {
         RegisterScreen1(popUp = { appState.popUp() }, navigate = { route ->
             appState.navigate(route)
@@ -150,11 +156,31 @@ fun NavGraphBuilder.LokcetGraph(appState: LokcetAppState) {
             appState.clearAndNavigate(route)
         })
     }
+
+    // Login screen
+    composable(Screen.LoginScreen_1.route) {
+        LoginScreen1(popUp = { appState.popUp() }, navigate = { route -> appState.navigate(route) })
+    }
+
+    composable(Screen.LoginScreen_2.route) { backStackEntry ->
+        val parentEntry = remember(backStackEntry) {
+            appState.navController.getBackStackEntry(Screen.HomeScreen_1.route)
+        }
+        val vm = hiltViewModel<LoginViewModel>(parentEntry)
+        LoginScreen2(
+            popUp = { appState.popUp() },
+            clearAndNavigate = { route -> appState.clearAndNavigate(route) },
+            viewModel = vm
+        )
+    }
+
+    // Add friend screen
     composable(Screen.AddFriendScreen.route) {
         AddFriendScreen(clearAndNavigate = { route ->
             appState.clearAndNavigate(route)
         })
     }
+    // Home screens
     composable(Screen.HomeScreen_1.route) {
         HomeScreen1(navigate = { route ->
             appState.navigate(route)
@@ -172,6 +198,7 @@ fun NavGraphBuilder.LokcetGraph(appState: LokcetAppState) {
             }, viewModel = vm
         )
     }
+    // Feed screen
     composable(Screen.FeedScreen.route) {
         FeedScreen()
     }

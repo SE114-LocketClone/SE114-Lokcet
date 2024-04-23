@@ -9,7 +9,7 @@ import javax.inject.Inject
 class WelcomeViewModel @Inject constructor() : LokcetViewModel() {
     fun onLoginClick(navigate: (String) -> Unit) {
         // Navigate to the login screen
-        navigate(Screen.LoginScreen.route)
+        navigate(Screen.LoginScreen_1.route)
     }
 
     fun onRegisterClick(navigate: (String) -> Unit) {
