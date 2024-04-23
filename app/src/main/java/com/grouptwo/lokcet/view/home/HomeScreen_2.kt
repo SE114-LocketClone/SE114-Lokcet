@@ -49,7 +49,7 @@ import com.grouptwo.lokcet.utils.noRippleClickable
 
 @Composable
 fun HomeScreen2(
-    viewModel: HomeViewModel = hiltViewModel(), clearAndNavigate: ( String) -> Unit
+    viewModel: HomeViewModel = hiltViewModel(), clearAndNavigate: (String) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
     // Display the home screen
@@ -111,22 +111,22 @@ fun HomeScreen2(
                     },
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
-                        .padding(16.dp)
+                        .padding(8.dp)
                         .widthIn(min = 86.dp),
                     placeholder = {
                         Text(
                             text = "Thêm một tin nhắn",
                             style = TextStyle(
-                                fontSize = 16.sp,
+                                fontSize = 14.sp,
                                 fontFamily = fontFamily,
                                 fontWeight = FontWeight.Bold,
-                                color = Color.White,
+                                color = Color(0xFF272626),
                                 textAlign = TextAlign.Center,
                             )
                         )
                     },
                     textStyle = TextStyle(
-                        fontSize = 16.sp,
+                        fontSize = 14.sp,
                         fontFamily = fontFamily,
                         fontWeight = FontWeight.Bold,
                         color = Color.White,

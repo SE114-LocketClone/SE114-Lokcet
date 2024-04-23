@@ -197,13 +197,12 @@ fun LoginScreen2(
                         )
                     } else {
                         Text(
-                            text = "Tiếp tục",
-                            style = TextStyle(
+                            text = "Tiếp tục", style = TextStyle(
                                 fontSize = 24.sp,
                                 fontFamily = fontFamily,
                                 color = BlackSecondary,
                                 fontWeight = FontWeight.Bold
-                            ), //modifier = Modifier.align(Alignment.CenterVertically)
+                            ), modifier = Modifier.align(Alignment.CenterVertically)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Image(

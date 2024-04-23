@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.graphics.Matrix
 import android.util.Patterns
+import android.view.View
+import android.view.ViewTreeObserver
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.runtime.Composable
@@ -71,6 +73,21 @@ fun Bitmap.rotateBitmap(rotationDegrees: Int): Bitmap {
         postRotate(-rotationDegrees.toFloat())
         postScale(-1f, -1f)
     }
-
     return Bitmap.createBitmap(this, 0, 0, width, height, matrix, true)
+}
+
+// Observer for listener to focus change in camera view
+inline fun View.afterMeasured(crossinline block: () -> Unit) {
+    if (measuredWidth > 0 && measuredHeight > 0) {
+        block()
+    } else {
+        viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                if (measuredWidth > 0 && measuredHeight > 0) {
+                    viewTreeObserver.removeOnGlobalLayoutListener(this)
+                    block()
+                }
+            }
+        })
+    }
 }

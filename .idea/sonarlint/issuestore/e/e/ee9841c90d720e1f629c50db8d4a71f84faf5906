@@ -1,3 +1,9 @@
 
-€kotlin:S6619R";Remove this useless elvis operation ?:, it always succeeds.(ó¢¦‘8§·‚ğ1J$7cca3dbe-e15a-4425-a1ff-c541ba13d576
-qkotlin:S6518Y",Replace function call with indexed accessor.(šù„Ï8Æ·‚ğ1J$c97eb6c0-773a-4c07-bc53-0719100f5f64
+~kotlin:S1172©"8Use "_" instead of this unused lambda parameter "event".(İîöÛ8°Ï›Ûğ1J$729761d2-cf26-48c8-bf07-a903a1043771
+kotlin:S6619€";Remove this useless elvis operation ?:, it always succeeds.(ó¢¦‘8·Ï›Ûğ1J$caf43212-99b8-41a4-b08f-c5a8baf798ca
+vkotlin:S1481S"1Remove this unused "zoomAnimator" local variable.(£ê‰±8ãÏ›Ûğ1J$a47054eb-68af-4782-b79d-c0e0fe932a81
+mkotlin:S1874\"#Deprecated code should not be used.(ËáĞ¸şÿÿÿÿ8ôÏ›Ûğ1J$6e384291-3e89-40a6-b41c-ce6acede2e1a
+mkotlin:S1874^"#Deprecated code should not be used.(À§Êëùÿÿÿÿ8õÏ›Ûğ1J$1b9bbbd2-9060-46c9-a216-b4e26f3dfea9
+œkotlin:S3776H"RRefactor this method to reduce its Cognitive Complexity from 18 to the 15 allowed.(³ÊæÌÿÿÿÿÿ8ùÏ›Ûğ1J$8d82c9a0-cc21-4012-a0da-e7b0da79edd0
+Ÿkotlin:S1186k"ZAdd a nested comment explaining why this function is empty or complete the implementation.(Š¿ñâ8‚Ğ›Ûğ1J$323602b3-1fee-4f22-84f5-65cfd89ac888
+rkotlin:S6518†",Replace function call with indexed accessor.(šù„Ï8‡Ğ›Ûğ1J$9e518579-e503-40a1-9e6d-519950ebbeec
