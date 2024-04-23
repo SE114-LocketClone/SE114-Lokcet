@@ -40,7 +40,9 @@ class AddFriendViewModel @Inject constructor(
                     it.copy(isNetworkAvailable = connectionState == ConnectionState.Available)
                 }
                 // When the state changes then try to fetch the suggest friend list
-                fetchSuggestFriendList()
+                // Make sủe get the new state from the networkStatus flow
+                if (connectionState != ConnectionState.Unknown)
+                    fetchSuggestFriendList()
             }
         }
     }

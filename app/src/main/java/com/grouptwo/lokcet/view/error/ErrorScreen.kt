@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -53,20 +54,22 @@ fun ErrorScreen(
                 style = TextStyle(
                     textAlign = TextAlign.Center,
                     color = Color.White,
-                    fontSize = 26.sp,
-                    fontFamily = fontFamily
+                    fontSize = 22.sp,
+                    fontFamily = fontFamily,
+                    fontWeight = FontWeight.Bold
                 )
             )
             Image(
                 painter = painterResource(id = R.drawable.error_image), // Replace this with your own error image
-                contentDescription = "Error Image", modifier = Modifier.weight(0.4f)
+                contentDescription = "Error Image", modifier = Modifier.weight(0.35f)
             )
             Spacer(modifier = Modifier.weight(0.1f))
             Text(
                 text = errorMessage, style = TextStyle(
                     textAlign = TextAlign.Center,
                     color = Color.White,
-                    fontSize = 24.sp,
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.Bold,
                     fontFamily = fontFamily
                 )
             )
@@ -81,6 +84,7 @@ fun ErrorScreen(
                     text = "Thử lại", style = TextStyle(
                         fontFamily = fontFamily, textAlign = TextAlign.Center,
                         color = BlackSecondary,
+                        fontWeight = FontWeight.Bold,
                         fontSize = 24.sp,
                     )
                 )
