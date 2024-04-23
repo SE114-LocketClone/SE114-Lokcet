@@ -143,4 +143,10 @@ class HomeViewModel @Inject constructor(
         // Navigate to the FeedScreen
         navigate(Screen.FeedScreen.route)
     }
+
+    //Message click
+    fun onMessageClick(navigate: (String) -> Unit)
+    {
+        navigate(Screen.MessageScreen_1.route)
+    }
 }

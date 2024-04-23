@@ -50,4 +50,7 @@ sealed class Screen(val route: String) {
 
     // Friends List Screen
     object FriendsListScreen : Screen("friends_list_screen")
+
+    //Message Screen
+    object MessageScreen_1 : Screen("message_screen_1")
 }

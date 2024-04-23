@@ -39,6 +39,8 @@ import com.grouptwo.lokcet.view.home.HomeViewModel
 import com.grouptwo.lokcet.view.login.LoginScreen1
 import com.grouptwo.lokcet.view.login.LoginScreen2
 import com.grouptwo.lokcet.view.login.LoginViewModel
+import com.grouptwo.lokcet.view.message.MessageScreen1
+import com.grouptwo.lokcet.view.message.MessageViewModel
 import com.grouptwo.lokcet.view.register.RegisterScreen1
 import com.grouptwo.lokcet.view.register.RegisterScreen2
 import com.grouptwo.lokcet.view.register.RegisterScreen3
@@ -201,6 +203,16 @@ fun NavGraphBuilder.LokcetGraph(appState: LokcetAppState) {
     // Feed screen
     composable(Screen.FeedScreen.route) {
         FeedScreen()
+    }
+
+    //Message Screen
+    composable(Screen.MessageScreen_1.route)
+    {backStackEntry ->
+        val parentEntry = remember(backStackEntry) {
+            appState.navController.getBackStackEntry(Screen.HomeScreen_1.route)
+        }
+        val vm = hiltViewModel<MessageViewModel>()
+        MessageScreen1(viewModel = vm, popUp = {appState.popUp()})
     }
 }
 
