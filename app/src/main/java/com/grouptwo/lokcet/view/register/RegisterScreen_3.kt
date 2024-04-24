@@ -162,7 +162,7 @@ fun RegisterScreen3(
             Button(
                 onClick = { viewModel.onNameClick(navigate) },
                 modifier = Modifier
-                    .width(294.dp)
+                    .fillMaxWidth()
                     .heightIn(min = 46.dp),
                 colors = buttonColor
             ) {

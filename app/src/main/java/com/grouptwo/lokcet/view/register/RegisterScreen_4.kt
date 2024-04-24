@@ -123,7 +123,7 @@ fun RegisterScreen4(
             TextField(
                 value = uiState.phoneNumber,
                 onValueChange = {
-                    if (!it.startsWith("0") && it.length <= 12) {
+                    if (!it.startsWith("0") && it.length <= 9) {
                         viewModel.onPhoneNumberChange(it)
                     }
                 },

@@ -169,3 +169,11 @@ t
 Dapp/src/main/java/com/grouptwo/lokcet/view/user/MakeSuggestScreen.kt,f/3/f3a3f7bb51660ae7a2f58f56b255eeb1d34e0d27
 s
 Capp/src/main/java/com/grouptwo/lokcet/view/setting/SettingScreen.kt,b/2/b2c27ebc7e557da22bc387851cad7af9b692c13b
+v
+Fapp/src/main/java/com/grouptwo/lokcet/infastructure/FirebaseAdapter.kt,3/1/312b52839d8270fa228629248c7153efc3995531
+u
+Eapp/src/main/java/com/grouptwo/lokcet/infastructure/WeatherAdapter.kt,0/4/04435829af54cb34f81c7e6e5af73020581b6c32
+m
+=app/src/main/java/com/grouptwo/lokcet/model/UserRepository.kt,8/b/8b2da4bd22283c23569a4a7e8289e334f3bf10bc
+k
+;app/src/main/java/com/grouptwo/lokcet/utils/ImageManager.kt,b/8/b83c37799dda89b15e4a8d66b776566cc32f26c4

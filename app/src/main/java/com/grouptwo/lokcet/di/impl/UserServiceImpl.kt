@@ -35,9 +35,10 @@ class UserServiceImpl @Inject constructor(
             val contactList = contactService.getContactList()
             // Initialize an empty list to hold the suggested friends
             val suggestFriendContactList = mutableListOf<User>()
-            // Perform query to get all users
+            // Perform query to get all users except the current user
             val allUsersDeferred = CoroutineScope(Dispatchers.IO).async {
                 firestore.collection("users")
+                    .whereNotEqualTo("id", accountService.currentUserId) // Exclude the current user
                     .get()
                     .await()
                     .toObjects(User::class.java)

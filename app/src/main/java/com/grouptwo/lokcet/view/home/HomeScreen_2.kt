@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.grouptwo.lokcet.R
+import com.grouptwo.lokcet.ui.component.global.ime.rememberImeState
 import com.grouptwo.lokcet.ui.theme.YellowPrimary
 import com.grouptwo.lokcet.ui.theme.fontFamily
 import com.grouptwo.lokcet.utils.DataState
@@ -52,6 +53,7 @@ fun HomeScreen2(
     viewModel: HomeViewModel = hiltViewModel(), clearAndNavigate: (String) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val imeState = rememberImeState()
     val image = uiState.capturedImage?.asImageBitmap()
     // Display the home screen
     Box(modifier = Modifier.fillMaxSize()) {
@@ -99,7 +101,7 @@ fun HomeScreen2(
                     singleLine = true,
                     shape = RoundedCornerShape(50.dp),
                     colors = TextFieldDefaults.textFieldColors(
-                        backgroundColor = Color(0xB2D9D9D9),
+                        backgroundColor = Color(0xFF272626).copy(alpha = 0.3f),
                         disabledTextColor = Color.Transparent,
                         focusedIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent,
@@ -123,7 +125,7 @@ fun HomeScreen2(
                                 fontSize = 14.sp,
                                 fontFamily = fontFamily,
                                 fontWeight = FontWeight.Bold,
-                                color = Color(0xFF272626),
+                                color = Color.White,
                                 textAlign = TextAlign.Center,
                             )
                         )
@@ -137,76 +139,78 @@ fun HomeScreen2(
                 )
             }
             Spacer(modifier = Modifier.weight(0.1f))
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 32.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.icon_close),
-                    contentDescription = "Close Icon",
+            if (!imeState.value) {
+                Row(
                     modifier = Modifier
-                        .size(38.dp)
-                        .noRippleClickable {
-                            viewModel.onClearImage(
-                                clearAndNavigate
-                            )
-                        }
-                )
-                when (uiState.isImageUpload) {
-                    is DataState.Loading -> {
-                        Box(
-                            modifier = Modifier
-                                .size(75.dp)
-                                .border(
-                                    width = 5.dp,
-                                    color = Color.White,
-                                    shape = CircleShape
+                        .fillMaxWidth()
+                        .padding(horizontal = 32.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.icon_close),
+                        contentDescription = "Close Icon",
+                        modifier = Modifier
+                            .size(38.dp)
+                            .noRippleClickable {
+                                viewModel.onClearImage(
+                                    clearAndNavigate
                                 )
-                        ) {
-                            CircularProgressIndicator(
-                                color = YellowPrimary,
+                            }
+                    )
+                    when (uiState.isImageUpload) {
+                        is DataState.Loading -> {
+                            Box(
                                 modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(5.dp)
+                                    .size(75.dp)
+                                    .border(
+                                        width = 5.dp,
+                                        color = Color.White,
+                                        shape = CircleShape
+                                    )
+                            ) {
+                                CircularProgressIndicator(
+                                    color = YellowPrimary,
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(5.dp)
+                                )
+                            }
+                        }
+
+                        is DataState.Error -> TODO()
+                        is DataState.Success -> {
+                            Image(
+                                painter = painterResource(id = R.drawable.sent_successful),
+                                contentDescription = "Upload Icon",
+                                modifier = Modifier
+                                    .size(75.dp)
+                            )
+                        }
+
+                        null -> {
+                            Image(
+                                painter = painterResource(id = R.drawable.icon_upload),
+                                contentDescription = "Send Icon",
+                                modifier = Modifier
+                                    .size(75.dp)
+                                    .noRippleClickable {
+                                        viewModel.onClickToUploadImage(clearAndNavigate)
+                                    }
                             )
                         }
                     }
-
-                    is DataState.Error -> TODO()
-                    is DataState.Success -> {
-                        Image(
-                            painter = painterResource(id = R.drawable.sent_successful),
-                            contentDescription = "Upload Icon",
-                            modifier = Modifier
-                                .size(75.dp)
-                        )
-                    }
-
-                    null -> {
-                        Image(
-                            painter = painterResource(id = R.drawable.icon_upload),
-                            contentDescription = "Send Icon",
-                            modifier = Modifier
-                                .size(75.dp)
-                                .noRippleClickable {
-                                    viewModel.onClickToUploadImage(clearAndNavigate)
-                                }
-                        )
-                    }
+                    Image(
+                        painter = painterResource(id = R.drawable.save_image),
+                        contentDescription = "Send Icon",
+                        modifier = Modifier
+                            .size(40.dp)
+                            .noRippleClickable {
+                            }
+                    )
                 }
-                Image(
-                    painter = painterResource(id = R.drawable.save_image),
-                    contentDescription = "Send Icon",
-                    modifier = Modifier
-                        .size(40.dp)
-                        .noRippleClickable {
-                        }
-                )
             }
-            Spacer(modifier = Modifier.weight(0.1f))
+            Spacer(modifier = Modifier.weight(0.2f))
         }
     }
 }

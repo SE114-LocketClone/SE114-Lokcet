@@ -179,7 +179,7 @@ fun RegisterScreen2(
             Button(
                 onClick = { viewModel.onPasswordClick(navigate) },
                 modifier = Modifier
-                    .width(294.dp)
+                    .fillMaxWidth()
                     .heightIn(min = 46.dp),
                 colors = buttonColor
             ) {

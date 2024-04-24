@@ -6,16 +6,16 @@ import androidx.activity.compose.setContent
 import androidx.core.view.WindowCompat
 import dagger.hilt.android.AndroidEntryPoint
 
-@AndroidEntryPoint
-class FirebaseAdapter : ComponentActivity() {
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        WindowCompat.setDecorFitsSystemWindows(this.window, false)
-        super.onCreate(savedInstanceState)
-        setContent {
-            // A surface container using the 'background' color from the theme
-            LokcetApp()
-        }
-    }
-}
-
+//@AndroidEntryPoint
+//class FirebaseAdapter : ComponentActivity() {
+//
+//    override fun onCreate(savedInstanceState: Bundle?) {
+//        WindowCompat.setDecorFitsSystemWindows(this.window, false)
+//        super.onCreate(savedInstanceState)
+//        setContent {
+//            // A surface container using the 'background' color from the theme
+//            LokcetApp()
+//        }
+//    }
+//}
+//
