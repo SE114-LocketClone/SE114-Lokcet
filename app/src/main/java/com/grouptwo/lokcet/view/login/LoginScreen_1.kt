@@ -221,8 +221,9 @@ fun LoginScreen1(
                 }, modifier = Modifier.fillMaxWidth(), colors = buttonColor
             ) {
                 Row(
-                    horizontalArrangement = Arrangement.Center,
+                    horizontalArrangement = Arrangement.Start,
                     verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
                 ) {
                     if (uiState.isCheckingEmail) {
                         // Show loading icon
