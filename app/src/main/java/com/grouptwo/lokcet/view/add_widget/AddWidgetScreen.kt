@@ -2,12 +2,16 @@ package com.grouptwo.lokcet.view.add_widget
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -38,61 +42,65 @@ fun AddWidgetScreen(
 ) {
     // Hold pager state
     val pagerState = rememberPagerState(pageCount = { widgetItems.size })
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(
-                top = 40.dp,
-                bottom = 40.dp,
-            ),
-        verticalArrangement = Arrangement.Top,
-        horizontalAlignment = Alignment.CenterHorizontally
-
-    ) {
-        Text(
-            text = "Tạo một Locket mới", style = TextStyle(
-                fontSize = 24.sp,
-                fontFamily = fontFamily,
-                fontWeight = FontWeight.Bold,
-                color = Color.White,
-                textAlign = TextAlign.Center,
-            )
-        )
-        Spacer(modifier = Modifier.height(40.dp))
-        HorizontalPager(state = pagerState, modifier = Modifier.weight(1.5f)) { page ->
-            AddWidgetTutorial(item = widgetItems[page])
-        }
-        Spacer(modifier = Modifier.height(20.dp))
-        HorizontalPagerIndicator(
-            pagerState = pagerState,
-            pageCount = widgetItems.size,
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(
             modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .padding(16.dp),
-            activeColor = Color.White
-        )
-        Spacer(modifier = Modifier.height(20.dp))
-        Button(
-            onClick = {
-                viewModel.onConfirmClick(clearAndNavigate)
-            },
-            modifier = Modifier
-                .width(300.dp)
-                .padding(8.dp)
-                .clip(
-                    shape = RoundedCornerShape(50)
+                .fillMaxSize()
+                .navigationBarsPadding()
+                .statusBarsPadding()
+                .imePadding()
+                .padding(
+                    horizontal = 16.dp,
                 ),
-            colors = ButtonDefaults.buttonColors(YellowPrimary),
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.CenterHorizontally
+
         ) {
+            Spacer(modifier = Modifier.height(40.dp))
             Text(
-                text = "Tôi đã thêm tiện ích này rồi", style = TextStyle(
-                    fontSize = 20.sp,
+                text = "Tạo một Locket mới", style = TextStyle(
+                    fontSize = 24.sp,
                     fontFamily = fontFamily,
                     fontWeight = FontWeight.Bold,
-                    color = BlackSecondary,
+                    color = Color.White,
+                    textAlign = TextAlign.Center,
                 )
             )
+            Spacer(modifier = Modifier.height(40.dp))
+            HorizontalPager(state = pagerState, modifier = Modifier.weight(1.5f)) { page ->
+                AddWidgetTutorial(item = widgetItems[page])
+            }
+            Spacer(modifier = Modifier.height(20.dp))
+            HorizontalPagerIndicator(
+                pagerState = pagerState,
+                pageCount = widgetItems.size,
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(16.dp),
+                activeColor = Color.White
+            )
+            Spacer(modifier = Modifier.height(20.dp))
+            Button(
+                onClick = {
+                    viewModel.onConfirmClick(clearAndNavigate)
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+                    .clip(
+                        shape = RoundedCornerShape(50)
+                    ),
+                colors = ButtonDefaults.buttonColors(YellowPrimary),
+            ) {
+                Text(
+                    text = "Tôi đã thêm tiện ích này rồi", style = TextStyle(
+                        fontSize = 20.sp,
+                        fontFamily = fontFamily,
+                        fontWeight = FontWeight.Bold,
+                        color = BlackSecondary,
+                    )
+                )
+            }
         }
     }
-
 }

@@ -52,6 +52,7 @@ fun HomeScreen2(
     viewModel: HomeViewModel = hiltViewModel(), clearAndNavigate: (String) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val image = uiState.capturedImage?.asImageBitmap()
     // Display the home screen
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -80,18 +81,20 @@ fun HomeScreen2(
                     .fillMaxWidth()
                     .requiredHeight(385.dp)
             ) {
-                Image(
-                    painter = BitmapPainter(uiState.capturedImage?.asImageBitmap()!!),
-                    contentDescription = "User Image",
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .heightIn(max = 385.dp)
-                        .clip(
-                            RoundedCornerShape(20)
-                        ),
-                    contentScale = ContentScale.Crop,
-                    alignment = Alignment.Center
-                )
+                image?.let { BitmapPainter(it) }?.let {
+                    Image(
+                        painter = it,
+                        contentDescription = "User Image",
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .heightIn(max = 385.dp)
+                            .clip(
+                                RoundedCornerShape(20)
+                            ),
+                        contentScale = ContentScale.Crop,
+                        alignment = Alignment.Center
+                    )
+                }
                 TextField(
                     singleLine = true,
                     shape = RoundedCornerShape(50.dp),
@@ -147,7 +150,9 @@ fun HomeScreen2(
                     modifier = Modifier
                         .size(38.dp)
                         .noRippleClickable {
-
+                            viewModel.onClearImage(
+                                clearAndNavigate
+                            )
                         }
                 )
                 when (uiState.isImageUpload) {

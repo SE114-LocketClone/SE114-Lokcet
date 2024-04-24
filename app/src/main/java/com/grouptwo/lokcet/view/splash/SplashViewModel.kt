@@ -13,7 +13,7 @@ class SplashViewModel @Inject constructor(
     fun onAppStart(openAndPopUp: (String, String) -> Unit) {
         if (accountService.hasUser) {
             // Navigate to the home screen
-            openAndPopUp(Screen.AddFriendScreen.route, Screen.SplashScreen.route)
+            openAndPopUp(Screen.HomeScreen_1.route, Screen.SplashScreen.route)
         } else {
             // Navigate to the welcome screen
             openAndPopUp(Screen.WelcomeScreen.route, Screen.SplashScreen.route)

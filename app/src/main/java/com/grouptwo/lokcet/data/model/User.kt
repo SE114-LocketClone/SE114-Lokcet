@@ -13,6 +13,7 @@ data class User(
     val profilePicture: String = "",
     val friends: List<String> = emptyList(),
     val friendRequests: List<String> = emptyList(),
+    val friendWaitList: List<String> = emptyList(),
     val uploadImageList: List<String> = emptyList(),
     val isOnline: Boolean = false,
     val isBannded: Boolean = false,

@@ -159,15 +159,13 @@ r
 Bapp/src/main/java/com/grouptwo/lokcet/view/login/LoginViewModel.kt,1/c/1c35ab0145760d166eab869c2b7b125069b7e37b
 q
 Aapp/src/main/java/com/grouptwo/lokcet/view/login/LoginScreen_2.kt,a/4/a411a28138705bd8fd10faa957943e6f31bbdb26
-…
-Uapp/src/main/java/com/grouptwo/lokcet/ui/component/global/focus/FocusIndicatorView.kt,7/1/711e93f2ad0937654f97d92c2a641394fa6b1f3e
 s
 Capp/src/main/java/com/grouptwo/lokcet/view/user/ChangeNameScreen.kt,6/6/661638d42ff281dbe66c9add810c98c98ee45e44
 t
 Dapp/src/main/java/com/grouptwo/lokcet/view/user/ChangePhoneScreen.kt,9/4/944d7b0382bd83b2fe46e7f6adf374788d48b63c
-p
-@app/src/main/java/com/grouptwo/lokcet/view/user/SuggestScreen.kt,f/b/fb92bb70650b57a7f144710e3ef91ea42a38d73d
 v
 Fapp/src/main/java/com/grouptwo/lokcet/view/user/ReportProblemScreen.kt,8/a/8aaa92884465cdb3f918edf26fab6e344a781d21
 t
 Dapp/src/main/java/com/grouptwo/lokcet/view/user/MakeSuggestScreen.kt,f/3/f3a3f7bb51660ae7a2f58f56b255eeb1d34e0d27
+s
+Capp/src/main/java/com/grouptwo/lokcet/view/setting/SettingScreen.kt,b/2/b2c27ebc7e557da22bc387851cad7af9b692c13b

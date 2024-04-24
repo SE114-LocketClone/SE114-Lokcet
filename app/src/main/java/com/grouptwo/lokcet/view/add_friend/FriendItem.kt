@@ -19,6 +19,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -31,14 +32,14 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.grouptwo.lokcet.R
 import com.grouptwo.lokcet.data.model.User
+import com.grouptwo.lokcet.ui.theme.BlackSecondary
 import com.grouptwo.lokcet.ui.theme.fontFamily
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.glide.GlideImage
 
 @Composable
 fun FriendItem(
-    user: User,
-    action: (String) -> Unit,
+    user: User, action: (User) -> Unit, isAddingFriend: Boolean, hasAddFriendSuccess: Boolean
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -85,29 +86,70 @@ fun FriendItem(
                 )
             )
         }
-        Button(
-            modifier = Modifier.padding(8.dp),
-            onClick = { action(user.id) },
-            colors = ButtonDefaults.buttonColors(Color(color = 0xFFE5A500))
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Image(
-                    Icons.Filled.Add,
-                    contentDescription = "Add Icon",
-                    modifier = Modifier.size(24.dp)
-                )
-                Spacer(modifier = Modifier.width(4.dp))
-                Text(
-                    text = "Thêm bạn", style = TextStyle(
-                        fontSize = 16.sp,
-                        fontFamily = fontFamily,
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFF000000)
+        if (hasAddFriendSuccess) {
+            // Add a little opacity to the button if the friend has been added
+            Button(
+                modifier = Modifier
+                    .padding(8.dp)
+                    .alpha(0.5f),
+                onClick = {
+                    // Do nothing
+                },
+                colors = ButtonDefaults.buttonColors(Color(color = 0xFFE5A500)),
+
+                ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.icon_check),
+                        contentDescription = "Checked Icon",
+                        modifier = Modifier.size(24.dp)
                     )
-                )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = "Đã thêm", style = TextStyle(
+                            fontSize = 16.sp,
+                            fontFamily = fontFamily,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFF000000)
+                        )
+                    )
+                }
+            }
+        } else {
+            Button(
+                modifier = Modifier.padding(8.dp),
+                onClick = { action(user) },
+                colors = ButtonDefaults.buttonColors(Color(color = 0xFFE5A500))
+
+            ) {
+                if (isAddingFriend) {
+                    CircularProgressIndicator(
+                        color = BlackSecondary, modifier = Modifier.size(20.dp)
+                    )
+                } else {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Image(
+                            Icons.Filled.Add,
+                            contentDescription = "Add Icon",
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = "Thêm bạn", style = TextStyle(
+                                fontSize = 16.sp,
+                                fontFamily = fontFamily,
+                                fontWeight = FontWeight.Bold,
+                                color = Color(0xFF000000)
+                            )
+                        )
+                    }
+                }
             }
         }
     }

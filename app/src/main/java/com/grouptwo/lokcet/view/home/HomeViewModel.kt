@@ -25,8 +25,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val storageService: StorageService,
-    private val internetService: InternetService
+    private val storageService: StorageService, private val internetService: InternetService
 ) : LokcetViewModel() {
     private val _uiState = MutableStateFlow(HomeUiState())
     private val networkStatus: StateFlow<ConnectionState> = internetService.networkStatus.stateIn(
@@ -71,10 +70,7 @@ class HomeViewModel @Inject constructor(
             }
             // Check if the captured image and compressed image are not null
             // Means the image has been captured and compressed
-            if (
-                _uiState.value.capturedImage != null &&
-                _uiState.value.compressedImage != null
-            ) {
+            if (_uiState.value.capturedImage != null && _uiState.value.compressedImage != null) {
                 // Navigate to the ImagePreviewScreen
                 navigate(Screen.HomeScreen_2.route)
             }
@@ -136,6 +132,15 @@ class HomeViewModel @Inject constructor(
             }
         }
 
+    }
+
+    fun onClearImage(clearAndNavigate: (String) -> Unit) {
+        // Clear the captured image and compressed image
+        // Navigate back to the HomeScreen
+        clearAndNavigate(Screen.HomeScreen_1.route)
+        _uiState.update {
+            it.copy(capturedImage = null, compressedImage = null, imageCaption = "")
+        }
     }
 
     // ViewModel for the HomeScreen

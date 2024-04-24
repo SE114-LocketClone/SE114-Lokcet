@@ -7,6 +7,7 @@ import com.grouptwo.lokcet.ui.component.global.snackbar.SnackbarMessage.Companio
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import kotlin.coroutines.cancellation.CancellationException
 
 open class LokcetViewModel() : ViewModel() {
     // Define function to to perform coroutine operation and catch throwable exception to show in snackbar

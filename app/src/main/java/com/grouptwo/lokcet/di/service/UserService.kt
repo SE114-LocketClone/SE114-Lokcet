@@ -6,4 +6,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface UserService {
     suspend fun getSuggestFriendList():Flow<DataState<List<User>>>
+    suspend fun addFriend(userId: String, friendId: String): Flow<DataState<Unit>>
 }

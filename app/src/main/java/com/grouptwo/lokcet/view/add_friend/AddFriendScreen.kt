@@ -292,7 +292,18 @@ fun AddFriendScreen(
                             verticalArrangement = Arrangement.Top,
                         ) {
                             state.data.forEach { user ->
-                                FriendItem(user = user, action = { /*TODO*/ })
+                                FriendItem(
+                                    user = user,
+                                    isAddingFriend = uiState.isAddingFriend[state.data.indexOf(user)],
+                                    action = {
+                                        viewModel.onAddFriendClick(
+                                            user
+                                        )
+                                    },
+                                    hasAddFriendSuccess = uiState.hasAddFriendSuccess[state.data.indexOf(
+                                        user
+                                    )]
+                                )
                             }
                         }
                     }
@@ -339,8 +350,10 @@ fun AddFriendScreen(
             }
         }
 
-        is DataState.Error -> ErrorScreen(errorMessage = "Lỗi xảy ra khi lấy danh sách bạn bè", onRetry = {
-            viewModel.fetchSuggestFriendList()
-        })
+        is DataState.Error -> ErrorScreen(
+            errorMessage = "Lỗi xảy ra khi lấy danh sách bạn bè",
+            onRetry = {
+                viewModel.fetchSuggestFriendList()
+            })
     }
 }
