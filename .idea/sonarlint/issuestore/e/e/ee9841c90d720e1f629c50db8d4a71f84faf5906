@@ -1,8 +1,8 @@
 
-kotlin:S6619€";Remove this useless elvis operation ?:, it always succeeds.(ó¢¦‘8·Ï›Ûğ1J$8120097f-fc8b-4975-982c-4f3f9c0e13a5
-vkotlin:S1481S"1Remove this unused "zoomAnimator" local variable.(£ê‰±8ãÏ›Ûğ1J$01e03a40-95dd-4d34-9779-96f6edb9be23
-mkotlin:S1874\"#Deprecated code should not be used.(ËáĞ¸şÿÿÿÿ8ôÏ›Ûğ1J$ce74362b-6dfd-4755-8007-51247a6cfd77
-mkotlin:S1874^"#Deprecated code should not be used.(À§Êëùÿÿÿÿ8õÏ›Ûğ1J$0249ba68-1124-4a0e-b563-16ada0791af0
-œkotlin:S3776H"RRefactor this method to reduce its Cognitive Complexity from 18 to the 15 allowed.(³ÊæÌÿÿÿÿÿ8ùÏ›Ûğ1J$b138b8c3-c6d8-4741-b5dd-6c848b9752b7
-Ÿkotlin:S1186k"ZAdd a nested comment explaining why this function is empty or complete the implementation.(Š¿ñâ8‚Ğ›Ûğ1J$ecdf7b21-e8c8-40ec-88b0-e869cdc6be92
-rkotlin:S6518†",Replace function call with indexed accessor.(šù„Ï8‡Ğ›Ûğ1J$931377a7-5139-4f2c-8f73-a91d69abffb0
+[kotlin:S6619…";Remove this useless elvis operation ?:, it always succeeds.(ó¢¦‘8Õ˜¶¬ñ1
+Pkotlin:S1481X"1Remove this unused "zoomAnimator" local variable.(£ê‰±8²š¶¬ñ1
+Gkotlin:S1874a"#Deprecated code should not be used.(ËáĞ¸şÿÿÿÿ8Ãš¶¬ñ1
+Gkotlin:S1874c"#Deprecated code should not be used.(À§Êëùÿÿÿÿ8Ãš¶¬ñ1
+vkotlin:S3776L"RRefactor this method to reduce its Cognitive Complexity from 18 to the 15 allowed.(³ÊæÌÿÿÿÿÿ8Åš¶¬ñ1
+ykotlin:S1186p"ZAdd a nested comment explaining why this function is empty or complete the implementation.(Š¿ñâ8Ëš¶¬ñ1
+Lkotlin:S6518‹",Replace function call with indexed accessor.(šù„Ï8Îš¶¬ñ1

@@ -8,6 +8,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import java.io.File
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -15,6 +16,11 @@ import dagger.hilt.components.SingletonComponent
 object AppModule {
     @Provides
     fun provideGson(): Gson = Gson()
+
+    @Provides
+    fun provideCacheDir(@ApplicationContext context: Context): File {
+        return context.cacheDir
+    }
 
     @Provides
     fun provideContentResolver(@ApplicationContext context: Context): ContentResolver {

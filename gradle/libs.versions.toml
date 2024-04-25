@@ -27,6 +27,7 @@ moshiKotlin = "1.15.0"
 playServicesLocation = "21.2.0"
 playServicesMaps = "18.2.0"
 secretsGradlePlugin = "2.0.1"
+ucrop = "2.2.8-native"
 uiTextGoogleFonts = "1.6.5"
 navigationCompose = "2.7.7"
 firebaseAuthKtx = "22.3.1"
@@ -80,6 +81,7 @@ play-services-maps = { module = "com.google.android.gms:play-services-maps", ver
 secrets-gradle-plugin = { module = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin:secrets-gradle-plugin", version.ref = "secretsGradlePlugin" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 firebase-storage-ktx = { group = "com.google.firebase", name = "firebase-storage-ktx", version.ref = "firebaseStorageKtx" }
+ucrop = { module = "com.github.yalantis:ucrop", version.ref = "ucrop" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

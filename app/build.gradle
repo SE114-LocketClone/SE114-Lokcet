@@ -107,6 +107,7 @@ dependencies {
     implementation libs.androidx.camera.view
     // If you want to additionally use the CameraX Extensions library
     implementation libs.androidx.camera.extensions
+    implementation libs.ucrop
 }
 
 // Allow references to generated code

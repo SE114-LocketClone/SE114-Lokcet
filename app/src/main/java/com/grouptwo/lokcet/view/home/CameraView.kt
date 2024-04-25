@@ -4,11 +4,15 @@ import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.net.Uri
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.ViewGroup
 import android.view.animation.LinearInterpolator
 import android.widget.LinearLayout
+import androidx.activity.compose.ManagedActivityResultLauncher
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.AspectRatio
 import androidx.camera.core.Camera
 import androidx.camera.core.CameraControl
@@ -73,7 +77,8 @@ fun CameraView(
     modifier: Modifier = Modifier,
     lensFacing: Int,
     onImageCapture: (Bitmap) -> Unit,
-    onSwitchCamera: () -> Unit
+    onSwitchCamera: () -> Unit,
+    launcher: ManagedActivityResultLauncher<PickVisualMediaRequest, Uri?>
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -235,6 +240,11 @@ fun CameraView(
                     .size(50.dp)
                     .noRippleClickable {
                         // Open Image Picker
+                        launcher.launch(
+                            PickVisualMediaRequest(
+                                mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly
+                            )
+                        )
                     })
             Image(painter = painterResource(id = R.drawable.take_picture),
                 contentDescription = "Take Picture",

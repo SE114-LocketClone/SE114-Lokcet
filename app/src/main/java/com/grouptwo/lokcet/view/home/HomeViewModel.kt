@@ -1,12 +1,17 @@
 package com.grouptwo.lokcet.view.home
 
+import android.app.Activity
 import android.content.ContentResolver
 import android.content.ContentValues
+import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.ImageDecoder
+import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
+import androidx.activity.result.ActivityResultLauncher
 import androidx.camera.core.CameraSelector
 import androidx.lifecycle.viewModelScope
 import com.grouptwo.lokcet.R
@@ -20,6 +25,7 @@ import com.grouptwo.lokcet.utils.ConnectionState
 import com.grouptwo.lokcet.utils.DataState
 import com.grouptwo.lokcet.utils.compressToJpeg
 import com.grouptwo.lokcet.view.LokcetViewModel
+import com.yalantis.ucrop.UCrop
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -37,7 +43,8 @@ class HomeViewModel @Inject constructor(
     private val storageService: StorageService,
     private val internetService: InternetService,
     private val userService: UserService,
-    private val contentResolver: ContentResolver
+    private val contentResolver: ContentResolver,
+    private val cacheDir: File,
 ) : LokcetViewModel() {
     private val _uiState = MutableStateFlow(HomeUiState())
     private val networkStatus: StateFlow<ConnectionState> = internetService.networkStatus.stateIn(
@@ -256,9 +263,44 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    fun onImagePicked(uri: Uri?, navigate: (String) -> Unit) {
+        launchCatching {
+            // Update the image uri
+            _uiState.update {
+                val bitmap = uri?.let {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                        val source = ImageDecoder.createSource(contentResolver, uri)
+                        ImageDecoder.decodeBitmap(source)
+                    } else {
+                        @Suppress("DEPRECATION")
+                        MediaStore.Images.Media.getBitmap(contentResolver, uri)
+                    }
+                }
+                it.copy(imagePicked = uri, capturedImage = bitmap)
+            }
+            // Check if captured image is not null
+            if (_uiState.value.capturedImage != null) {
+                // Navigate to the ImagePreviewScreen
+                onImageCaptured(_uiState.value.capturedImage!!, navigate)
+            }
+        }
+    }
+
     // ViewModel for the HomeScreen
     fun onSwipeUp(navigate: (String) -> Unit) {
         // Navigate to the FeedScreen
         navigate(Screen.FeedScreen.route)
+    }
+
+    fun startCropping(
+        activity: Activity,
+        sourceUri: Uri,
+        cropResultLauncher: ActivityResultLauncher<Intent>
+    ) {
+        val destinationUri = Uri.fromFile(File(activity.cacheDir, "cropped"))
+        val intent = UCrop.of(sourceUri, destinationUri)
+            .withAspectRatio(1f, 1f)
+            .getIntent(activity)
+        cropResultLauncher.launch(intent)
     }
 }

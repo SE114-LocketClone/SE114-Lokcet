@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -74,8 +73,7 @@ fun HomeScreen2(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Gửi đến...",
-                style = TextStyle(
+                text = "Gửi đến...", style = TextStyle(
                     fontSize = 22.sp,
                     fontFamily = fontFamily,
                     fontWeight = FontWeight.Bold,
@@ -87,7 +85,6 @@ fun HomeScreen2(
             Box(
                 modifier = Modifier
                     .weight(0.65f)
-                    .aspectRatio(1f)
                     .requiredHeight(385.dp)
             ) {
                 image?.let { BitmapPainter(it) }?.let {
@@ -127,8 +124,7 @@ fun HomeScreen2(
                         .widthIn(min = 86.dp),
                     placeholder = {
                         Text(
-                            text = "Thêm một tin nhắn",
-                            style = TextStyle(
+                            text = "Thêm một tin nhắn", style = TextStyle(
                                 fontSize = 14.sp,
                                 fontFamily = fontFamily,
                                 fontWeight = FontWeight.Bold,
@@ -154,8 +150,7 @@ fun HomeScreen2(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.icon_close),
+                    Image(painter = painterResource(id = R.drawable.icon_close),
                         contentDescription = "Close Icon",
                         modifier = Modifier
                             .size(38.dp)
@@ -163,17 +158,14 @@ fun HomeScreen2(
                                 viewModel.onClearImage(
                                     clearAndNavigate
                                 )
-                            }
-                    )
+                            })
                     when (uiState.isImageUpload) {
                         is DataState.Loading -> {
                             Box(
                                 modifier = Modifier
                                     .size(75.dp)
                                     .border(
-                                        width = 5.dp,
-                                        color = Color.White,
-                                        shape = CircleShape
+                                        width = 5.dp, color = Color.White, shape = CircleShape
                                     )
                             ) {
                                 CircularProgressIndicator(
@@ -190,21 +182,18 @@ fun HomeScreen2(
                             Image(
                                 painter = painterResource(id = R.drawable.sent_successful),
                                 contentDescription = "Upload Icon",
-                                modifier = Modifier
-                                    .size(75.dp)
+                                modifier = Modifier.size(75.dp)
                             )
                         }
 
                         null -> {
-                            Image(
-                                painter = painterResource(id = R.drawable.icon_upload),
+                            Image(painter = painterResource(id = R.drawable.icon_upload),
                                 contentDescription = "Send Icon",
                                 modifier = Modifier
                                     .size(75.dp)
                                     .noRippleClickable {
                                         viewModel.onClickToUploadImage(clearAndNavigate)
-                                    }
-                            )
+                                    })
                         }
                     }
                     if (uiState.savedImageSuccess) {
@@ -219,15 +208,13 @@ fun HomeScreen2(
                             colorFilter = ColorFilter.tint(Color.White)
                         )
                     } else {
-                        Image(
-                            painter = painterResource(id = R.drawable.save_image),
+                        Image(painter = painterResource(id = R.drawable.save_image),
                             contentDescription = "Save Icon",
                             modifier = Modifier
                                 .size(40.dp)
                                 .noRippleClickable {
                                     viewModel.onSaveImage(uiState.capturedImage)
-                                }
-                        )
+                                })
                     }
                 }
             }
@@ -238,13 +225,11 @@ fun HomeScreen2(
                     .padding(horizontal = 16.dp)
                     .horizontalScroll(scrollState),
             ) {
-                Column(
-                    modifier = Modifier
-                        .noRippleClickable { viewModel.onSelectViewer(null) }
-                        .padding(horizontal = 16.dp),
+                Column(modifier = Modifier
+                    .noRippleClickable { viewModel.onSelectViewer(null) }
+                    .padding(horizontal = 16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
+                    verticalArrangement = Arrangement.Center) {
                     // If the visibleIds is not null and the user id is in the visibleIds list, show yellow border around the profile picture else show gray border.
                     val borderColor = if (uiState.visibleToUserIds == null) {
                         YellowPrimary
@@ -265,23 +250,21 @@ fun HomeScreen2(
                     }
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "Tất cả",
-                        style = TextStyle(
+                        text = "Tất cả", style = TextStyle(
                             color = Color.White,
                             fontFamily = fontFamily,
                             fontWeight = FontWeight.Bold,
-                            fontSize = 14.sp, textAlign = TextAlign.Center
+                            fontSize = 14.sp,
+                            textAlign = TextAlign.Center
                         )
                     )
                 }
                 if (uiState.friendList is DataState.Success) {
                     (uiState.friendList as DataState.Success<List<User>>).data.forEach { user ->
                         FriendButton(
-                            user = user,
-                            onAddFriend = { userId ->
+                            user = user, onAddFriend = { userId ->
                                 viewModel.onSelectViewer(userId)
-                            },
-                            visibleIds = uiState.visibleToUserIds
+                            }, visibleIds = uiState.visibleToUserIds
                         )
                     }
                 }

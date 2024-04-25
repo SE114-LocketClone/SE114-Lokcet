@@ -1,5 +1,8 @@
 package com.grouptwo.lokcet.view.home
 
+import android.app.Activity
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -32,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -41,6 +45,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.grouptwo.lokcet.R
 import com.grouptwo.lokcet.ui.theme.fontFamily
 import com.grouptwo.lokcet.utils.noRippleClickable
+import com.yalantis.ucrop.UCrop
 
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
@@ -48,7 +53,21 @@ import com.grouptwo.lokcet.utils.noRippleClickable
 fun HomeScreen1(
     viewModel: HomeViewModel = hiltViewModel(), navigate: (String) -> Unit
 ) {
+    val activity = LocalContext.current as Activity
+    val cropResultLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK && result.data != null) {
+            val uri = UCrop.getOutput(result.data!!)
+            // Handle the cropped image URI
+            viewModel.onImagePicked(uri, navigate)
+        }
+    }
     val uiState by viewModel.uiState.collectAsState()
+    val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.PickVisualMedia()) {
+
+        if (it != null) {
+            viewModel.startCropping(activity, it, cropResultLauncher)
+        }
+    }
     // Display the home scree
     Box(
         modifier = Modifier
@@ -123,7 +142,7 @@ fun HomeScreen1(
                 viewModel.onImageCaptured(image, navigate)
             }, modifier = Modifier.weight(0.65f), onSwitchCamera = {
                 viewModel.switchCamera()
-            })
+            }, launcher = launcher)
             Spacer(modifier = Modifier.weight(0.05f))
             Column(horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
