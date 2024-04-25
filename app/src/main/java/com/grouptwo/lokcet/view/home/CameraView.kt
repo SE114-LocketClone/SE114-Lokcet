@@ -132,7 +132,7 @@ fun CameraView(
                     val buffer: ByteBuffer = image.planes[0].buffer
                     val bytes = ByteArray(buffer.remaining())
                     buffer.get(bytes)
-                    val bitmapImage = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+                    var bitmapImage = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
                     onImageCapture(bitmapImage)
                     image.close()
                 }
@@ -166,10 +166,6 @@ fun CameraView(
                     scaleType = PreviewView.ScaleType.FILL_CENTER
 
                 }.also { previewView ->
-                    previewView.setOnTouchListener { _, event ->
-
-                        return@setOnTouchListener true
-                    }
                     // Create a listener to set the camera tap to focus
                     previewView.afterMeasured {
                         previewView.setOnTouchListener { _, event ->

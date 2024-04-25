@@ -1,9 +1,15 @@
 package com.grouptwo.lokcet.view.home
 
+import android.content.ContentResolver
+import android.content.ContentValues
 import android.graphics.Bitmap
+import android.os.Build
+import android.os.Environment
+import android.provider.MediaStore
 import android.util.Log
 import androidx.camera.core.CameraSelector
 import androidx.lifecycle.viewModelScope
+import com.grouptwo.lokcet.R
 import com.grouptwo.lokcet.di.service.InternetService
 import com.grouptwo.lokcet.di.service.StorageService
 import com.grouptwo.lokcet.di.service.UserService
@@ -21,6 +27,8 @@ import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import java.io.File
+import java.io.FileOutputStream
 import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException
 
@@ -28,7 +36,8 @@ import kotlin.coroutines.cancellation.CancellationException
 class HomeViewModel @Inject constructor(
     private val storageService: StorageService,
     private val internetService: InternetService,
-    private val userService: UserService
+    private val userService: UserService,
+    private val contentResolver: ContentResolver
 ) : LokcetViewModel() {
     private val _uiState = MutableStateFlow(HomeUiState())
     private val networkStatus: StateFlow<ConnectionState> = internetService.networkStatus.stateIn(
@@ -181,7 +190,7 @@ class HomeViewModel @Inject constructor(
             _uiState.update {
                 val existing = it.visibleToUserIds ?: emptyList()
                 // Check if user id exist in list
-                if(existing.contains(viewerId)) {
+                if (existing.contains(viewerId)) {
                     // Remove the user id from the list
                     it.copy(visibleToUserIds = existing - viewerId)
                 } else {
@@ -202,6 +211,48 @@ class HomeViewModel @Inject constructor(
         clearAndNavigate(Screen.HomeScreen_1.route)
         _uiState.update {
             it.copy(capturedImage = null, compressedImage = null, imageCaption = "")
+        }
+    }
+
+    fun onSaveImage(imageCapture: Bitmap?) {
+        // Save the image to the gallery
+        imageCapture?.let {
+            launchCatching {
+                // File name is IMG_yyyyMMdd_HHmmss.jpg
+                val fileName = "IMG_${System.currentTimeMillis()}.jpg"
+                val values = ContentValues().apply {
+                    put(MediaStore.Images.Media.DISPLAY_NAME, fileName)
+                    put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+                    // Check android version
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {  // If Android 10 or higher
+                        put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
+                    }
+                }
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    val uri =
+                        contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+                    uri?.let {
+                        val outputStream = contentResolver.openOutputStream(uri)
+                        outputStream?.let {
+                            imageCapture.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+                            outputStream.close()
+                        }
+                    }
+                } else { // If Android 9 or lower
+                    val imagesDir =
+                        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+                            .toString()
+                    val imageFile = File(imagesDir, fileName)
+                    val fos = FileOutputStream(imageFile)
+                    imageCapture.compress(Bitmap.CompressFormat.JPEG, 100, fos)
+                    fos.close()
+                }
+                // If the image is saved successfully
+                _uiState.update {
+                    it.copy(savedImageSuccess = true)
+                }
+                SnackbarManager.showMessage(R.string.save_image_success)
+            }
         }
     }
 

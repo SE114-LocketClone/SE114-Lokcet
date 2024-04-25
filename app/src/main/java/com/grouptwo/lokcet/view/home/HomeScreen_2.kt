@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -34,6 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
@@ -85,7 +87,7 @@ fun HomeScreen2(
             Box(
                 modifier = Modifier
                     .weight(0.65f)
-                    .fillMaxWidth()
+                    .aspectRatio(1f)
                     .requiredHeight(385.dp)
             ) {
                 image?.let { BitmapPainter(it) }?.let {
@@ -205,14 +207,28 @@ fun HomeScreen2(
                             )
                         }
                     }
-                    Image(
-                        painter = painterResource(id = R.drawable.save_image),
-                        contentDescription = "Send Icon",
-                        modifier = Modifier
-                            .size(40.dp)
-                            .noRippleClickable {
-                            }
-                    )
+                    if (uiState.savedImageSuccess) {
+                        Image(
+                            painter = painterResource(id = R.drawable.icon_success),
+                            contentDescription = "Success Icon",
+                            modifier = Modifier
+                                .size(40.dp)
+                                .noRippleClickable {
+                                    viewModel.onSaveImage(uiState.capturedImage)
+                                },
+                            colorFilter = ColorFilter.tint(Color.White)
+                        )
+                    } else {
+                        Image(
+                            painter = painterResource(id = R.drawable.save_image),
+                            contentDescription = "Save Icon",
+                            modifier = Modifier
+                                .size(40.dp)
+                                .noRippleClickable {
+                                    viewModel.onSaveImage(uiState.capturedImage)
+                                }
+                        )
+                    }
                 }
             }
             Spacer(modifier = Modifier.weight(0.1f))

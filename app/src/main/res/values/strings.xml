@@ -49,5 +49,7 @@
     <!-- Login -->
     <string name="invalid_email_or_password">Email hoặc mật khẩu không đúng</string>
     <string name="non_exist_email">Email không tồn tại</string>
+    <!-- Home -->
+    <string name="save_image_success">Ảnh đã được lưu vào thư viện</string>
 
 </resources>

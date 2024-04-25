@@ -14,4 +14,5 @@ data class HomeUiState(
     val isImageUpload: DataState<Unit>?= null,
     val isNetworkAvailable: Boolean = false,
     val friendList: DataState<List<User>> = DataState.Loading,
+    val savedImageSuccess: Boolean = false
 )
