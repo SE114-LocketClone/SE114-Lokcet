@@ -69,28 +69,6 @@ class AddFriendViewModel @Inject constructor(
                         }
 
                         is DataState.Success -> {
-//                            _uiState.update {
-//                                it.copy(suggestedList = DataState.Success(dataState.data),
-//                                    filteredSuggestedList = DataState.Success(dataState.data),
-//                                    isAddingFriend = List(dataState.data.size) { false },
-//                                    hasAddFriendSuccess = List(dataState.data.size) { false })
-//                            }
-//                            // Check if user's friendWaitList has friend uid the update the state for hasAddFriendSuccess
-//                            accountService.currentUser.collect { user ->
-//                                val friendWaitList = user.friendWaitList
-//                                if (friendWaitList.isNotEmpty()) {
-//                                    val currentList = _uiState.value.suggestedList
-//                                    if (currentList is DataState.Success) {
-//                                        val updatedHasAddFriendSuccess =
-//                                            currentList.data.map { friend ->
-//                                                friendWaitList.contains(friend.id)
-//                                            }
-//                                        _uiState.update {
-//                                            it.copy(hasAddFriendSuccess = updatedHasAddFriendSuccess)
-//                                        }
-//                                    }
-//                                }
-//                            }\
                             accountService.currentUser.collect { user ->
                                 val friendWaitList = user.friendWaitList
                                 val updatedHasAddFriendSuccess = dataState.data.map { friend ->
@@ -108,12 +86,7 @@ class AddFriendViewModel @Inject constructor(
                         }
 
                         is DataState.Error -> {
-                            _uiState.update {
-                                it.copy(suggestedList = DataState.Error(dataState.exception),
-                                    filteredSuggestedList = DataState.Error(dataState.exception),
-                                    isAddingFriend = List(0) { false },
-                                    hasAddFriendSuccess = List(0) { false })
-                            }
+                            throw dataState.exception
                         }
                     }
                 }

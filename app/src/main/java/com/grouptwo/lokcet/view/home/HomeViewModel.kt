@@ -6,6 +6,7 @@ import androidx.camera.core.CameraSelector
 import androidx.lifecycle.viewModelScope
 import com.grouptwo.lokcet.di.service.InternetService
 import com.grouptwo.lokcet.di.service.StorageService
+import com.grouptwo.lokcet.di.service.UserService
 import com.grouptwo.lokcet.navigation.Screen
 import com.grouptwo.lokcet.ui.component.global.snackbar.SnackbarManager
 import com.grouptwo.lokcet.ui.component.global.snackbar.SnackbarMessage.Companion.toSnackbarMessage
@@ -20,29 +21,33 @@ import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.coroutines.cancellation.CancellationException
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val storageService: StorageService, private val internetService: InternetService
+    private val storageService: StorageService,
+    private val internetService: InternetService,
+    private val userService: UserService
 ) : LokcetViewModel() {
     private val _uiState = MutableStateFlow(HomeUiState())
     private val networkStatus: StateFlow<ConnectionState> = internetService.networkStatus.stateIn(
         scope = viewModelScope,
         initialValue = ConnectionState.Unknown,
-        started = WhileSubscribed(5000)
+        started = WhileSubscribed(500000)
     )
 
     // Read only access to the uiState
     val uiState: StateFlow<HomeUiState> = _uiState
 
     init {
-        viewModelScope.launch {
+        launchCatching {
             networkStatus.collect { connectionState ->
                 _uiState.update {
-                    it.copy(isNetworkAvailable = connectionState == ConnectionState.Available)
+                    it.copy(isNetworkAvailable = connectionState == ConnectionState.Available || connectionState == ConnectionState.Unknown)
                 }
+                // Call to fetch friends list to select viewers for the image
+                fetchFriendList()
             }
         }
     }
@@ -76,7 +81,6 @@ class HomeViewModel @Inject constructor(
             }
         }
 
-        Log.d("Image Captured", imageCapture.toString())
     }
 
     fun onInputCaption(caption: String) {
@@ -91,7 +95,6 @@ class HomeViewModel @Inject constructor(
             try {
                 // Check the internet connection
                 if (_uiState.value.isNetworkAvailable.not()) {
-                    Log.d("Internet Connection", "No internet connection")
                     throw Exception("No internet connection")
                 }
                 _uiState.update {
@@ -131,7 +134,66 @@ class HomeViewModel @Inject constructor(
                 SnackbarManager.showMessage(e.toSnackbarMessage())
             }
         }
+    }
 
+    fun fetchFriendList() {
+        launchCatching {
+            try {
+                if (_uiState.value.isNetworkAvailable.not()) {
+                    throw Exception("Không có kết nối mạng")
+                }
+                userService.getFriendList().collect { dataState ->
+                    when (dataState) {
+                        is DataState.Loading -> {
+                            _uiState.update {
+                                it.copy(friendList = DataState.Loading)
+                            }
+                        }
+
+                        is DataState.Success -> {
+                            _uiState.update {
+                                it.copy(friendList = DataState.Success(dataState.data))
+                            }
+                        }
+
+                        is DataState.Error -> {
+                            throw dataState.exception
+                        }
+                    }
+                }
+
+            } catch (e: CancellationException) {
+                // Do nothing only make sure not show the "Job was cancelled" notification
+            } catch (e: Exception) {
+                // Show snackbar with throwable message if there is an exception for UX
+                _uiState.update {
+                    it.copy(friendList = DataState.Error(e))
+                }
+                SnackbarManager.showMessage(e.toSnackbarMessage())
+            }
+        }
+    }
+
+    fun onSelectViewer(viewerId: String?) {
+        // Update the selected viewers (Default is null means visible to all)
+        // Update the list of selected viewers
+        if (viewerId != null) {
+            _uiState.update {
+                val existing = it.visibleToUserIds ?: emptyList()
+                // Check if user id exist in list
+                if(existing.contains(viewerId)) {
+                    // Remove the user id from the list
+                    it.copy(visibleToUserIds = existing - viewerId)
+                } else {
+                    // Add the user id to the list
+                    it.copy(visibleToUserIds = existing + viewerId)
+                }
+            }
+        } else {
+            _uiState.update {
+                it.copy(visibleToUserIds = null)
+            }
+        }
     }
 
     fun onClearImage(clearAndNavigate: (String) -> Unit) {

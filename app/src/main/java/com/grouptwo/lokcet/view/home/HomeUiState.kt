@@ -2,6 +2,7 @@ package com.grouptwo.lokcet.view.home
 
 import android.graphics.Bitmap
 import androidx.camera.core.CameraSelector
+import com.grouptwo.lokcet.data.model.User
 import com.grouptwo.lokcet.utils.DataState
 
 data class HomeUiState(
@@ -11,5 +12,6 @@ data class HomeUiState(
     val imageCaption: String = "",
     val visibleToUserIds: List<String>? = null,
     val isImageUpload: DataState<Unit>?= null,
-    val isNetworkAvailable: Boolean = false
+    val isNetworkAvailable: Boolean = false,
+    val friendList: DataState<List<User>> = DataState.Loading,
 )

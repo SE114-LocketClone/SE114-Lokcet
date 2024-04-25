@@ -3,6 +3,7 @@ package com.grouptwo.lokcet.view.home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -18,6 +20,7 @@ import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
@@ -42,6 +45,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.grouptwo.lokcet.R
+import com.grouptwo.lokcet.data.model.User
 import com.grouptwo.lokcet.ui.component.global.ime.rememberImeState
 import com.grouptwo.lokcet.ui.theme.YellowPrimary
 import com.grouptwo.lokcet.ui.theme.fontFamily
@@ -55,6 +59,7 @@ fun HomeScreen2(
     val uiState by viewModel.uiState.collectAsState()
     val imeState = rememberImeState()
     val image = uiState.capturedImage?.asImageBitmap()
+    val scrollState = rememberScrollState()
     // Display the home screen
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -210,7 +215,61 @@ fun HomeScreen2(
                     )
                 }
             }
-            Spacer(modifier = Modifier.weight(0.2f))
+            Spacer(modifier = Modifier.weight(0.1f))
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+                    .horizontalScroll(scrollState),
+            ) {
+                Column(
+                    modifier = Modifier
+                        .noRippleClickable { viewModel.onSelectViewer(null) }
+                        .padding(horizontal = 16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    // If the visibleIds is not null and the user id is in the visibleIds list, show yellow border around the profile picture else show gray border.
+                    val borderColor = if (uiState.visibleToUserIds == null) {
+                        YellowPrimary
+                    } else {
+                        Color(0xFF948F8F)
+                    }
+                    Box {
+                        Image(
+                            painter = painterResource(id = R.drawable.icon_friend),
+                            contentDescription = "Friend Icon",
+                            modifier = Modifier
+                                .size(38.dp)
+                                .clip(shape = CircleShape)
+                                .border(
+                                    width = 1.dp, color = borderColor, shape = CircleShape
+                                )
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = "Tất cả",
+                        style = TextStyle(
+                            color = Color.White,
+                            fontFamily = fontFamily,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 14.sp, textAlign = TextAlign.Center
+                        )
+                    )
+                }
+                if (uiState.friendList is DataState.Success) {
+                    (uiState.friendList as DataState.Success<List<User>>).data.forEach { user ->
+                        FriendButton(
+                            user = user,
+                            onAddFriend = { userId ->
+                                viewModel.onSelectViewer(userId)
+                            },
+                            visibleIds = uiState.visibleToUserIds
+                        )
+                    }
+                }
+            }
         }
     }
 }

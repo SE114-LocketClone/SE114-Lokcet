@@ -108,4 +108,30 @@ class UserServiceImpl @Inject constructor(
         }
     }
 
+    override suspend fun getFriendList(): Flow<DataState<List<User>>> {
+        return flow {
+            try {
+                emit(DataState.Loading)
+                val user = firestore.collection("users").document(accountService.currentUserId)
+                    .get().await().toObject(User::class.java)
+                if (user != null) {
+                    val friendList = user.friends
+                    val friendListDeferreds = friendList.map { friendId ->
+                        CoroutineScope(Dispatchers.IO).async {
+                            firestore.collection("users").document(friendId).get().await()
+                                .toObject(User::class.java)
+                        }
+                    }
+                    val friends = friendListDeferreds.awaitAll().filterNotNull()
+                    emit(DataState.Success(friends))
+                } else {
+                    emit(DataState.Error(Exception("Không tìm thấy người dùng")))
+                }
+
+            } catch (e: Exception) {
+                emit(DataState.Error(e))
+            }
+        }
+    }
+
 }

@@ -177,3 +177,5 @@ m
 =app/src/main/java/com/grouptwo/lokcet/model/UserRepository.kt,8/b/8b2da4bd22283c23569a4a7e8289e334f3bf10bc
 k
 ;app/src/main/java/com/grouptwo/lokcet/utils/ImageManager.kt,b/8/b83c37799dda89b15e4a8d66b776566cc32f26c4
+o
+?app/src/main/java/com/grouptwo/lokcet/view/home/FriendButton.kt,2/5/2554daa7895f960923105ce6a2798d9cb72dcc25
