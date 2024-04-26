@@ -39,9 +39,7 @@ class UserServiceImpl @Inject constructor(
             val allUsersDeferred = CoroutineScope(Dispatchers.IO).async {
                 firestore.collection("users")
                     .whereNotEqualTo("id", accountService.currentUserId) // Exclude the current user
-                    .get()
-                    .await()
-                    .toObjects(User::class.java)
+                    .get().await().toObjects(User::class.java)
             }
             // Perform query to get the suggest friend list based on user has account with phoneNumber in contactList
             val contactListDeferreds = contactList.map { phoneNumber ->
@@ -108,12 +106,118 @@ class UserServiceImpl @Inject constructor(
         }
     }
 
+    override suspend fun acceptFriend(userId: String, friendId: String): Flow<DataState<Unit>> {
+        return flow {
+            try {
+                emit(DataState.Loading)
+                val userRef = firestore.collection("users").document(userId)
+                val friendRef = firestore.collection("users").document(friendId)
+                val user = userRef.get().await().toObject(User::class.java)
+                val friend = friendRef.get().await().toObject(User::class.java)
+                if (user != null && friend != null) {
+                    val userFriendRequests = user.friendRequests.toMutableList()
+                    val friendFriendWaitList = friend.friendWaitList.toMutableList()
+                    // Check if the user has a friend request from the friend and the friend is in the user's friend wait list
+                    if (userFriendRequests.contains(friendId) && friendFriendWaitList.contains(
+                            userId
+                        )
+                    ) {
+                        // Remove the friend from the user's friend request list and the user from the friend's friend wait listc
+                        userFriendRequests.remove(friendId)
+                        friendFriendWaitList.remove(userId)
+                        val userFriends = user.friends.toMutableList()
+                        val friendFriends = friend.friends.toMutableList()
+                        userFriends.add(friendId)
+                        friendFriends.add(userId)
+                        userRef.update("friendRequests", userFriendRequests).await()
+                        userRef.update("friends", userFriends).await()
+                        friendRef.update("friendWaitList", friendFriendWaitList).await()
+                        friendRef.update("friends", friendFriends).await()
+                        emit(DataState.Success(Unit))
+                    } else {
+                        emit(DataState.Error(Exception("Không tìm thấy người dùng trong danh sách chờ")))
+                    }
+                } else {
+                    emit(DataState.Error(Exception("Không tìm thấy người dùng")))
+                }
+            } catch (e: Exception) {
+                emit(DataState.Error(e))
+            }
+        }
+    }
+
+    override suspend fun rejectFriend(userId: String, friendId: String): Flow<DataState<Unit>> {
+        return flow {
+            try {
+                emit(DataState.Loading)
+                val userRef = firestore.collection("users").document(userId)
+                val friendRef = firestore.collection("users").document(friendId)
+                val user = userRef.get().await().toObject(User::class.java)
+                val friend = friendRef.get().await().toObject(User::class.java)
+                if (user != null && friend != null) {
+
+                    val userFriendRequests = user.friendRequests.toMutableList()
+                    val friendFriendWaitList = friend.friendWaitList.toMutableList()
+                    // Check if the user has a friend request from the friend and the friend is in the user's friend wait list
+                    if (userFriendRequests.contains(friendId) && friendFriendWaitList.contains(
+                            userId
+                        )
+                    ) {
+                        // Remove the friend from the user's friend request list and the user from the friend's friend wait list
+                        userFriendRequests.remove(friendId)
+                        friendFriendWaitList.remove(userId)
+                        userRef.update("friendRequests", userFriendRequests).await()
+                        friendRef.update("friendWaitList", friendFriendWaitList).await()
+                        emit(DataState.Success(Unit))
+                    } else {
+                        emit(DataState.Error(Exception("Không tìm thấy người dùng trong danh sách chờ")))
+                    }
+                } else {
+                    emit(DataState.Error(Exception("Không tìm thấy người dùng")))
+                }
+
+            } catch (e: Exception) {
+                emit(DataState.Error(e))
+            }
+        }
+    }
+
+    override suspend fun removeFriend(userId: String, friendId: String): Flow<DataState<Unit>> {
+        return flow {
+            try {
+                emit(DataState.Loading)
+                val userRef = firestore.collection("users").document(userId)
+                val friendRef = firestore.collection("users").document(friendId)
+                val user = userRef.get().await().toObject(User::class.java)
+                val friend = friendRef.get().await().toObject(User::class.java)
+                if (user != null && friend != null) {
+                    val userFriends = user.friends.toMutableList()
+                    val friendFriends = friend.friends.toMutableList()
+                    if (userFriends.contains(friendId) && friendFriends.contains(userId)) {
+                        userFriends.remove(friendId)
+                        friendFriends.remove(userId)
+                        userRef.update("friends", userFriends).await()
+                        friendRef.update("friends", friendFriends).await()
+                        emit(DataState.Success(Unit))
+                    } else {
+                        emit(DataState.Error(Exception("Không tìm thấy người dùng trong danh sách bạn bè")))
+                    }
+                } else {
+                    emit(DataState.Error(Exception("Không tìm thấy người dùng")))
+                }
+            } catch (e: Exception) {
+                emit(DataState.Error(e))
+            }
+        }
+    }
+
     override suspend fun getFriendList(): Flow<DataState<List<User>>> {
         return flow {
             try {
                 emit(DataState.Loading)
-                val user = firestore.collection("users").document(accountService.currentUserId)
-                    .get().await().toObject(User::class.java)
+                val user =
+                    firestore.collection("users").document(accountService.currentUserId).get()
+                        .await().toObject(User::class.java)
                 if (user != null) {
                     val friendList = user.friends
                     val friendListDeferreds = friendList.map { friendId ->
@@ -134,4 +238,91 @@ class UserServiceImpl @Inject constructor(
         }
     }
 
+    override suspend fun getWaitedFriendList(): Flow<DataState<List<User>>> {
+        return flow {
+            try {
+                emit(DataState.Loading)
+                val user =
+                    firestore.collection("users").document(accountService.currentUserId).get()
+                        .await().toObject(User::class.java)
+                if (user != null) {
+                    val friendWaitList = user.friendWaitList
+                    val friendWaitListDeferreds = friendWaitList.map { friendId ->
+                        CoroutineScope(Dispatchers.IO).async {
+                            firestore.collection("users").document(friendId).get().await()
+                                .toObject(User::class.java)
+                        }
+                    }
+                    val friends = friendWaitListDeferreds.awaitAll().filterNotNull()
+                    emit(DataState.Success(friends))
+                } else {
+                    emit(DataState.Error(Exception("Không tìm thấy người dùng")))
+                }
+
+            } catch (e: Exception) {
+                emit(DataState.Error(e))
+            }
+        }
+    }
+
+    override suspend fun removeWaitedFriend(
+        userId: String, friendId: String
+    ): Flow<DataState<Unit>> {
+        return flow {
+            try {
+                emit(DataState.Loading)
+                val userRef = firestore.collection("users").document(userId)
+                val friendRef = firestore.collection("users").document(friendId)
+                val user = userRef.get().await().toObject(User::class.java)
+                val friend = friendRef.get().await().toObject(User::class.java)
+                if (user != null && friend != null) {
+                    val userFriendWaitList = user.friendWaitList.toMutableList()
+                    val friendFriendRequests = friend.friendRequests.toMutableList()
+                    if (userFriendWaitList.contains(friendId) && friendFriendRequests.contains(
+                            userId
+                        )
+                    ) {
+                        userFriendWaitList.remove(friendId)
+                        friendFriendRequests.remove(userId)
+                        userRef.update("friendWaitList", userFriendWaitList).await()
+                        friendRef.update("friendRequests", friendFriendRequests).await()
+                        emit(DataState.Success(Unit))
+                    } else {
+                        emit(DataState.Error(Exception("Không tìm thấy người dùng trong danh sách chờ")))
+                    }
+                }
+            } catch (
+                e: Exception
+            ) {
+                emit(DataState.Error(e))
+            }
+        }
+    }
+
+    override suspend fun getRequestFriendList(): Flow<DataState<List<User>>> {
+        return flow {
+            try {
+                emit(DataState.Loading)
+                val user =
+                    firestore.collection("users").document(accountService.currentUserId).get()
+                        .await().toObject(User::class.java)
+                if (user != null) {
+                    val friendRequests = user.friendRequests
+                    val friendRequestsDeferreds = friendRequests.map { friendId ->
+                        CoroutineScope(Dispatchers.IO).async {
+                            firestore.collection("users").document(friendId).get().await()
+                                .toObject(User::class.java)
+                        }
+                    }
+                    val friends = friendRequestsDeferreds.awaitAll().filterNotNull()
+                    emit(DataState.Success(friends))
+                } else {
+                    emit(DataState.Error(Exception("Không tìm thấy người dùng")))
+
+                }
+            } catch (e: Exception) {
+                emit(DataState.Error(e))
+            }
+        }
+    }
 }

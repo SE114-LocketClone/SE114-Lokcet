@@ -179,3 +179,9 @@ k
 ;app/src/main/java/com/grouptwo/lokcet/utils/ImageManager.kt,b/8/b83c37799dda89b15e4a8d66b776566cc32f26c4
 o
 ?app/src/main/java/com/grouptwo/lokcet/view/home/FriendButton.kt,2/5/2554daa7895f960923105ce6a2798d9cb72dcc25
+q
+Aapp/src/main/java/com/grouptwo/lokcet/view/friend/FriendScreen.kt,9/f/9f39f1ff021f8f46a09955bf33db274bfa5f32fb
+t
+Dapp/src/main/java/com/grouptwo/lokcet/view/friend/FriendViewModel.kt,1/7/176ec51e7a2b179ef29f7517ee65515e8df82a94
+r
+Bapp/src/main/java/com/grouptwo/lokcet/view/friend/FriendUiState.kt,9/0/909560c4a3e39e0f85d7b85a40e7c5a9e76f25d8
