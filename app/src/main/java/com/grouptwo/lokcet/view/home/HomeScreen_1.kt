@@ -54,24 +54,25 @@ fun HomeScreen1(
     viewModel: HomeViewModel = hiltViewModel(), navigate: (String) -> Unit
 ) {
     val activity = LocalContext.current as Activity
-    val cropResultLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == Activity.RESULT_OK && result.data != null) {
-            val uri = UCrop.getOutput(result.data!!)
-            // Handle the cropped image URI
-            viewModel.onImagePicked(uri, navigate)
+    val cropResultLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK && result.data != null) {
+                val uri = UCrop.getOutput(result.data!!)
+                // Handle the cropped image URI
+                viewModel.onImagePicked(uri, navigate)
+            }
         }
-    }
     val uiState by viewModel.uiState.collectAsState()
-    val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.PickVisualMedia()) {
+    val launcher =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.PickVisualMedia()) {
 
-        if (it != null) {
-            viewModel.startCropping(activity, it, cropResultLauncher)
+            if (it != null) {
+                viewModel.startCropping(activity, it, cropResultLauncher)
+            }
         }
-    }
     // Display the home scree
     Box(
-        modifier = Modifier
-            .fillMaxSize()
+        modifier = Modifier.fillMaxSize()
     ) {
         Column(
             modifier = Modifier
@@ -98,7 +99,9 @@ fun HomeScreen1(
                             // Navigate to the user profile screen
                         })
                 Button(
-                    onClick = { /*TODO*/ },
+                    onClick = {
+                        viewModel.onFriendButtonClick(navigate)
+                    },
                     modifier = Modifier.wrapContentSize(),
                     colors = ButtonDefaults.buttonColors(Color(0xFF272626)),
                     shape = RoundedCornerShape(50.dp)

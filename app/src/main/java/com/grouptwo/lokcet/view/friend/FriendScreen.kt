@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -26,8 +25,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -53,20 +50,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.grouptwo.lokcet.R
+import com.grouptwo.lokcet.data.model.User
 import com.grouptwo.lokcet.ui.component.global.composable.BasicIconButton
 import com.grouptwo.lokcet.ui.component.global.composable.BasicShareButton
 import com.grouptwo.lokcet.ui.component.global.ime.rememberImeState
-import com.grouptwo.lokcet.ui.theme.BlackSecondary
 import com.grouptwo.lokcet.ui.theme.YellowPrimary
 import com.grouptwo.lokcet.ui.theme.fontFamily
 import com.grouptwo.lokcet.utils.DataState
-import com.grouptwo.lokcet.view.add_friend.FriendItem
 import com.grouptwo.lokcet.view.error.ErrorScreen
 
 @Composable
 fun FriendScreen(
-    viewModel: FriendViewModel = hiltViewModel(),
-    clearAndNavigate: (String) -> Unit
+    viewModel: FriendViewModel = hiltViewModel(), clearAndNavigate: (String) -> Unit
 ) {
     val scrollState = rememberScrollState()
     val uiState by viewModel.uiState.collectAsState()
@@ -112,20 +107,20 @@ fun FriendScreen(
                     verticalArrangement = Arrangement.SpaceBetween,
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    BasicIconButton(
-                        drawableResource = R.drawable.arrow_left,
-                        modifier = Modifier
-                            .size(40.dp)
-                            .align(Alignment.Start),
-                        action = { viewModel.onBackClick(clearAndNavigate) },
-                        description = "Back icon",
-                        colors = Color(0xFF948F8F),
-                        tint = Color.White
-                    )
                     Column(
                         verticalArrangement = Arrangement.Top,
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
+                        BasicIconButton(
+                            drawableResource = R.drawable.arrow_left,
+                            modifier = Modifier
+                                .size(40.dp)
+                                .align(Alignment.Start),
+                            action = { viewModel.onBackClick(clearAndNavigate) },
+                            description = "Back icon",
+                            colors = Color(0xFF948F8F),
+                            tint = Color.White
+                        )
                         Text(
                             text = "Kết bạn mới", style = TextStyle(
                                 fontSize = 24.sp,
@@ -193,8 +188,7 @@ fun FriendScreen(
                             }),
                             trailingIcon = {
                                 if (isKeyboardVisible) {
-                                    Image(
-                                        Icons.Filled.Clear,
+                                    Image(Icons.Filled.Clear,
                                         contentDescription = "X Icon",
                                         modifier = Modifier
                                             .size(36.dp)
@@ -283,93 +277,216 @@ fun FriendScreen(
                             }
                         }
                         Spacer(modifier = Modifier.height(16.dp))
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.Start,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.icon_people),
-                                contentDescription = "People Icon",
-                                modifier = Modifier.size(25.dp)
-                            )
-                            Spacer(modifier = Modifier.width(10.dp))
-                            Text(
-                                text = " Bạn bè của bạn", style = TextStyle(
-                                    fontSize = 20.sp,
-                                    fontFamily = fontFamily,
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color(0xFF959292),
+                        if (uiState.friendList is DataState.Success && (uiState.friendList as DataState.Success<List<User>>).data.isNotEmpty()) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.Start,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.icon_people),
+                                    contentDescription = "People Icon",
+                                    modifier = Modifier.size(25.dp)
                                 )
-                            )
-                        }
-                        Column(
-                            // Replace LazyColumn with Column
-                            modifier = Modifier.fillMaxWidth(), // Change to fillMaxWidth
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Top,
-                        ) {
-                            when (val data = uiState.filteredSuggestFriendList) {
-                                is DataState.Error -> TODO()
-                                DataState.Loading -> TODO()
-                                is DataState.Success -> {
-                                    data.data.forEach { user ->
-                                        FriendItem(
-                                            user = user,
-                                            isAddingFriend = uiState.isAddingFriend[data.data.indexOf(
-                                                user
-                                            )],
-                                            action = {
-                                                viewModel.onAddFriendClick(
+                                Spacer(modifier = Modifier.width(10.dp))
+                                Text(
+                                    text = " Bạn bè của bạn", style = TextStyle(
+                                        fontSize = 20.sp,
+                                        fontFamily = fontFamily,
+                                        fontWeight = FontWeight.Bold,
+                                        color = Color(0xFF959292),
+                                    )
+                                )
+                            }
+                            Column(
+                                // Replace LazyColumn with Column
+                                modifier = Modifier.fillMaxWidth(), // Change to fillMaxWidth
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Top,
+                            ) {
+                                when (val data = uiState.friendList) {
+                                    is DataState.Error -> TODO()
+                                    DataState.Loading -> TODO()
+                                    is DataState.Success -> {
+                                        data.data.forEach { user ->
+                                            FriendItem(
+                                                user = user,
+                                                action = {
+                                                    viewModel.onRemoveFriend(it)
+                                                },
+                                                isRemovingFriend = uiState.isRemovingFriend[data.data.indexOf(
                                                     user
-                                                )
-                                            },
-                                            hasAddFriendSuccess = uiState.hasAddFriendSuccess[data.data.indexOf(
-                                                user
-                                            )]
-                                        )
-                                    }
+                                                )],
+                                                hasRemoveFriendSuccess = uiState.hasRemoveFriendSuccess[data.data.indexOf(
+                                                    user
+                                                )]
+                                            )
+                                        }
 
+                                    }
                                 }
                             }
                         }
-                    }
-                    // Next Button
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Column {
-                        val buttonColor = ButtonDefaults.buttonColors(
-                            YellowPrimary
-                        )
-                        Button(
-                            onClick = {
-                                viewModel.onContinueClick(clearAndNavigate)
-                            },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .wrapContentHeight(),
-                            colors = buttonColor
-                        ) {
+                        // Add a spacer between the friend list and the requested friend list
+                        Spacer(modifier = Modifier.height(16.dp))
+                        if (uiState.requestedFriendList is DataState.Success && (uiState.requestedFriendList as DataState.Success<List<User>>).data.isNotEmpty()) {
                             Row(
-                                horizontalArrangement = Arrangement.Center,
-                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.Start,
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
-
-                                Text(
-                                    text = "Tiếp tục", style = TextStyle(
-                                        fontSize = 24.sp,
-                                        fontFamily = fontFamily,
-                                        color = BlackSecondary,
-                                        fontWeight = FontWeight.Bold
-                                    ), modifier = Modifier.align(Alignment.CenterVertically)
-                                )
-                                Spacer(modifier = Modifier.width(8.dp))
                                 Image(
-                                    painter = painterResource(id = R.drawable.arrow_right),
-                                    contentDescription = "image description",
-                                    modifier = Modifier
-                                        .size(24.dp)
-                                        .align(Alignment.CenterVertically)
+                                    painter = painterResource(id = R.drawable.icon_people),
+                                    contentDescription = "People Icon",
+                                    modifier = Modifier.size(25.dp)
                                 )
+                                Spacer(modifier = Modifier.width(10.dp))
+                                Text(
+                                    text = "Yêu cầu kết bạn", style = TextStyle(
+                                        fontSize = 20.sp,
+                                        fontFamily = fontFamily,
+                                        fontWeight = FontWeight.Bold,
+                                        color = Color(0xFF959292),
+                                    )
+                                )
+                            }
+                            Column(
+                                // Replace LazyColumn with Column
+                                modifier = Modifier.fillMaxWidth(), // Change to fillMaxWidth
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Top,
+                            ) {
+                                when (val data = uiState.requestedFriendList) {
+                                    is DataState.Error -> TODO()
+                                    DataState.Loading -> TODO()
+                                    is DataState.Success -> {
+                                        data.data.forEach { user ->
+                                            RequestedFriendItem(user = user,
+                                                isAcceptingRequestFriend = uiState.isAcceptingRequestFriend[data.data.indexOf(
+                                                    user
+                                                )],
+                                                hasAcceptRequestFriendSuccess = uiState.hasAcceptRequestFriendSuccess[data.data.indexOf(
+                                                    user
+                                                )],
+                                                isRemovingRequestedFriend = uiState.isRemovingRequestedFriend[data.data.indexOf(
+                                                    user
+                                                )],
+                                                hasRemoveRequestedFriendSuccess = uiState.hasRemoveRequestedFriendSuccess[data.data.indexOf(
+                                                    user
+                                                )],
+                                                onAcceptFriend = {
+                                                    viewModel.onAcceptFriend(it)
+                                                },
+                                                onRemoveFriend = {
+                                                    viewModel.onRejectFriend(it)
+                                                }
+
+                                            )
+                                        }
+
+                                    }
+                                }
+                            }
+                        }
+                        // Add a spacer between the requested friend list and the waited friend list
+                        Spacer(modifier = Modifier.height(16.dp))
+                        if (uiState.waitedFriendList is DataState.Success && (uiState.waitedFriendList as DataState.Success<List<User>>).data.isNotEmpty()) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.Start,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.icon_people),
+                                    contentDescription = "People Icon",
+                                    modifier = Modifier.size(25.dp)
+                                )
+                                Spacer(modifier = Modifier.width(10.dp))
+                                Text(
+                                    text = "Đang chờ xác nhận", style = TextStyle(
+                                        fontSize = 20.sp,
+                                        fontFamily = fontFamily,
+                                        fontWeight = FontWeight.Bold,
+                                        color = Color(0xFF959292),
+                                    )
+                                )
+                            }
+                            Column(
+                                // Replace LazyColumn with Column
+                                modifier = Modifier.fillMaxWidth(), // Change to fillMaxWidth
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Top,
+                            ) {
+                                when (val data = uiState.waitedFriendList) {
+                                    is DataState.Error -> TODO()
+                                    DataState.Loading -> TODO()
+                                    is DataState.Success -> {
+                                        data.data.forEach { user ->
+                                            WaitedFriendItem(user = user,
+                                                isRemovingWaitedFriend = uiState.isRemovingWaitedFriend[data.data.indexOf(
+                                                    user
+                                                )],
+                                                hasRemoveWaitedFriendSuccess = uiState.hasRemoveWaitedFriendSuccess[data.data.indexOf(
+                                                    user
+                                                )],
+                                                action = {
+                                                    viewModel.onRemoveFromWaitList(it)
+                                                })
+                                        }
+
+                                    }
+                                }
+                            }
+                        }
+                        // Add a spacer at the end of the list for suggested friends
+                        Spacer(modifier = Modifier.height(16.dp))
+                        if (uiState.filteredSuggestFriendList is DataState.Success && (uiState.filteredSuggestFriendList as DataState.Success<List<User>>).data.isNotEmpty()) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.Start,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.icon_people),
+                                    contentDescription = "People Icon",
+                                    modifier = Modifier.size(25.dp)
+                                )
+                                Spacer(modifier = Modifier.width(10.dp))
+                                Text(
+                                    text = "Gợi ý kết bạn", style = TextStyle(
+                                        fontSize = 20.sp,
+                                        fontFamily = fontFamily,
+                                        fontWeight = FontWeight.Bold,
+                                        color = Color(0xFF959292),
+                                    )
+                                )
+                            }
+                            Column(
+                                // Replace LazyColumn with Column
+                                modifier = Modifier.fillMaxWidth(), // Change to fillMaxWidth
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Top,
+                            ) {
+                                when (val data = uiState.filteredSuggestFriendList) {
+                                    is DataState.Error -> TODO()
+                                    DataState.Loading -> TODO()
+                                    is DataState.Success -> {
+                                        data.data.forEach { user ->
+                                            SuggestedFriendItem(
+                                                user = user,
+                                                action = {
+                                                    viewModel.onAddFriendClick(it)
+                                                },
+                                                isAddingFriend = uiState.isAddingFriend[data.data.indexOf(
+                                                    user
+                                                )],
+                                                hasAddFriendSuccess = uiState.hasAddFriendSuccess[data.data.indexOf(
+                                                    user
+                                                )]
+                                            )
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
@@ -377,8 +494,7 @@ fun FriendScreen(
             }
         }
 
-        state.any { it is DataState.Error } -> ErrorScreen(
-            errorMessage = "Lỗi xảy ra khi lấy danh sách bạn bè",
+        state.any { it is DataState.Error } -> ErrorScreen(errorMessage = "Lỗi xảy ra khi lấy danh sách bạn bè",
             onRetry = {
                 viewModel.onRetryAll()
             })

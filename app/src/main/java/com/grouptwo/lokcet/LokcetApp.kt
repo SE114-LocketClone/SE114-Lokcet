@@ -33,6 +33,7 @@ import com.grouptwo.lokcet.ui.theme.YellowPrimary
 import com.grouptwo.lokcet.view.add_friend.AddFriendScreen
 import com.grouptwo.lokcet.view.add_widget.AddWidgetScreen
 import com.grouptwo.lokcet.view.feed.FeedScreen
+import com.grouptwo.lokcet.view.friend.FriendScreen
 import com.grouptwo.lokcet.view.home.HomeScreen1
 import com.grouptwo.lokcet.view.home.HomeScreen2
 import com.grouptwo.lokcet.view.home.HomeViewModel
@@ -167,8 +168,7 @@ fun NavGraphBuilder.LokcetGraph(appState: LokcetAppState) {
             appState.navController.getBackStackEntry(Screen.LoginScreen_1.route)
         }
         val vm = hiltViewModel<LoginViewModel>(parentEntry)
-        LoginScreen2(
-            popUp = { appState.popUp() },
+        LoginScreen2(popUp = { appState.popUp() },
             clearAndNavigate = { route -> appState.clearAndNavigate(route) },
             viewModel = vm
         )
@@ -201,6 +201,12 @@ fun NavGraphBuilder.LokcetGraph(appState: LokcetAppState) {
     // Feed screen
     composable(Screen.FeedScreen.route) {
         FeedScreen()
+    }
+    // Friend screen
+    composable(Screen.FriendScreen.route) {
+        FriendScreen(clearAndNavigate = { route ->
+            appState.clearAndNavigate(route)
+        })
     }
 }
 

@@ -292,6 +292,11 @@ class HomeViewModel @Inject constructor(
         navigate(Screen.FeedScreen.route)
     }
 
+    fun onFriendButtonClick(navigate: (String) -> Unit) {
+        // Navigate to the FriendScreen
+        navigate(Screen.FriendScreen.route)
+    }
+
     fun startCropping(
         activity: Activity,
         sourceUri: Uri,

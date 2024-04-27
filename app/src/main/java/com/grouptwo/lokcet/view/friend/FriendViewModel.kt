@@ -58,7 +58,7 @@ class FriendViewModel @Inject constructor(
                 if (_uiState.value.isNetworkAvailable.not()) {
                     throw Exception("Không có kết nối mạng")
                 }
-                userService.getFriendList().collect { dataState ->
+                userService.getSuggestFriendList().collect { dataState ->
                     when (dataState) {
                         is DataState.Loading -> {
                             _uiState.update {
@@ -70,19 +70,11 @@ class FriendViewModel @Inject constructor(
                         }
 
                         is DataState.Success -> {
-                            accountService.currentUser.collect { user ->
-                                val friendWaitList = user.friendWaitList
-                                val updatedHasAddFriendSuccess = dataState.data.map { friend ->
-                                    friendWaitList.contains(friend.id)
-                                }
-                                _uiState.update {
-                                    it.copy(
-                                        suggestFriendList = DataState.Success(dataState.data),
-                                        filteredSuggestFriendList = DataState.Success(dataState.data),
-                                        isAddingFriend = List(dataState.data.size) { false },
-                                        hasAddFriendSuccess = updatedHasAddFriendSuccess
-                                    )
-                                }
+                            _uiState.update {
+                                it.copy(suggestFriendList = DataState.Success(dataState.data),
+                                    filteredSuggestFriendList = DataState.Success(dataState.data),
+                                    isAddingFriend = List(dataState.data.size) { false },
+                                    hasAddFriendSuccess = List(dataState.data.size) { false })
                             }
                         }
 
@@ -335,7 +327,7 @@ class FriendViewModel @Inject constructor(
                                 if (index != -1) {
                                     _uiState.update {
                                         val updatedIsAddingFriend =
-                                            it.isAddingFriend.toMutableList()
+                                            _uiState.value.isAddingFriend.toMutableList()
                                         updatedIsAddingFriend[index] = true
                                         it.copy(isAddingFriend = updatedIsAddingFriend)
                                     }
@@ -350,31 +342,40 @@ class FriendViewModel @Inject constructor(
                                 if (index != -1) {
                                     _uiState.update {
                                         val updatedIsAddingFriend =
-                                            it.isAddingFriend.toMutableList()
+                                            _uiState.value.isAddingFriend.toMutableList()
                                         val updatedHasAddFriendSuccess =
-                                            it.hasAddFriendSuccess.toMutableList()
+                                            _uiState.value.hasAddFriendSuccess.toMutableList()
                                         val updatedIsRemoveWaitedFriend =
-                                            it.isRemovingWaitedFriend.toMutableList()
+                                            _uiState.value.isRemovingWaitedFriend.toMutableList()
                                         val updatedHasRemoveWaitedFriendSuccess =
-                                            it.hasRemoveWaitedFriendSuccess.toMutableList()
+                                            _uiState.value.hasRemoveWaitedFriendSuccess.toMutableList()
                                         // Remove friend from the suggest friend list and add to the wait list
                                         var waitList = _uiState.value.waitedFriendList
                                         if (waitList is DataState.Success) {
-                                            waitList =
-                                                DataState.Success(waitList.data.toMutableList()
-                                                    .apply { add(friend) })
+                                            waitList = DataState.Success(
+                                                waitList.data.toMutableList().apply { add(friend) })
                                             updatedHasRemoveWaitedFriendSuccess.add(false)
                                             updatedIsRemoveWaitedFriend.add(false)
                                         }
-                                        updatedIsAddingFriend[index] = false
-                                        updatedHasAddFriendSuccess[index] = true
+                                        // Remove friend from the suggest friend list
+                                        val updatedSuggestFriendList =
+                                            currentList.data.toMutableList()
+                                        updatedSuggestFriendList.removeAt(index)
+                                        updatedIsAddingFriend.removeAt(index)
+                                        updatedHasAddFriendSuccess.removeAt(index)
 
                                         it.copy(
                                             isAddingFriend = updatedIsAddingFriend,
                                             hasAddFriendSuccess = updatedHasAddFriendSuccess,
                                             waitedFriendList = waitList,
                                             isRemovingWaitedFriend = updatedIsRemoveWaitedFriend,
-                                            hasRemoveWaitedFriendSuccess = updatedHasRemoveWaitedFriendSuccess
+                                            hasRemoveWaitedFriendSuccess = updatedHasRemoveWaitedFriendSuccess,
+                                            suggestFriendList = DataState.Success(
+                                                updatedSuggestFriendList
+                                            ),
+                                            filteredSuggestFriendList = DataState.Success(
+                                                updatedSuggestFriendList
+                                            )
                                         )
                                     }
                                 }
@@ -394,8 +395,10 @@ class FriendViewModel @Inject constructor(
                     val index = currentList.data.indexOf(friend)
                     if (index != -1) {
                         _uiState.update {
-                            val updatedIsAddingFriend = it.isAddingFriend.toMutableList()
-                            val updatedHasAddFriendSuccess = it.hasAddFriendSuccess.toMutableList()
+                            val updatedIsAddingFriend =
+                                _uiState.value.isAddingFriend.toMutableList()
+                            val updatedHasAddFriendSuccess =
+                                _uiState.value.hasAddFriendSuccess.toMutableList()
                             updatedIsAddingFriend[index] = false
                             updatedHasAddFriendSuccess[index] = false
                             it.copy(
@@ -427,7 +430,7 @@ class FriendViewModel @Inject constructor(
                                 if (index != -1) {
                                     _uiState.update {
                                         val updatedIsRemovingFriend =
-                                            it.isRemovingFriend.toMutableList()
+                                            _uiState.value.isRemovingFriend.toMutableList()
                                         updatedIsRemovingFriend[index] = true
                                         it.copy(isRemovingFriend = updatedIsRemovingFriend)
                                     }
@@ -442,18 +445,45 @@ class FriendViewModel @Inject constructor(
                                 if (index != -1) {
                                     _uiState.update {
                                         val updatedIsRemovingFriend =
-                                            it.isRemovingFriend.toMutableList()
+                                            _uiState.value.isRemovingFriend.toMutableList()
                                         val updatedHasRemoveFriendSuccess =
-                                            it.hasRemoveFriendSuccess.toMutableList()
+                                            _uiState.value.hasRemoveFriendSuccess.toMutableList()
                                         val updatedFriendList = currentList.data.toMutableList()
                                         updatedIsRemovingFriend.removeAt(index)
                                         updatedHasRemoveFriendSuccess.removeAt(index)
                                         updatedFriendList.removeAt(index)
-                                        it.copy(
-                                            isRemovingFriend = updatedIsRemovingFriend,
-                                            hasRemoveFriendSuccess = updatedHasRemoveFriendSuccess,
-                                            friendList = DataState.Success(updatedFriendList)
-                                        )
+                                        val suggestedFriendList = _uiState.value.suggestFriendList
+                                        val updatedIsAddingFriend =
+                                            _uiState.value.isAddingFriend.toMutableList()
+                                        val updatedHasAddFriendSuccess =
+                                            _uiState.value.hasAddFriendSuccess.toMutableList()
+                                        if (suggestedFriendList is DataState.Success) {
+                                            val newList =
+                                                suggestedFriendList.data.toMutableList().apply {
+                                                    add(friend)
+                                                }
+                                            updatedIsAddingFriend.add(false)
+                                            updatedHasAddFriendSuccess.add(false)
+                                            it.copy(
+                                                isRemovingFriend = updatedIsRemovingFriend,
+                                                hasRemoveFriendSuccess = updatedHasRemoveFriendSuccess,
+                                                suggestFriendList = DataState.Success(
+                                                    newList
+                                                ),
+                                                filteredSuggestFriendList = DataState.Success(
+                                                    newList
+                                                ),
+                                                isAddingFriend = updatedIsAddingFriend,
+                                                hasAddFriendSuccess = updatedHasAddFriendSuccess,
+                                                friendList = DataState.Success(updatedFriendList)
+                                            )
+                                        } else {
+                                            it.copy(
+                                                isRemovingFriend = updatedIsRemovingFriend,
+                                                hasRemoveFriendSuccess = updatedHasRemoveFriendSuccess,
+                                                friendList = DataState.Success(updatedFriendList)
+                                            )
+                                        }
                                     }
                                 }
                             }
@@ -472,9 +502,10 @@ class FriendViewModel @Inject constructor(
                     val index = currentList.data.indexOf(friend)
                     if (index != -1) {
                         _uiState.update {
-                            val updatedIsRemovingFriend = it.isRemovingFriend.toMutableList()
+                            val updatedIsRemovingFriend =
+                                _uiState.value.isRemovingFriend.toMutableList()
                             val updatedHasRemoveFriendSuccess =
-                                it.hasRemoveFriendSuccess.toMutableList()
+                                _uiState.value.hasRemoveFriendSuccess.toMutableList()
                             updatedIsRemovingFriend[index] = false
                             updatedHasRemoveFriendSuccess[index] = false
                             it.copy(
@@ -506,7 +537,7 @@ class FriendViewModel @Inject constructor(
                                 if (index != -1) {
                                     _uiState.update {
                                         val updatedIsAcceptingRequestFriend =
-                                            it.isAcceptingRequestFriend.toMutableList()
+                                            _uiState.value.isAcceptingRequestFriend.toMutableList()
                                         updatedIsAcceptingRequestFriend[index] = true
                                         it.copy(isAcceptingRequestFriend = updatedIsAcceptingRequestFriend)
                                     }
@@ -521,13 +552,13 @@ class FriendViewModel @Inject constructor(
                                 if (index != -1) {
                                     _uiState.update {
                                         val updatedIsAcceptingRequestFriend =
-                                            it.isAcceptingRequestFriend.toMutableList()
+                                            _uiState.value.isAcceptingRequestFriend.toMutableList()
                                         val updatedHasAcceptRequestFriendSuccess =
-                                            it.hasAcceptRequestFriendSuccess.toMutableList()
+                                            _uiState.value.hasAcceptRequestFriendSuccess.toMutableList()
                                         val updatedIsRemovingRequestedFriend =
-                                            it.isRemovingRequestedFriend.toMutableList()
+                                            _uiState.value.isRemovingRequestedFriend.toMutableList()
                                         val updatedHasRemoveRequestedFriendSuccess =
-                                            it.hasRemoveRequestedFriendSuccess.toMutableList()
+                                            _uiState.value.hasRemoveRequestedFriendSuccess.toMutableList()
                                         val updatedRequestFriendList =
                                             currentList.data.toMutableList()
 
@@ -538,15 +569,16 @@ class FriendViewModel @Inject constructor(
                                         updatedIsRemovingRequestedFriend.removeAt(index)
                                         updatedHasRemoveRequestedFriendSuccess.removeAt(index)
                                         // Add friend to the friend list
-                                        val updatedFriendList = it.friendList
+                                        val updatedFriendList = _uiState.value.friendList
                                         val updatedRemoveFriendList =
-                                            it.isRemovingFriend.toMutableList()
+                                            _uiState.value.isRemovingFriend.toMutableList()
                                         val updatedHasRemoveFriendSuccess =
-                                            it.hasRemoveFriendSuccess.toMutableList()
+                                            _uiState.value.hasRemoveFriendSuccess.toMutableList()
                                         if (updatedFriendList is DataState.Success) {
-                                            updatedFriendList.data.toMutableList().apply {
-                                                add(friend)
-                                            }
+                                            val newList =
+                                                updatedFriendList.data.toMutableList().apply {
+                                                    add(friend)
+                                                }
                                             updatedRemoveFriendList.add(false)
                                             updatedHasRemoveFriendSuccess.add(false)
                                             it.copy(
@@ -554,7 +586,7 @@ class FriendViewModel @Inject constructor(
                                                 hasAcceptRequestFriendSuccess = updatedHasAcceptRequestFriendSuccess,
                                                 isRemovingRequestedFriend = updatedIsRemovingRequestedFriend,
                                                 hasRemoveRequestedFriendSuccess = updatedHasRemoveRequestedFriendSuccess,
-                                                friendList = DataState.Success(updatedFriendList.data),
+                                                friendList = DataState.Success(newList),
                                                 isRemovingFriend = updatedRemoveFriendList,
                                                 hasRemoveFriendSuccess = updatedHasRemoveFriendSuccess,
                                                 requestedFriendList = DataState.Success(
@@ -591,9 +623,9 @@ class FriendViewModel @Inject constructor(
                     if (index != -1) {
                         _uiState.update {
                             val updatedIsAcceptingRequestFriend =
-                                it.isAcceptingRequestFriend.toMutableList()
+                                _uiState.value.isAcceptingRequestFriend.toMutableList()
                             val updatedHasAcceptRequestFriendSuccess =
-                                it.hasAcceptRequestFriendSuccess.toMutableList()
+                                _uiState.value.hasAcceptRequestFriendSuccess.toMutableList()
                             updatedIsAcceptingRequestFriend[index] = false
                             updatedHasAcceptRequestFriendSuccess[index] = false
                             it.copy(
@@ -624,7 +656,7 @@ class FriendViewModel @Inject constructor(
                                 if (index != -1) {
                                     _uiState.update {
                                         val updatedIsRemovingRequestedFriend =
-                                            it.isRemovingRequestedFriend.toMutableList()
+                                            _uiState.value.isRemovingRequestedFriend.toMutableList()
                                         updatedIsRemovingRequestedFriend[index] = true
                                         it.copy(isRemovingRequestedFriend = updatedIsRemovingRequestedFriend)
                                     }
@@ -639,31 +671,64 @@ class FriendViewModel @Inject constructor(
                                 if (index != -1) {
                                     _uiState.update {
                                         val updatedIsAcceptingRequestFriend =
-                                            it.isAcceptingRequestFriend.toMutableList()
+                                            _uiState.value.isAcceptingRequestFriend.toMutableList()
                                         val updatedHasAcceptRequestFriendSuccess =
-                                            it.hasAcceptRequestFriendSuccess.toMutableList()
+                                            _uiState.value.hasAcceptRequestFriendSuccess.toMutableList()
                                         val updatedIsRemovingRequestedFriend =
-                                            it.isRemovingRequestedFriend.toMutableList()
+                                            _uiState.value.isRemovingRequestedFriend.toMutableList()
                                         val updatedHasRemoveRequestedFriendSuccess =
-                                            it.hasRemoveRequestedFriendSuccess.toMutableList()
+                                            _uiState.value.hasRemoveRequestedFriendSuccess.toMutableList()
                                         val updatedRequestFriendList =
                                             currentList.data.toMutableList()
-
-                                        // Remove friend from the requested friend list
-                                        updatedRequestFriendList.removeAt(index)
-                                        updatedIsAcceptingRequestFriend.removeAt(index)
-                                        updatedHasAcceptRequestFriendSuccess.removeAt(index)
-                                        updatedIsRemovingRequestedFriend.removeAt(index)
-                                        updatedHasRemoveRequestedFriendSuccess.removeAt(index)
-                                        it.copy(
-                                            isAcceptingRequestFriend = updatedIsAcceptingRequestFriend,
-                                            hasAcceptRequestFriendSuccess = updatedHasAcceptRequestFriendSuccess,
-                                            isRemovingRequestedFriend = updatedIsRemovingRequestedFriend,
-                                            hasRemoveRequestedFriendSuccess = updatedHasRemoveRequestedFriendSuccess,
-                                            requestedFriendList = DataState.Success(
-                                                updatedRequestFriendList
+                                        // Add to the suggest friend list
+                                        val updatedSuggestFriendList =
+                                            _uiState.value.suggestFriendList
+                                        val updatedIsAddingFriend =
+                                            _uiState.value.isAddingFriend.toMutableList()
+                                        val updatedHasAddFriendSuccess =
+                                            _uiState.value.hasAddFriendSuccess.toMutableList()
+                                        if (updatedSuggestFriendList is DataState.Success) {
+                                            val newList =
+                                                updatedSuggestFriendList.data.toMutableList()
+                                                    .apply {
+                                                        add(friend)
+                                                    }
+                                            updatedIsAddingFriend.add(false)
+                                            updatedHasAddFriendSuccess.add(false)
+                                            // Remove friend from the requested friend list
+                                            updatedRequestFriendList.removeAt(index)
+                                            updatedIsAcceptingRequestFriend.removeAt(index)
+                                            updatedHasAcceptRequestFriendSuccess.removeAt(index)
+                                            updatedIsRemovingRequestedFriend.removeAt(index)
+                                            updatedHasRemoveRequestedFriendSuccess.removeAt(index)
+                                            it.copy(
+                                                isAcceptingRequestFriend = updatedIsAcceptingRequestFriend,
+                                                hasAcceptRequestFriendSuccess = updatedHasAcceptRequestFriendSuccess,
+                                                isRemovingRequestedFriend = updatedIsRemovingRequestedFriend,
+                                                hasRemoveRequestedFriendSuccess = updatedHasRemoveRequestedFriendSuccess,
+                                                suggestFriendList = DataState.Success(
+                                                    newList
+                                                ),
+                                                filteredSuggestFriendList = DataState.Success(
+                                                    newList
+                                                ),
+                                                isAddingFriend = updatedIsAddingFriend,
+                                                hasAddFriendSuccess = updatedHasAddFriendSuccess,
+                                                requestedFriendList = DataState.Success(
+                                                    updatedRequestFriendList
+                                                )
                                             )
-                                        )
+                                        } else {
+                                            it.copy(
+                                                isAcceptingRequestFriend = updatedIsAcceptingRequestFriend,
+                                                hasAcceptRequestFriendSuccess = updatedHasAcceptRequestFriendSuccess,
+                                                isRemovingRequestedFriend = updatedIsRemovingRequestedFriend,
+                                                hasRemoveRequestedFriendSuccess = updatedHasRemoveRequestedFriendSuccess,
+                                                requestedFriendList = DataState.Success(
+                                                    updatedRequestFriendList
+                                                )
+                                            )
+                                        }
                                     }
                                 }
                             }
@@ -683,9 +748,9 @@ class FriendViewModel @Inject constructor(
                     if (index != -1) {
                         _uiState.update {
                             val updatedIsRemovingRequestedFriend =
-                                it.isRemovingRequestedFriend.toMutableList()
+                                _uiState.value.isRemovingRequestedFriend.toMutableList()
                             val updatedHasRemoveRequestedFriendSuccess =
-                                it.hasRemoveRequestedFriendSuccess.toMutableList()
+                                _uiState.value.hasRemoveRequestedFriendSuccess.toMutableList()
                             updatedIsRemovingRequestedFriend[index] = false
                             updatedHasRemoveRequestedFriendSuccess[index] = false
                             it.copy(
@@ -716,7 +781,7 @@ class FriendViewModel @Inject constructor(
                                 if (index != -1) {
                                     _uiState.update {
                                         val updatedIsRemovingWaitedFriend =
-                                            it.isRemovingWaitedFriend.toMutableList()
+                                            _uiState.value.isRemovingWaitedFriend.toMutableList()
                                         updatedIsRemovingWaitedFriend[index] = true
                                         it.copy(isRemovingWaitedFriend = updatedIsRemovingWaitedFriend)
                                     }
@@ -731,31 +796,36 @@ class FriendViewModel @Inject constructor(
                                 if (index != -1) {
                                     _uiState.update {
                                         val updatedIsRemovingWaitedFriend =
-                                            it.isRemovingWaitedFriend.toMutableList()
+                                            _uiState.value.isRemovingWaitedFriend.toMutableList()
                                         val updatedHasRemoveWaitedFriendSuccess =
-                                            it.hasRemoveWaitedFriendSuccess.toMutableList()
+                                            _uiState.value.hasRemoveWaitedFriendSuccess.toMutableList()
                                         val waitedFriendList = currentList.data.toMutableList()
                                         updatedIsRemovingWaitedFriend.removeAt(index)
                                         updatedHasRemoveWaitedFriendSuccess.removeAt(index)
                                         waitedFriendList.removeAt(index)
-                                        // Add friend to the suggest friend list
-                                        val updatedSuggestFriendList = it.suggestFriendList
+                                        val updatedSuggestFriendList =
+                                            _uiState.value.suggestFriendList
                                         val updatedIsAddingFriend =
-                                            it.isAddingFriend.toMutableList()
+                                            _uiState.value.isAddingFriend.toMutableList()
                                         val updatedHasAddFriendSuccess =
-                                            it.hasAddFriendSuccess.toMutableList()
+                                            _uiState.value.hasAddFriendSuccess.toMutableList()
                                         if (updatedSuggestFriendList is DataState.Success) {
-                                            updatedSuggestFriendList.data.toMutableList().apply {
-                                                add(friend)
-                                            }
+                                            val newList =
+                                                updatedSuggestFriendList.data.toMutableList()
+                                                    .apply {
+                                                        add(friend)
+                                                    }
                                             updatedIsAddingFriend.add(false)
                                             updatedHasAddFriendSuccess.add(false)
                                             it.copy(
                                                 isRemovingWaitedFriend = updatedIsRemovingWaitedFriend,
                                                 hasRemoveWaitedFriendSuccess = updatedHasRemoveWaitedFriendSuccess,
                                                 suggestFriendList = DataState.Success(
-                                                    updatedSuggestFriendList.data
+                                                    newList
                                                 ),
+                                                filteredSuggestFriendList = DataState.Success(
+                                                    newList
+                                                ), // Make sure the filtered list is updated
                                                 isAddingFriend = updatedIsAddingFriend,
                                                 hasAddFriendSuccess = updatedHasAddFriendSuccess,
                                                 waitedFriendList = DataState.Success(
@@ -771,6 +841,7 @@ class FriendViewModel @Inject constructor(
                                                 )
                                             )
                                         }
+
                                     }
                                 }
                             }
@@ -790,9 +861,9 @@ class FriendViewModel @Inject constructor(
                     if (index != -1) {
                         _uiState.update {
                             val updatedIsRemovingWaitedFriend =
-                                it.isRemovingWaitedFriend.toMutableList()
+                                _uiState.value.isRemovingWaitedFriend.toMutableList()
                             val updatedHasRemoveWaitedFriendSuccess =
-                                it.hasRemoveWaitedFriendSuccess.toMutableList()
+                                _uiState.value.hasRemoveWaitedFriendSuccess.toMutableList()
                             updatedIsRemovingWaitedFriend[index] = false
                             updatedHasRemoveWaitedFriendSuccess[index] = false
                             it.copy(

@@ -185,3 +185,11 @@ t
 Dapp/src/main/java/com/grouptwo/lokcet/view/friend/FriendViewModel.kt,1/7/176ec51e7a2b179ef29f7517ee65515e8df82a94
 r
 Bapp/src/main/java/com/grouptwo/lokcet/view/friend/FriendUiState.kt,9/0/909560c4a3e39e0f85d7b85a40e7c5a9e76f25d8
+x
+Happ/src/main/java/com/grouptwo/lokcet/view/friend/SuggestedFriendItem.kt,5/2/52ab9aa94be5fa9f66247c2a9e33326ed04a067a
+u
+Eapp/src/main/java/com/grouptwo/lokcet/view/friend/WaitedFriendItem.kt,7/4/744aa230a752ad0463003e04f422227b7c64b831
+x
+Happ/src/main/java/com/grouptwo/lokcet/view/friend/RequestedFriendItem.kt,4/8/48fdebf6ecd3c2145d9320c89cd032894568e32f
+o
+?app/src/main/java/com/grouptwo/lokcet/view/friend/FriendItem.kt,2/8/28f927341837602cda688e8aca096d31d76e8cab
