@@ -698,7 +698,7 @@ class FriendViewModel @Inject constructor(
             }
         }
     }
-// TODO: Remove friend from the wait list
+
     fun onRemoveFromWaitList(friend: User) {
         launchCatching {
             try {
@@ -734,16 +734,43 @@ class FriendViewModel @Inject constructor(
                                             it.isRemovingWaitedFriend.toMutableList()
                                         val updatedHasRemoveWaitedFriendSuccess =
                                             it.hasRemoveWaitedFriendSuccess.toMutableList()
+                                        val waitedFriendList = currentList.data.toMutableList()
                                         updatedIsRemovingWaitedFriend.removeAt(index)
                                         updatedHasRemoveWaitedFriendSuccess.removeAt(index)
-                                        // Remove friend from the wait list
-                                        val waitList = currentList.data.toMutableList()
-                                        waitList.removeAt(index)
-                                        it.copy(
-                                            isRemovingWaitedFriend = updatedIsRemovingWaitedFriend,
-                                            hasRemoveWaitedFriendSuccess = updatedHasRemoveWaitedFriendSuccess,
-                                            waitedFriendList = DataState.Success(waitList)
-                                        )
+                                        waitedFriendList.removeAt(index)
+                                        // Add friend to the suggest friend list
+                                        val updatedSuggestFriendList = it.suggestFriendList
+                                        val updatedIsAddingFriend =
+                                            it.isAddingFriend.toMutableList()
+                                        val updatedHasAddFriendSuccess =
+                                            it.hasAddFriendSuccess.toMutableList()
+                                        if (updatedSuggestFriendList is DataState.Success) {
+                                            updatedSuggestFriendList.data.toMutableList().apply {
+                                                add(friend)
+                                            }
+                                            updatedIsAddingFriend.add(false)
+                                            updatedHasAddFriendSuccess.add(false)
+                                            it.copy(
+                                                isRemovingWaitedFriend = updatedIsRemovingWaitedFriend,
+                                                hasRemoveWaitedFriendSuccess = updatedHasRemoveWaitedFriendSuccess,
+                                                suggestFriendList = DataState.Success(
+                                                    updatedSuggestFriendList.data
+                                                ),
+                                                isAddingFriend = updatedIsAddingFriend,
+                                                hasAddFriendSuccess = updatedHasAddFriendSuccess,
+                                                waitedFriendList = DataState.Success(
+                                                    waitedFriendList
+                                                )
+                                            )
+                                        } else {
+                                            it.copy(
+                                                isRemovingWaitedFriend = updatedIsRemovingWaitedFriend,
+                                                hasRemoveWaitedFriendSuccess = updatedHasRemoveWaitedFriendSuccess,
+                                                waitedFriendList = DataState.Success(
+                                                    waitedFriendList
+                                                )
+                                            )
+                                        }
                                     }
                                 }
                             }
