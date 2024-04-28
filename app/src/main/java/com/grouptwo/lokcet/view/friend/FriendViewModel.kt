@@ -173,25 +173,12 @@ class FriendViewModel @Inject constructor(
                         }
 
                         is DataState.Success -> {
-                            accountService.currentUser.collect { user ->
-                                val friendRequestList = user.friendRequests
-                                val updatedHasAcceptRequestFriendSuccess =
-                                    dataState.data.map { friend ->
-                                        friendRequestList.contains(friend.id)
-                                    }
-                                val updatedHasRemoveRequestedFriendSuccess =
-                                    dataState.data.map { friend ->
-                                        friendRequestList.contains(friend.id).not()
-                                    }
-                                _uiState.update {
-                                    it.copy(
-                                        requestedFriendList = DataState.Success(dataState.data),
-                                        isAcceptingRequestFriend = List(dataState.data.size) { false },
-                                        hasAcceptRequestFriendSuccess = updatedHasAcceptRequestFriendSuccess,
-                                        isRemovingRequestedFriend = List(dataState.data.size) { false },
-                                        hasRemoveRequestedFriendSuccess = updatedHasRemoveRequestedFriendSuccess
-                                    )
-                                }
+                            _uiState.update {
+                                it.copy(requestedFriendList = DataState.Success(dataState.data),
+                                    isAcceptingRequestFriend = List(dataState.data.size) { false },
+                                    hasAcceptRequestFriendSuccess = List(dataState.data.size) { false },
+                                    isRemovingRequestedFriend = List(dataState.data.size) { false },
+                                    hasRemoveRequestedFriendSuccess = List(dataState.data.size) { false })
                             }
                         }
 
@@ -352,8 +339,9 @@ class FriendViewModel @Inject constructor(
                                         // Remove friend from the suggest friend list and add to the wait list
                                         var waitList = _uiState.value.waitedFriendList
                                         if (waitList is DataState.Success) {
-                                            waitList = DataState.Success(
-                                                waitList.data.toMutableList().apply { add(friend) })
+                                            waitList =
+                                                DataState.Success(waitList.data.toMutableList()
+                                                    .apply { add(friend) })
                                             updatedHasRemoveWaitedFriendSuccess.add(false)
                                             updatedIsRemoveWaitedFriend.add(false)
                                         }

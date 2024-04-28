@@ -14,8 +14,11 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
@@ -26,6 +29,8 @@ class UserServiceImpl @Inject constructor(
     private val locationService: LocationService,
     private val contactService: ContactService
 ) : UserService {
+
+
     override suspend fun getSuggestFriendList(): Flow<DataState<List<User>>> = flow {
         emit(DataState.Loading)
         try {
@@ -309,28 +314,43 @@ class UserServiceImpl @Inject constructor(
     }
 
     override suspend fun getRequestFriendList(): Flow<DataState<List<User>>> {
-        return flow {
+        return callbackFlow {
             try {
-                emit(DataState.Loading)
-                val user =
-                    firestore.collection("users").document(accountService.currentUserId).get()
-                        .await().toObject(User::class.java)
-                if (user != null) {
-                    val friendRequests = user.friendRequests
-                    val friendRequestsDeferreds = friendRequests.map { friendId ->
-                        CoroutineScope(Dispatchers.IO).async {
-                            firestore.collection("users").document(friendId).get().await()
-                                .toObject(User::class.java)
+                trySend(DataState.Loading)
+                val userDocument =
+                    firestore.collection("users").document(accountService.currentUserId)
+                val userListener = userDocument.addSnapshotListener { snapshot, error ->
+                    if (error != null) {
+                        trySend(DataState.Error(error))
+                        return@addSnapshotListener
+                    }
+                    if (snapshot != null && snapshot.exists()) {
+                        val user = snapshot.toObject(User::class.java)
+                        if (user != null) {
+                            val friendRequests = user.friendRequests
+                            CoroutineScope(Dispatchers.IO).launch {
+                                val friends = friendRequests.map { friendId ->
+                                    async {
+                                        firestore.collection("users").document(friendId).get()
+                                            .await().toObject(User::class.java)
+                                    }
+                                }.awaitAll().filterNotNull()
+                                trySend(DataState.Success(friends))
+                            }
+                        } else {
+                            trySend(DataState.Error(Exception("Không tìm thấy người dùng")))
                         }
                     }
-                    val friends = friendRequestsDeferreds.awaitAll().filterNotNull()
-                    emit(DataState.Success(friends))
-                } else {
-                    emit(DataState.Error(Exception("Không tìm thấy người dùng")))
-
                 }
-            } catch (e: Exception) {
-                emit(DataState.Error(e))
+                awaitClose {
+                    // Close channel when the listener is removed
+                    channel.close()
+                    userListener.remove()
+                }
+            } catch (
+                e: Exception
+            ) {
+                trySend(DataState.Error(e))
             }
         }
     }
