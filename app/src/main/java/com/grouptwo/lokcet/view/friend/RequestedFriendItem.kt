@@ -42,127 +42,124 @@ fun RequestedFriendItem(
     onAcceptFriend: (User) -> Unit,
     onRemoveFriend: (User) -> Unit,
     isAcceptingRequestFriend: Boolean,
-    hasAcceptRequestFriendSuccess: Boolean,
     isRemovingRequestedFriend: Boolean,
-    hasRemoveRequestedFriendSuccess: Boolean
 ) {
-    // Only render this item when hasAcceptRequestFriendSuccess and hasRemoveRequestedFriendSuccess are false
-    if (!hasAcceptRequestFriendSuccess && !hasRemoveRequestedFriendSuccess) {
-        // Render the requested friend item
+    // Render the requested friend item
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
         Row(
-            modifier = Modifier.fillMaxWidth() .padding(bottom = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.Start
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Start
-            ) {
-                GlideImage(
-                    imageModel = { user.profilePicture },
-                    imageOptions = ImageOptions(
-                        contentScale = ContentScale.Crop, alignment = Alignment.Center
-                    ),
-                    requestOptions = {
-                        RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL).centerCrop()
-                    },
-                    loading = {
-                        // Show a circular progress indicator when loading.
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(36.dp), color = Color(0xFFE5A500)
-                        )
-                    },
-                    failure = {
-                        // Show a circular progress indicator when loading.
-                        Image(
-                            painter = painterResource(id = R.drawable.icon_friend),
-                            contentDescription = "Friend Icon",
-                            modifier = Modifier
-                                .size(36.dp)
-                                .padding(2.dp)
-                        )
-                    },
-                    modifier = Modifier
-                        .size(38.dp)
-                        .padding(4.dp)
-                        .clip(shape = CircleShape)
-                        .border(
-                            width = 1.dp, color = Color(0xFFE5A500), shape = CircleShape
-                        )
-                )
-                Spacer(modifier = Modifier.width(16.dp))
-                Text(
-                    modifier = Modifier.padding(start = 20.dp),
-                    text = "${user.firstName} ${user.lastName}",
-                    style = TextStyle(
-                        fontSize = 18.sp,
-                        fontFamily = fontFamily,
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFFEDEDED)
+            GlideImage(
+                imageModel = { user.profilePicture },
+                imageOptions = ImageOptions(
+                    contentScale = ContentScale.Crop, alignment = Alignment.Center
+                ),
+                requestOptions = {
+                    RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL).centerCrop()
+                },
+                loading = {
+                    // Show a circular progress indicator when loading.
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(36.dp), color = Color(0xFFE5A500)
                     )
+                },
+                failure = {
+                    // Show a circular progress indicator when loading.
+                    Image(
+                        painter = painterResource(id = R.drawable.icon_friend),
+                        contentDescription = "Friend Icon",
+                        modifier = Modifier
+                            .size(36.dp)
+                            .padding(2.dp)
+                    )
+                },
+                modifier = Modifier
+                    .size(38.dp)
+                    .padding(4.dp)
+                    .clip(shape = CircleShape)
+                    .border(
+                        width = 1.dp, color = Color(0xFFE5A500), shape = CircleShape
+                    )
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+            Text(
+                modifier = Modifier.padding(start = 20.dp),
+                text = "${user.firstName} ${user.lastName}",
+                style = TextStyle(
+                    fontSize = 18.sp,
+                    fontFamily = fontFamily,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFFEDEDED)
                 )
-            }
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.End
+            )
+        }
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.End
+        ) {
+            // Accept friend button
+            Button(
+                modifier = Modifier.padding(8.dp),
+                onClick = {
+                    onAcceptFriend(user)
+                },
+                colors = ButtonDefaults.buttonColors(Color(color = 0xFFE5A500)),
             ) {
-                // Accept friend button
-                Button(
-                    modifier = Modifier.padding(8.dp),
-                    onClick = {
-                        onAcceptFriend(user)
-                    },
-                    colors = ButtonDefaults.buttonColors(Color(color = 0xFFE5A500)),
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
                 ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        if (isAcceptingRequestFriend) {
-                            CircularProgressIndicator(
-                                color = BlackSecondary, modifier = Modifier.size(20.dp)
-                            )
-                        } else {
-                            Image(
-                                painter = painterResource(id = R.drawable.icon_check),
-                                contentDescription = "Checked Icon",
-                                modifier = Modifier.size(24.dp)
-                            )
-                            Spacer(modifier = Modifier.width(4.dp))
-                            Text(
-                                text = "Đồng ý", style = TextStyle(
-                                    fontSize = 16.sp,
-                                    fontFamily = fontFamily,
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color(0xFF000000)
-                                )
-                            )
-                        }
-                    }
-                }
-                Spacer(modifier = Modifier.width(8.dp))
-                // Remove friend request button
-
-                FloatingActionButton(
-                    onClick = {
-                        onRemoveFriend(user)
-                    },
-                    shape = CircleShape,
-                    containerColor = Color(0xFF272626), contentColor = Color.White,
-                ) {
-                    if (isRemovingRequestedFriend) {
+                    if (isAcceptingRequestFriend) {
                         CircularProgressIndicator(
-                            modifier = Modifier.size(38.dp), color = Color.White
+                            color = BlackSecondary, modifier = Modifier.size(20.dp)
                         )
                     } else {
                         Image(
-                            painter = painterResource(id = R.drawable.icon_close),
-                            contentDescription = "Remove",
-                            modifier = Modifier.size(17.dp),
-                            alignment = Alignment.Center,
-                            colorFilter = ColorFilter.tint(Color.White)
+                            painter = painterResource(id = R.drawable.icon_check),
+                            contentDescription = "Checked Icon",
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = "Đồng ý", style = TextStyle(
+                                fontSize = 16.sp,
+                                fontFamily = fontFamily,
+                                fontWeight = FontWeight.Bold,
+                                color = Color(0xFF000000)
+                            )
                         )
                     }
+                }
+            }
+            Spacer(modifier = Modifier.width(8.dp))
+            // Remove friend request button
+
+            FloatingActionButton(
+                onClick = {
+                    onRemoveFriend(user)
+                },
+                shape = CircleShape,
+                containerColor = Color(0xFF272626), contentColor = Color.White,
+            ) {
+                if (isRemovingRequestedFriend) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(38.dp), color = Color.White
+                    )
+                } else {
+                    Image(
+                        painter = painterResource(id = R.drawable.icon_close),
+                        contentDescription = "Remove",
+                        modifier = Modifier.size(17.dp),
+                        alignment = Alignment.Center,
+                        colorFilter = ColorFilter.tint(Color.White)
+                    )
                 }
             }
         }

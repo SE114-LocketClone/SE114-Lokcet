@@ -317,9 +317,6 @@ fun FriendScreen(
                                                 isRemovingFriend = uiState.isRemovingFriend[data.data.indexOf(
                                                     user
                                                 )],
-                                                hasRemoveFriendSuccess = uiState.hasRemoveFriendSuccess[data.data.indexOf(
-                                                    user
-                                                )]
                                             )
                                         }
 
@@ -365,13 +362,7 @@ fun FriendScreen(
                                                 isAcceptingRequestFriend = uiState.isAcceptingRequestFriend[data.data.indexOf(
                                                     user
                                                 )],
-                                                hasAcceptRequestFriendSuccess = uiState.hasAcceptRequestFriendSuccess[data.data.indexOf(
-                                                    user
-                                                )],
                                                 isRemovingRequestedFriend = uiState.isRemovingRequestedFriend[data.data.indexOf(
-                                                    user
-                                                )],
-                                                hasRemoveRequestedFriendSuccess = uiState.hasRemoveRequestedFriendSuccess[data.data.indexOf(
                                                     user
                                                 )],
                                                 onAcceptFriend = {
@@ -426,9 +417,6 @@ fun FriendScreen(
                                                 isRemovingWaitedFriend = uiState.isRemovingWaitedFriend[data.data.indexOf(
                                                     user
                                                 )],
-                                                hasRemoveWaitedFriendSuccess = uiState.hasRemoveWaitedFriendSuccess[data.data.indexOf(
-                                                    user
-                                                )],
                                                 action = {
                                                     viewModel.onRemoveFromWaitList(it)
                                                 })
@@ -480,9 +468,6 @@ fun FriendScreen(
                                                 isAddingFriend = uiState.isAddingFriend[data.data.indexOf(
                                                     user
                                                 )],
-                                                hasAddFriendSuccess = uiState.hasAddFriendSuccess[data.data.indexOf(
-                                                    user
-                                                )]
                                             )
                                         }
                                     }
@@ -494,7 +479,8 @@ fun FriendScreen(
             }
         }
 
-        state.any { it is DataState.Error } -> ErrorScreen(errorMessage = "Lỗi xảy ra khi lấy danh sách bạn bè",
+        state.any { it is DataState.Error } -> ErrorScreen(
+            errorMessage = "Lỗi xảy ra khi lấy danh sách bạn bè",
             onRetry = {
                 viewModel.onRetryAll()
             })

@@ -38,87 +38,83 @@ fun WaitedFriendItem(
     user: User,
     action: (User) -> Unit,
     isRemovingWaitedFriend: Boolean,
-    hasRemoveWaitedFriendSuccess: Boolean,
 ) {
-    // Only render this item when hasRemoveWaitedFriendSuccess is false
-    if (!hasRemoveWaitedFriendSuccess) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.Start
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Start
-            ) {
-                GlideImage(
-                    imageModel = { user.profilePicture },
-                    imageOptions = ImageOptions(
-                        contentScale = ContentScale.Crop, alignment = Alignment.Center
-                    ),
-                    requestOptions = {
-                        RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL).centerCrop()
-                    },
-                    loading = {
-                        // Show a circular progress indicator when loading.
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(36.dp), color = Color(0xFFE5A500)
-                        )
-                    },
-                    failure = {
-                        // Show a circular progress indicator when loading.
-                        Image(
-                            painter = painterResource(id = R.drawable.icon_friend),
-                            contentDescription = "Friend Icon",
-                            modifier = Modifier
-                                .size(36.dp)
-                                .padding(2.dp)
-                        )
-                    },
-                    modifier = Modifier
-                        .size(38.dp)
-                        .padding(4.dp)
-                        .clip(shape = CircleShape)
-                        .border(
-                            width = 1.dp, color = Color(0xFFE5A500), shape = CircleShape
-                        )
-                )
-                Spacer(modifier = Modifier.width(16.dp))
-                Text(
-                    modifier = Modifier.padding(start = 20.dp),
-                    text = "${user.firstName} ${user.lastName}",
-                    style = TextStyle(
-                        fontSize = 18.sp,
-                        fontFamily = fontFamily,
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFFEDEDED)
-                    )
-                )
-            }
-
-            FloatingActionButton(
-                onClick = {
-                    action(user)
+            GlideImage(
+                imageModel = { user.profilePicture },
+                imageOptions = ImageOptions(
+                    contentScale = ContentScale.Crop, alignment = Alignment.Center
+                ),
+                requestOptions = {
+                    RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL).centerCrop()
                 },
-                shape = CircleShape,
-                containerColor = Color(0xFF272626), contentColor = Color.White,
-            ) {
-                if (isRemovingWaitedFriend)
+                loading = {
+                    // Show a circular progress indicator when loading.
                     CircularProgressIndicator(
-                        modifier = Modifier.size(38.dp),
-                        color = Color.White
+                        modifier = Modifier.size(36.dp), color = Color(0xFFE5A500)
                     )
-                else {
+                },
+                failure = {
+                    // Show a circular progress indicator when loading.
                     Image(
-                        painter = painterResource(id = R.drawable.icon_close),
-                        contentDescription = "Remove",
-                        modifier = Modifier.size(17.dp),
-                        alignment = Alignment.Center,
-                        colorFilter = ColorFilter.tint(Color.White)
+                        painter = painterResource(id = R.drawable.icon_friend),
+                        contentDescription = "Friend Icon",
+                        modifier = Modifier
+                            .size(36.dp)
+                            .padding(2.dp)
                     )
-                }
+                },
+                modifier = Modifier
+                    .size(38.dp)
+                    .padding(4.dp)
+                    .clip(shape = CircleShape)
+                    .border(
+                        width = 1.dp, color = Color(0xFFE5A500), shape = CircleShape
+                    )
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+            Text(
+                modifier = Modifier.padding(start = 20.dp),
+                text = "${user.firstName} ${user.lastName}",
+                style = TextStyle(
+                    fontSize = 18.sp,
+                    fontFamily = fontFamily,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFFEDEDED)
+                )
+            )
+        }
+
+        FloatingActionButton(
+            onClick = {
+                action(user)
+            },
+            shape = CircleShape,
+            containerColor = Color(0xFF272626), contentColor = Color.White,
+        ) {
+            if (isRemovingWaitedFriend)
+                CircularProgressIndicator(
+                    modifier = Modifier.size(38.dp),
+                    color = Color.White
+                )
+            else {
+                Image(
+                    painter = painterResource(id = R.drawable.icon_close),
+                    contentDescription = "Remove",
+                    modifier = Modifier.size(17.dp),
+                    alignment = Alignment.Center,
+                    colorFilter = ColorFilter.tint(Color.White)
+                )
             }
         }
     }
