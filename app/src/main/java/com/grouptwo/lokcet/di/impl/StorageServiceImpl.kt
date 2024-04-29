@@ -48,7 +48,6 @@ class StorageServiceImpl @Inject constructor(
                 imageUrl = downloadUrl.toString(),
                 imageCaption = imageCaption,
                 visibleUserIds = visibleUserIds,
-                createdAt = FieldValue.serverTimestamp()
             )
             // Save image to Firestore
             firestore.collection("images").add(image).await()
@@ -62,22 +61,6 @@ class StorageServiceImpl @Inject constructor(
         }
     }
 
-    override suspend fun getImages(): List<UploadImage> {
-//        return emptyList()
-        // Get friends list from current user
-
-        val friends =
-            firestore.collection("users").document(auth.currentUser?.uid.orEmpty()).get()
-                .await()
-                .get("friends") as List<String>
-        // Get images from friends and sort by createdAt field to descending order
-        return firestore.collection("images")
-            .whereIn("userId", friends)
-            .orderBy("createdAt", Query.Direction.DESCENDING)
-            .get()
-            .await()
-            .toObjects(UploadImage::class.java)
-    }
 
     override suspend fun deleteImage(imageId: String) {
         TODO("Not yet implemented")

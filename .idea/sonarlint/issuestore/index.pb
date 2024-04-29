@@ -193,3 +193,13 @@ x
 Happ/src/main/java/com/grouptwo/lokcet/view/friend/RequestedFriendItem.kt,4/8/48fdebf6ecd3c2145d9320c89cd032894568e32f
 o
 ?app/src/main/java/com/grouptwo/lokcet/view/friend/FriendItem.kt,2/8/28f927341837602cda688e8aca096d31d76e8cab
+>
+app/.gitignore,5/1/51e1c5d383dfaa35e0e7e5873a0a99355a86880f
+s
+Capp/src/main/java/com/grouptwo/lokcet/di/paging/FeedPagingSource.kt,2/7/27f39146385c2c5435b47043ba3764c5290ef5a4
+h
+8app/src/main/java/com/grouptwo/lokcet/data/model/Feed.kt,7/1/7171ff2fc79a58d21d667a3b8c7c44f6241072ae
+q
+Aapp/src/main/java/com/grouptwo/lokcet/di/paging/FeedRepository.kt,1/9/19e750b3ef879dba185b6b18656fd592d9b6a646
+z
+Japp/src/main/java/com/grouptwo/lokcet/di/paging/FeedPagingSourceFactory.kt,4/b/4bcee4169dac8425d4dddac5a72cbbee76a30a1b

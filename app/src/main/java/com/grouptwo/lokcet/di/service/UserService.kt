@@ -13,6 +13,7 @@ interface UserService {
 
     suspend fun getFriendList(): Flow<DataState<List<User>>>
 
+
     suspend fun getWaitedFriendList(): Flow<DataState<List<User>>>
 
     suspend fun getRequestFriendList(): Flow<DataState<List<User>>>

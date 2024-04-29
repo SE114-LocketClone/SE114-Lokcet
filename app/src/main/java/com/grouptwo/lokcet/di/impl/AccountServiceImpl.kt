@@ -69,10 +69,9 @@ class AccountServiceImpl @Inject constructor(
                 email = email,
                 firstName = firstName,
                 lastName = lastName,
+                fullName = "$firstName $lastName",
                 location = location,
                 phoneNumber = phoneNumber,
-                createdAt = FieldValue.serverTimestamp(),
-                lastSeen = FieldValue.serverTimestamp(),
                 profilePicture = Constants.AVATAR_API_URL + "$firstName $lastName"
             )
             firestore.collection("users").document(user?.uid.orEmpty()).set(userObject).await()
