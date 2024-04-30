@@ -34,6 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -91,7 +92,8 @@ fun FriendDropdown(
                 Image(
                     painter = painterResource(id = R.drawable.arrow_down),
                     contentDescription = "Friend Logo",
-                    modifier = Modifier.size(20.dp)
+                    modifier = Modifier.size(20.dp),
+                    colorFilter = ColorFilter.tint(Color.White)
                 )
             }
         }
@@ -125,8 +127,7 @@ fun FriendDropdown(
                                 onFriendSelected(null)
                                 showDropdown = false
                             }
-                            .padding(8.dp)
-                        ) {
+                            .padding(8.dp)) {
                             Row(
                                 modifier = Modifier.fillMaxWidth(), // This line is added
                                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -163,7 +164,8 @@ fun FriendDropdown(
                                 Image(
                                     painter = painterResource(id = R.drawable.arrow_right),
                                     contentDescription = "Next Icon",
-                                    modifier = Modifier.size(20.dp)
+                                    modifier = Modifier.size(20.dp),
+                                    colorFilter = ColorFilter.tint(Color.White)
                                 )
                             }
                         }
@@ -251,13 +253,15 @@ fun FriendDropdown(
                                     Image(
                                         painter = painterResource(id = R.drawable.arrow_right),
                                         contentDescription = "Next Icon",
-                                        modifier = Modifier.size(20.dp)
+                                        modifier = Modifier.size(20.dp),
+                                        colorFilter = ColorFilter.tint(Color.White)
                                     )
                                 }
                             }
                         }
                     }
                 }
+
             }
 
         }

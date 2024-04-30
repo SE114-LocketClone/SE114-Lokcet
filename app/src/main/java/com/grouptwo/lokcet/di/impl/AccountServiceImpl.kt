@@ -5,7 +5,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
-import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.GeoPoint
 import com.grouptwo.lokcet.data.model.User
@@ -105,6 +104,18 @@ class AccountServiceImpl @Inject constructor(
         } else {
             // Send the email verification
             auth.currentUser?.sendEmailVerification()?.await()
+        }
+    }
+
+    // Get the current user
+    override suspend fun getCurrentUser(): User {
+        try {
+            val docRef =
+                firestore.collection("users").document(auth.currentUser?.uid.orEmpty()).get()
+                    .await()
+            return docRef.toObject(User::class.java) ?: User()
+        } catch (e: Exception) {
+            throw e
         }
     }
 

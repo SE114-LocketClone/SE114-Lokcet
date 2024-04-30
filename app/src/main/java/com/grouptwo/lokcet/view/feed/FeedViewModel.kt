@@ -1,5 +1,6 @@
 package com.grouptwo.lokcet.view.feed
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.PagingData
@@ -7,6 +8,7 @@ import androidx.paging.cachedIn
 import com.grouptwo.lokcet.data.model.Feed
 import com.grouptwo.lokcet.data.model.User
 import com.grouptwo.lokcet.di.paging.FeedRepository
+import com.grouptwo.lokcet.di.service.AccountService
 import com.grouptwo.lokcet.di.service.InternetService
 import com.grouptwo.lokcet.di.service.UserService
 import com.grouptwo.lokcet.ui.component.global.snackbar.SnackbarManager
@@ -30,6 +32,7 @@ import kotlin.coroutines.cancellation.CancellationException
 class FeedViewModel @Inject constructor(
     private val internetService: InternetService,
     private val userService: UserService,
+    private val accountService: AccountService,
     private val feedRepository: FeedRepository
 ) : LokcetViewModel() {
     private val _uiState = MutableStateFlow(FeedUiState())
@@ -41,6 +44,7 @@ class FeedViewModel @Inject constructor(
         initialValue = ConnectionState.Unknown,
         started = SharingStarted.WhileSubscribed(500000)
     )
+
     init {
         launchCatching {
             networkStatus.collect { connectionState ->
@@ -73,6 +77,7 @@ class FeedViewModel @Inject constructor(
                         }
                     } else {
                         // Request feed for selected friend only
+                        Log.d("FeedViewModel", "requestFeed: ${_uiState.value.selectedFriend}")
                         feedRepository.getFeeds(listOf(_uiState.value.selectedFriend!!.id))
                             .distinctUntilChanged().cachedIn(viewModelScope).collect {
                                 _feedState.value = it
@@ -108,9 +113,15 @@ class FeedViewModel @Inject constructor(
                         }
 
                         is DataState.Success -> {
+                            // add current user to friend list
+                            val currentUser = accountService.getCurrentUser()
+                            val friendList = dataState.data.toMutableList()
+                            if (currentUser.id.isNotEmpty() && friendList.none { it.id == currentUser.id }) {
+                                friendList.add(currentUser)
+                            }
                             _uiState.update {
                                 it.copy(
-                                    friendList = DataState.Success(dataState.data),
+                                    friendList = DataState.Success(friendList),
                                     selectedFriend = null
                                 )
                             }
@@ -139,6 +150,7 @@ class FeedViewModel @Inject constructor(
 
     fun onSelectedFriendChanged(user: User?) {
         _uiState.update {
+            Log.d("FeedViewModel", "onSelectedFriendChanged: $user")
             it.copy(selectedFriend = user)
         }
         // Request feed for selected friend

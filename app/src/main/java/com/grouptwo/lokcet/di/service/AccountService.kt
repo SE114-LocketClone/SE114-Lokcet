@@ -17,6 +17,7 @@ interface AccountService {
         phoneNumber: String
     )
 
+    suspend fun getCurrentUser(): User
     suspend fun sendEmailVerify(
         email: String
     )
