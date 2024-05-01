@@ -2,6 +2,7 @@ package com.grouptwo.lokcet.view.message
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,14 +10,23 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.OutlinedTextField
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldColors
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,6 +34,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -53,44 +64,107 @@ fun MessageScreen_2(viewModel : MessageViewModel = hiltViewModel(),
 
         ) {
             Spacer(modifier = Modifier.height(31.dp))
-            Row (modifier = Modifier.fillMaxWidth()) {
-                Spacer(modifier = Modifier.height(70.dp))
+            Box (contentAlignment = Alignment.CenterStart) {
+
                 BasicIconButton(
                     drawableResource = R.drawable.arrow_left,
                     modifier = Modifier
-                        .size(31.dp)
-                        .align(Alignment.CenterVertically),
+                        .size(31.dp),
                     action = { viewModel.onBackClick(popUp) },
                     description = "Back icon",
+                    colors = Color.Transparent
                 )
 
-                Image(painter = painterResource(id = R.drawable.icon_friend),
-                    contentDescription = "avt",
-                    modifier = Modifier
-                        .align(Alignment.CenterVertically)
-                        .size(40.dp)
+                Row(modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically)
+                {
+                    Image(painter = painterResource(id = R.drawable.icon_friend),
+                        contentDescription = "avt",
+                        modifier = Modifier
+                            .size(40.dp)
                     )
 
-                Text(
-                    text = "abc...",
-                    modifier = Modifier.align(Alignment.CenterVertically),
-                    style = TextStyle(
-                        color = Color.White,
-                        fontFamily = fontFamily,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp,
-                        textAlign = TextAlign.Center
+                    Text(
+                        text = "abc...",
+                        style = TextStyle(
+                            color = Color.White,
+                            fontFamily = fontFamily,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 16.sp,
+                            textAlign = TextAlign.Center
+                        )
                     )
-                )
+                }
+
             }
-        }
-        Row(modifier = Modifier.fillMaxSize())
-        {
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(0.9f),
+            )
+            {
+                Text(text = "Message field",
+                    color = Color.White)
+                //Message field
+            }
+
+            Row(modifier = Modifier
+                .fillMaxWidth()
+                .weight(0.1f)
+                .padding(bottom = 10.dp),
+                verticalAlignment = Alignment.CenterVertically
+            )
+            {
+                val textFieldColors = TextFieldDefaults.colors(
+                    focusedContainerColor = Color(0xFF272626),
+                    unfocusedContainerColor = Color(0xFF272626),
+                    unfocusedIndicatorColor = Color.Black,
+                    focusedIndicatorColor = Color.Black,
+                )
+                TextField(
+                    value = "Tin nhắn",
+                    onValueChange = {
+
+                    },
+                    singleLine = true,
+                    textStyle = TextStyle(
+                        fontSize = 16.sp,
+                        fontFamily = fontFamily,
+                        color = Color(0xFFFFFFFF)
+                    ),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                    placeholder = {
+                        Text(
+                            text = "Địa chỉ email", style = TextStyle(
+                                color = Color(0xFF737070),
+                                fontFamily = fontFamily,
+                                fontSize = 13.sp,
+                            )
+                        )
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = 52.dp),
+                    shape = RoundedCornerShape(18.dp),
+                    colors = textFieldColors,
+                )
+
+//                BasicIconButton(
+//                    drawableResource = R.drawable.icon_instagram,
+//                    modifier = Modifier
+//                        .size(31.dp),
+//                    action = { viewModel.onBackClick(popUp) },
+//                    description = "Back icon",
+//                )
+
+            }
 
         }
-        //Row(modifier)
     }
 }
+
 //@Composable
 //fun MessageCard(message: Message) {
 //    // Create a Boolean state to track whether the message is expanded or not
