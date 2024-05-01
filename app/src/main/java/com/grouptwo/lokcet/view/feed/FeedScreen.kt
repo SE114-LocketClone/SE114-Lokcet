@@ -2,6 +2,7 @@ package com.grouptwo.lokcet.view.feed
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,14 +10,16 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
@@ -53,6 +56,7 @@ import com.grouptwo.lokcet.data.model.User
 import com.grouptwo.lokcet.ui.theme.YellowPrimary
 import com.grouptwo.lokcet.ui.theme.fontFamily
 import com.grouptwo.lokcet.utils.DataState
+import com.grouptwo.lokcet.utils.calculateTimePassed
 import com.grouptwo.lokcet.utils.noRippleClickable
 import com.grouptwo.lokcet.view.error.ErrorScreen
 import com.skydoves.landscapist.ImageOptions
@@ -128,9 +132,7 @@ fun FeedScreen(
                     // Get the feed state and apply the state to the feed list
 
                     Box(
-                        modifier = Modifier
-                            .weight(0.65f)
-                            .requiredHeight(385.dp)
+                        modifier = Modifier.weight(0.65f)
                     ) {
                         feedState.loadState.apply {
                             when {
@@ -176,8 +178,7 @@ fun FeedScreen(
                                             contentAlignment = Alignment.Center
                                         ) {
                                             Text(
-                                                text = "Không có bài viết nào",
-                                                style = TextStyle(
+                                                text = "Không có bài viết nào", style = TextStyle(
                                                     fontSize = 20.sp,
                                                     fontFamily = fontFamily,
                                                     fontWeight = FontWeight.Bold,
@@ -189,8 +190,7 @@ fun FeedScreen(
                                     } else {
                                         // Return VerticalPager with the feed list and the feed state
                                         VerticalPager(
-                                            state = pagerState,
-                                            modifier = Modifier.fillMaxSize()
+                                            state = pagerState
                                         ) { page ->
                                             val feed = feedState[page]
                                             if (feed != null) {
@@ -198,7 +198,6 @@ fun FeedScreen(
                                                     GlideImage(
                                                         imageModel = { feed.uploadImage.imageUrl },
                                                         modifier = Modifier
-                                                            .fillMaxSize()
                                                             .heightIn(max = 385.dp)
                                                             .clip(
                                                                 RoundedCornerShape(20)
@@ -231,7 +230,7 @@ fun FeedScreen(
                                                             onValueChange = {},
                                                             modifier = Modifier
                                                                 .align(Alignment.BottomCenter)
-                                                                .padding(8.dp)
+                                                                .padding(4.dp)
                                                                 .widthIn(min = 86.dp),
                                                             textStyle = TextStyle(
                                                                 fontSize = 14.sp,
@@ -239,6 +238,49 @@ fun FeedScreen(
                                                                 fontWeight = FontWeight.Bold,
                                                                 color = Color.White,
                                                                 textAlign = TextAlign.Center
+                                                            )
+                                                        )
+                                                    }
+                                                }
+                                                // Show info (who posted the feed and when) this can be swipe up with feed
+                                                Spacer(modifier = Modifier.height(16.dp))
+                                                Box(
+                                                    modifier = Modifier
+                                                        .wrapContentSize()
+                                                        .clip(
+                                                            RoundedCornerShape(
+                                                                50.dp
+                                                            )
+                                                        )
+                                                        .background(
+                                                            Color(0xFF272626).copy(alpha = 0.3f)
+                                                        )
+                                                ) {
+                                                    Row(
+                                                        modifier = Modifier.padding(16.dp),
+                                                        horizontalArrangement = Arrangement.Center,
+                                                        verticalAlignment = Alignment.CenterVertically
+                                                    ) {
+                                                        if (feed.uploadImage.userName.isNotEmpty()) {
+                                                            Text(
+                                                                text = feed.uploadImage.userName,
+                                                                style = TextStyle(
+                                                                    fontSize = 16.sp,
+                                                                    fontFamily = fontFamily,
+                                                                    fontWeight = FontWeight.Bold,
+                                                                    color = Color.White,
+                                                                )
+                                                            )
+                                                            Spacer(modifier = Modifier.width(16.dp))
+                                                        }
+                                                        Text(
+                                                            text = feed.uploadImage.createdAt.calculateTimePassed(
+                                                                uiState.value.currentServerTime!!
+                                                            ), style = TextStyle(
+                                                                fontSize = 16.sp,
+                                                                fontFamily = fontFamily,
+                                                                fontWeight = FontWeight.Bold,
+                                                                color = Color(0xFF737070),
                                                             )
                                                         )
                                                     }

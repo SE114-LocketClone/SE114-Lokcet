@@ -1,5 +1,6 @@
 package com.grouptwo.lokcet.di.service
 
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.GeoPoint
 import com.grouptwo.lokcet.data.model.User
 import kotlinx.coroutines.flow.Flow
@@ -25,7 +26,7 @@ interface AccountService {
     suspend fun signIn(email: String, password: String)
     suspend fun signOut()
     suspend fun sendPasswordResetEmail(email: String)
-
     suspend fun isEmailUsed(email: String): Boolean
     suspend fun isPhoneUsed(phone: String): Boolean
+    suspend fun getCurrentServerTime(): Timestamp? // return null if failed
 }

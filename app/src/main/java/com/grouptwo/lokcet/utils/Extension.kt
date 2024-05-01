@@ -12,7 +12,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
+import com.google.firebase.Timestamp
 import java.io.ByteArrayOutputStream
+import java.util.Date
+import java.util.concurrent.TimeUnit
 
 // Define validate function for app
 fun String.isValidEmail(): Boolean {
@@ -81,7 +84,8 @@ inline fun View.afterMeasured(crossinline block: () -> Unit) {
     if (measuredWidth > 0 && measuredHeight > 0) {
         block()
     } else {
-        viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+        viewTreeObserver.addOnGlobalLayoutListener(object :
+            ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
                 if (measuredWidth > 0 && measuredHeight > 0) {
                     viewTreeObserver.removeOnGlobalLayoutListener(this)
@@ -89,5 +93,27 @@ inline fun View.afterMeasured(crossinline block: () -> Unit) {
                 }
             }
         })
+    }
+}
+
+fun Date.calculateTimePassed(currentServerTime: Timestamp): String {
+    val milliseconds = currentServerTime.toDate().time - this.time
+    val seconds = TimeUnit.MILLISECONDS.toSeconds(milliseconds)
+    val minutes = TimeUnit.SECONDS.toMinutes(seconds)
+    val hours = TimeUnit.SECONDS.toHours(seconds)
+    val days = TimeUnit.SECONDS.toDays(seconds)
+    val weeks = days / 7
+    val months = days / 30
+    val years = days / 365
+
+    return when {
+        years > 0 -> "$years năm trước"
+        months > 0 -> "$months tháng trước"
+        weeks > 0 -> "$weeks tuần trước"
+        days > 0 -> "$days ngày trước"
+        hours > 0 -> "$hours giờ trước"
+        minutes > 0 -> "$minutes phút trước"
+        seconds > 0 -> "$seconds giây trước"
+        else -> "Vừa xong"
     }
 }

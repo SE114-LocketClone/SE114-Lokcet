@@ -51,6 +51,8 @@ class FeedViewModel @Inject constructor(
                 _uiState.update {
                     it.copy(isNetworkAvailable = connectionState == ConnectionState.Available || connectionState == ConnectionState.Unknown)
                 }
+                // get server time when network is available
+                fetchCurrentServerTime()
                 // Make sure to fetch friend list when network is available then start fetching feeds
                 fetchFriendList()
             }
@@ -147,10 +149,28 @@ class FeedViewModel @Inject constructor(
         }
     }
 
+    fun fetchCurrentServerTime() {
+        launchCatching {
+            try {
+                if (_uiState.value.isNetworkAvailable.not()) {
+                    throw Exception("Không có kết nối mạng")
+                }
+                val currentServerTime = accountService.getCurrentServerTime()
+                if (currentServerTime != null) {
+                    _uiState.update {
+                        it.copy(currentServerTime = currentServerTime)
+                    }
+                }
+            } catch (e: CancellationException) {
+                // Do nothing
+            } catch (e: Exception) {
+                SnackbarManager.showMessage(e.toSnackbarMessage())
+            }
+        }
+    }
 
     fun onSelectedFriendChanged(user: User?) {
         _uiState.update {
-            Log.d("FeedViewModel", "onSelectedFriendChanged: $user")
             it.copy(selectedFriend = user)
         }
         // Request feed for selected friend

@@ -14,6 +14,7 @@ data class EmojiReaction(
 data class UploadImage(
     val imageId: String = "",
     val userId: String = "",
+    val userName: String = "", // This is the user's display name at the time of the upload
     val imageUrl: String = "",
     val imageCaption: String = "",
     val imageLocation: String = "",

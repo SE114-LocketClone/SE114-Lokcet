@@ -1,12 +1,16 @@
 package com.grouptwo.lokcet.di.impl
 
 import com.google.firebase.FirebaseNetworkException
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.GeoPoint
+import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.SetOptions
 import com.grouptwo.lokcet.data.model.User
 import com.grouptwo.lokcet.di.service.AccountService
 import com.grouptwo.lokcet.utils.Constants
@@ -160,5 +164,24 @@ class AccountServiceImpl @Inject constructor(
     override suspend fun isPhoneUsed(phone: String): Boolean {
         val docRef = firestore.collection("users").whereEqualTo("phoneNumber", phone).get().await()
         return !docRef.isEmpty
+    }
+
+    override suspend fun getCurrentServerTime(): Timestamp? {
+        return try {
+            // First update the server time
+            val serverTimeRef = firestore.collection("serverTime").document("current")
+            serverTimeRef.set(mapOf("time" to FieldValue.serverTimestamp()), SetOptions.merge()).await()
+            // Get the server time
+            val snapshot = serverTimeRef.get().await()
+            snapshot.getTimestamp("time")
+        } catch (e: Exception) {
+            val mostRecentDocumentSnapshot =
+                firestore.collection("images").orderBy("createAt", Query.Direction.DESCENDING)
+                    .limit(1).get().await().documents.firstOrNull()
+            if (mostRecentDocumentSnapshot == null) {
+                // If both attempts fail, throw an exception
+                throw e
+            } else mostRecentDocumentSnapshot.getTimestamp("createAt")
+        }
     }
 }

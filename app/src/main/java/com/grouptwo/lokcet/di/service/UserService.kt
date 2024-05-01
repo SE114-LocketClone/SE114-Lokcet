@@ -11,10 +11,7 @@ interface UserService {
     suspend fun addFriend(userId: String, friendId: String): Flow<DataState<Unit>>
     suspend fun removeFriend(userId: String, friendId: String): Flow<DataState<Unit>>
     suspend fun getFriendList(): Flow<DataState<List<User>>>
-
     suspend fun getWaitedFriendList(): Flow<DataState<List<User>>>
-
     suspend fun getRequestFriendList(): Flow<DataState<List<User>>>
-
     suspend fun removeWaitedFriend(userId: String, friendId: String): Flow<DataState<Unit>>
 }

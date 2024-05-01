@@ -4,9 +4,9 @@ import android.icu.text.SimpleDateFormat
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
 import com.google.firebase.storage.FirebaseStorage
 import com.grouptwo.lokcet.data.model.UploadImage
+import com.grouptwo.lokcet.di.service.AccountService
 import com.grouptwo.lokcet.di.service.StorageService
 import com.grouptwo.lokcet.utils.DataState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -21,7 +21,8 @@ import javax.inject.Inject
 class StorageServiceImpl @Inject constructor(
     private val auth: FirebaseAuth,
     private val firestore: FirebaseFirestore,
-    private val storage: FirebaseStorage
+    private val storage: FirebaseStorage,
+    private val accountService: AccountService
 ) : StorageService {
     @OptIn(ExperimentalCoroutinesApi::class)
     override val images: Flow<List<UploadImage>> get() = emptyFlow()
@@ -42,15 +43,24 @@ class StorageServiceImpl @Inject constructor(
             imageRef.putBytes(imageUpload).await()
             // Get download URL
             val downloadUrl = imageRef.downloadUrl.await()
+            // Get current user
+            val user = accountService.getCurrentUser()
             // Create image object
             val image = UploadImage(
-                userId = auth.currentUser?.uid.orEmpty(),
+                userId = user.id,
                 imageUrl = downloadUrl.toString(),
                 imageCaption = imageCaption,
                 visibleUserIds = visibleUserIds,
+                userName = "${user.firstName} ${user.lastName}",
             )
             // Save image to Firestore
             firestore.collection("images").add(image).await()
+            // Update imageId in image object
+            firestore.collection("images").whereEqualTo("imageUrl", downloadUrl.toString())
+                .get().await().documents.firstOrNull()?.let {
+                    firestore.collection("images").document(it.id)
+                        .update("imageId", it.id).await()
+                }
             // Add image to user's uploadImageList
             firestore.collection("users").document(auth.currentUser?.uid.orEmpty())
                 .update("uploadImageList", FieldValue.arrayUnion(image.imageUrl)).await()
