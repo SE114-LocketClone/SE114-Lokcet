@@ -1,5 +1,6 @@
 package com.grouptwo.lokcet.di.paging
 
+import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.google.firebase.firestore.DocumentSnapshot
@@ -8,6 +9,7 @@ import com.google.firebase.firestore.Query
 import com.grouptwo.lokcet.data.model.EmojiReaction
 import com.grouptwo.lokcet.data.model.Feed
 import com.grouptwo.lokcet.data.model.UploadImage
+import com.grouptwo.lokcet.di.service.AccountService
 import com.grouptwo.lokcet.utils.Constants
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -100,29 +102,79 @@ import kotlinx.coroutines.tasks.await
 //    }
 //}
 class FeedPagingSource(
-    private val firestore: FirebaseFirestore, private val friendIds: List<String>
+    private val firestore: FirebaseFirestore,
+    private val friendIds: List<String>,
+    private val accountService: AccountService
 ) : PagingSource<DocumentSnapshot, Feed>() {
 
     override suspend fun load(params: LoadParams<DocumentSnapshot>): LoadResult<DocumentSnapshot, Feed> {
         return try {
+//            val currentPage = coroutineScope {
+//                params.key?.let { key ->
+//                    friendIds.map { friendId ->
+//                        async {
+//                            firestore.collection("images").whereEqualTo("userId", friendId)
+//                                .orderBy("createdAt", Query.Direction.DESCENDING)
+//                                .startAfter(key).limit(Constants.PAGE_SIZE).get().await().documents
+//                        }
+//                    }.awaitAll().flatten().sortedByDescending { it.getDate("createdAt") }
+//                        .take(Constants.PAGE_SIZE.toInt())
+//                } ?: friendIds.map { friendId ->
+//                    async {
+//                        firestore.collection("images").whereEqualTo("userId", friendId)
+//                            .orderBy("createdAt", Query.Direction.DESCENDING)
+//                            .limit(Constants.PAGE_SIZE).get().await().documents
+//                    }
+//                }.awaitAll().flatten().sortedByDescending { it.getDate("createdAt") }
+//                    .take(Constants.PAGE_SIZE.toInt())
+//            }
+            val currentUserId = accountService.currentUserId
             val currentPage = coroutineScope {
                 params.key?.let { key ->
-                    friendIds.map { friendId ->
+                    // Querry for images that are visible to all users
+                    val visibleToAllImages = friendIds.map { friendId ->
                         async {
                             firestore.collection("images").whereEqualTo("userId", friendId)
+                                .whereEqualTo("isVisibleToAll", true)
                                 .orderBy("createdAt", Query.Direction.DESCENDING)
                                 .startAfter(key).limit(Constants.PAGE_SIZE).get().await().documents
                         }
                     }.awaitAll().flatten().sortedByDescending { it.getDate("createdAt") }
+                    // Querry for images that are visible to the current user
+                    val visibleToUserImages = friendIds.map { friendId ->
+                        async {
+                            firestore.collection("images").whereEqualTo("userId", friendId)
+                                .whereArrayContains("visibleUserIds", currentUserId)
+                                .orderBy("createdAt", Query.Direction.DESCENDING)
+                                .startAfter(key).limit(Constants.PAGE_SIZE).get().await().documents
+                        }
+                    }.awaitAll().flatten().sortedByDescending { it.getDate("createdAt") }
+
+                    (visibleToAllImages + visibleToUserImages).sortedByDescending { it.getDate("createdAt") }
                         .take(Constants.PAGE_SIZE.toInt())
-                } ?: friendIds.map { friendId ->
-                    async {
-                        firestore.collection("images").whereEqualTo("userId", friendId)
-                            .orderBy("createdAt", Query.Direction.DESCENDING)
-                            .limit(Constants.PAGE_SIZE).get().await().documents
-                    }
-                }.awaitAll().flatten().sortedByDescending { it.getDate("createdAt") }
-                    .take(Constants.PAGE_SIZE.toInt())
+                } ?: let {
+                    // Querry for images that are visible to all users
+                    val visibleToAllImages = friendIds.map { friendId ->
+                        async {
+                            firestore.collection("images").whereEqualTo("userId", friendId)
+                                .whereEqualTo("isVisibleToAll", true)
+                                .orderBy("createdAt", Query.Direction.DESCENDING)
+                                .limit(Constants.PAGE_SIZE).get().await().documents
+                        }
+                    }.awaitAll().flatten().sortedByDescending { it.getDate("createdAt") }
+                    // Querry for images that are visible to the current user
+                    val visibleToUserImages = friendIds.map { friendId ->
+                        async {
+                            firestore.collection("images").whereEqualTo("userId", friendId)
+                                .whereArrayContains("visibleUserIds", currentUserId)
+                                .orderBy("createdAt", Query.Direction.DESCENDING)
+                                .limit(Constants.PAGE_SIZE).get().await().documents
+                        }
+                    }.awaitAll().flatten().sortedByDescending { it.getDate("createdAt") }
+
+                    (visibleToAllImages + visibleToUserImages).sortedByDescending { it.getDate("createdAt") }
+                        .take(Constants.PAGE_SIZE.toInt())
+                }
             }
 
             val currentList = currentPage.toList()

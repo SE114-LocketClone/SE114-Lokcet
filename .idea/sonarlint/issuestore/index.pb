@@ -209,3 +209,5 @@ p
 @app/src/main/java/com/grouptwo/lokcet/view/feed/FeedViewModel.kt,c/7/c72d3e65b81f9395c105cb3953c17aa4edddad38
 q
 Aapp/src/main/java/com/grouptwo/lokcet/view/feed/FriendDropdown.kt,a/e/ae479537f3e10ea7b316b69e5aa5b959d1bc145a
+n
+>app/src/main/java/com/grouptwo/lokcet/view/feed/ReactionBar.kt,0/f/0ffc07f3bfe6bf17ad0d6c0e145f2fef5a4bde19

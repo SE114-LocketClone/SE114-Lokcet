@@ -217,58 +217,60 @@ fun HomeScreen2(
                                 })
                     }
                 }
-            }
-            Spacer(modifier = Modifier.weight(0.1f))
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-                    .horizontalScroll(scrollState),
-            ) {
-                Column(modifier = Modifier
-                    .noRippleClickable { viewModel.onSelectViewer(null) }
-                    .padding(horizontal = 16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center) {
-                    // If the visibleIds is not null and the user id is in the visibleIds list, show yellow border around the profile picture else show gray border.
-                    val borderColor = if (uiState.visibleToUserIds == null) {
-                        YellowPrimary
-                    } else {
-                        Color(0xFF948F8F)
-                    }
-                    Box {
-                        Image(
-                            painter = painterResource(id = R.drawable.icon_friend),
-                            contentDescription = "Friend Icon",
-                            modifier = Modifier
-                                .size(38.dp)
-                                .clip(shape = CircleShape)
-                                .border(
-                                    width = 1.dp, color = borderColor, shape = CircleShape
-                                )
+                // Display the list of friends to send the image to
+                Spacer(modifier = Modifier.weight(0.1f))
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                        .horizontalScroll(scrollState),
+                ) {
+                    Column(modifier = Modifier
+                        .noRippleClickable { viewModel.onSelectViewer(null) }
+                        .padding(horizontal = 16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center) {
+                        // If the visibleIds is not null and the user id is in the visibleIds list, show yellow border around the profile picture else show gray border.
+                        val borderColor = if (uiState.visibleToUserIds.isEmpty()) {
+                            YellowPrimary
+                        } else {
+                            Color(0xFF948F8F)
+                        }
+                        Box {
+                            Image(
+                                painter = painterResource(id = R.drawable.icon_friend),
+                                contentDescription = "Friend Icon",
+                                modifier = Modifier
+                                    .size(38.dp)
+                                    .clip(shape = CircleShape)
+                                    .border(
+                                        width = 1.dp, color = borderColor, shape = CircleShape
+                                    )
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = "Tất cả", style = TextStyle(
+                                color = Color.White,
+                                fontFamily = fontFamily,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 14.sp,
+                                textAlign = TextAlign.Center
+                            )
                         )
                     }
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = "Tất cả", style = TextStyle(
-                            color = Color.White,
-                            fontFamily = fontFamily,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 14.sp,
-                            textAlign = TextAlign.Center
-                        )
-                    )
+                    if (uiState.friendList is DataState.Success) {
+                        (uiState.friendList as DataState.Success<List<User>>).data.forEach { user ->
+                            FriendButton(
+                                user = user, onAddFriend = { userId ->
+                                    viewModel.onSelectViewer(userId)
+                                }, visibleIds = uiState.visibleToUserIds
+                            )
+                        }
+                    }
                 }
-                if (uiState.friendList is DataState.Success) {
-                    (uiState.friendList as DataState.Success<List<User>>).data.forEach { user ->
-                        FriendButton(
-                            user = user, onAddFriend = { userId ->
-                                viewModel.onSelectViewer(userId)
-                            }, visibleIds = uiState.visibleToUserIds
-                        )
-                    }
-                }
             }
+
         }
     }
 }

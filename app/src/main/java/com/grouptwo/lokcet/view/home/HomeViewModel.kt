@@ -207,7 +207,7 @@ class HomeViewModel @Inject constructor(
             }
         } else {
             _uiState.update {
-                it.copy(visibleToUserIds = null)
+                it.copy(visibleToUserIds = emptyList())
             }
         }
     }

@@ -9,7 +9,7 @@ interface StorageService {
     suspend fun uploadImage(
         imageUpload: ByteArray,
         imageCaption: String,
-        visibleUserIds: List<String>? = null,
+        visibleUserIds: List<String> = emptyList(),
     ): Flow<DataState<Unit>>
 
     suspend fun deleteImage(imageId: String)

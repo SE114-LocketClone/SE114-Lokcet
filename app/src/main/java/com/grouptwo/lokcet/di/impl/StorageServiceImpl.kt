@@ -29,7 +29,7 @@ class StorageServiceImpl @Inject constructor(
     override suspend fun uploadImage(
         imageUpload: ByteArray,
         imageCaption: String,
-        visibleUserIds: List<String>? // null if visible to all
+        visibleUserIds: List<String> // if empty, image is visible to all users else only to the users in visibleUserIds list can see the image
     ): Flow<DataState<Unit>> = flow {
         emit(DataState.Loading)
         try {
@@ -51,6 +51,7 @@ class StorageServiceImpl @Inject constructor(
                 imageUrl = downloadUrl.toString(),
                 imageCaption = imageCaption,
                 visibleUserIds = visibleUserIds,
+                isVisibleToAll = visibleUserIds.isEmpty(), // If visibleUserIds is null, then the image is visible to all users else only to the users in visibleUserIds list can see the image
                 userName = "${user.firstName} ${user.lastName}",
             )
             // Save image to Firestore

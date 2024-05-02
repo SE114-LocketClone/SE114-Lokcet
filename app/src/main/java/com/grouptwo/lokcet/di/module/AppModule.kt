@@ -6,6 +6,7 @@ import androidx.paging.PagingConfig
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.gson.Gson
 import com.grouptwo.lokcet.di.paging.FeedRepository
+import com.grouptwo.lokcet.di.service.AccountService
 import com.grouptwo.lokcet.utils.Constants
 import dagger.Module
 import dagger.Provides
@@ -41,8 +42,8 @@ object AppModule {
 
     @Provides
     fun provideFeedRepository(
-        pagingConfig: PagingConfig, firestore: FirebaseFirestore
+        pagingConfig: PagingConfig, firestore: FirebaseFirestore, accountService: AccountService
     ): FeedRepository {
-        return FeedRepository(pagingConfig, firestore)
+        return FeedRepository(pagingConfig, firestore, accountService)
     }
 }

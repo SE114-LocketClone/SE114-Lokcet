@@ -1,14 +1,13 @@
 package com.grouptwo.lokcet.data.model
 
 import com.google.firebase.firestore.ServerTimestamp
-import java.time.LocalDateTime
 import java.util.Date
 
 data class EmojiReaction(
     val emojiId: String = "",
     val userId: String = "",
     val imageId: String = "",
-    @ServerTimestamp    val createdAt: Date = Date(),
+    @ServerTimestamp val createdAt: Date = Date(),
 )
 
 data class UploadImage(
@@ -18,6 +17,7 @@ data class UploadImage(
     val imageUrl: String = "",
     val imageCaption: String = "",
     val imageLocation: String = "",
-    val visibleUserIds: List<String>? = null,
+    val visibleUserIds: List<String> = emptyList(), // size 0 if visible to all
+    val isVisibleToAll: Boolean = visibleUserIds.isEmpty(), // If visibleUserIds is empty, then the image is visible to all users else only to the users in visibleUserIds list can see the image
     @ServerTimestamp val createdAt: Date = Date(),
 )

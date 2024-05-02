@@ -3,11 +3,13 @@ package com.grouptwo.lokcet.view.feed
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -31,19 +33,27 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
@@ -53,6 +63,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.grouptwo.lokcet.R
 import com.grouptwo.lokcet.data.model.Feed
 import com.grouptwo.lokcet.data.model.User
+import com.grouptwo.lokcet.ui.component.global.ime.rememberImeState
 import com.grouptwo.lokcet.ui.theme.YellowPrimary
 import com.grouptwo.lokcet.ui.theme.fontFamily
 import com.grouptwo.lokcet.utils.DataState
@@ -71,14 +82,24 @@ fun FeedScreen(
     // Observe the feed state from the view model
     val feedState: LazyPagingItems<Feed> = viewModel.feedState.collectAsLazyPagingItems()
     val pagerState = rememberPagerState(pageCount = { feedState.itemCount })
-
+    // Get the focus manager from the local focus manager
+    val focusManager = LocalFocusManager.current
+    val focusRequester = remember { FocusRequester() }
     // Display the feed screen
-
+    val showReplyTextField = remember { mutableStateOf(false) }
+    val imeState = rememberImeState()
     when (uiState.value.friendList) {
         is DataState.Success -> {
             // Display the feed screen
             Box(
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier
+                    .fillMaxSize()
+                    .pointerInput(Unit) {// If the user taps outside the text field, clear the focus
+                        detectTapGestures(onTap = {
+                            focusManager.clearFocus()
+                            showReplyTextField.value = false
+                        })
+                    },
             ) {
                 Column(
                     modifier = Modifier
@@ -127,33 +148,44 @@ fun FeedScreen(
                             )
                         }
                     }
-                    Spacer(modifier = Modifier.weight(0.1f))
+                    Spacer(modifier = Modifier.height(64.dp))
                     // Show the feed
                     // Get the feed state and apply the state to the feed list
-
                     Box(
-                        modifier = Modifier.weight(0.65f)
+                        modifier = Modifier.wrapContentSize(),
                     ) {
                         feedState.loadState.apply {
                             when {
                                 refresh is LoadState.Loading -> {
-                                    CircularProgressIndicator(
-                                        modifier = Modifier
-                                            .size(50.dp)
-                                            .align(
-                                                Alignment.Center
-                                            ), color = YellowPrimary
-                                    )
+                                    Box(
+                                        modifier = Modifier.fillMaxSize(),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        // Display a loading indicator
+                                        CircularProgressIndicator(
+                                            modifier = Modifier
+                                                .size(50.dp)
+                                                .align(
+                                                    Alignment.Center
+                                                ), color = YellowPrimary
+                                        )
+                                    }
                                 }
 
                                 append is LoadState.Loading -> {
-                                    CircularProgressIndicator(
-                                        modifier = Modifier
-                                            .size(50.dp)
-                                            .align(
-                                                Alignment.Center
-                                            ), color = YellowPrimary
-                                    )
+                                    Box(
+                                        modifier = Modifier.fillMaxSize(),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        // Display a loading indicator
+                                        CircularProgressIndicator(
+                                            modifier = Modifier
+                                                .size(50.dp)
+                                                .align(
+                                                    Alignment.Center
+                                                ), color = YellowPrimary
+                                        )
+                                    }
                                 }
 
                                 refresh is LoadState.Error -> {
@@ -194,7 +226,11 @@ fun FeedScreen(
                                         ) { page ->
                                             val feed = feedState[page]
                                             if (feed != null) {
-                                                Box {
+                                                Box( // Display the feed image ensuring it is square
+                                                    modifier = Modifier
+                                                        .aspectRatio(1f)
+                                                        .fillMaxWidth()
+                                                ) {
                                                     GlideImage(
                                                         imageModel = { feed.uploadImage.imageUrl },
                                                         modifier = Modifier
@@ -213,48 +249,46 @@ fun FeedScreen(
                                                         },
                                                     )
                                                     if (feed.uploadImage.imageCaption.isNotEmpty()) {
-                                                        TextField(
-                                                            singleLine = true,
-                                                            readOnly = true,
-                                                            shape = RoundedCornerShape(50.dp),
-                                                            colors = TextFieldDefaults.textFieldColors(
-                                                                backgroundColor = Color(0xFF272626).copy(
-                                                                    alpha = 0.3f
-                                                                ),
-                                                                disabledTextColor = Color.Transparent,
-                                                                focusedIndicatorColor = Color.Transparent,
-                                                                unfocusedIndicatorColor = Color.Transparent,
-                                                                disabledIndicatorColor = Color.Transparent
-                                                            ),
-                                                            value = feed.uploadImage.imageCaption,
-                                                            onValueChange = {},
+                                                        Box(
                                                             modifier = Modifier
                                                                 .align(Alignment.BottomCenter)
-                                                                .padding(4.dp)
-                                                                .widthIn(min = 86.dp),
-                                                            textStyle = TextStyle(
-                                                                fontSize = 14.sp,
-                                                                fontFamily = fontFamily,
-                                                                fontWeight = FontWeight.Bold,
-                                                                color = Color.White,
-                                                                textAlign = TextAlign.Center
+                                                                .padding(16.dp)
+                                                        ) {
+                                                            TextField(
+                                                                singleLine = true,
+                                                                readOnly = true,
+                                                                shape = RoundedCornerShape(50.dp),
+                                                                colors = TextFieldDefaults.textFieldColors(
+                                                                    backgroundColor = Color(
+                                                                        0xFF272626
+                                                                    ).copy(
+                                                                        alpha = 0.3f
+                                                                    ),
+                                                                    disabledTextColor = Color.Transparent,
+                                                                    focusedIndicatorColor = Color.Transparent,
+                                                                    unfocusedIndicatorColor = Color.Transparent,
+                                                                    disabledIndicatorColor = Color.Transparent
+                                                                ),
+                                                                value = feed.uploadImage.imageCaption,
+                                                                onValueChange = {},
+                                                                modifier = Modifier
+                                                                    .padding(4.dp)
+                                                                    .widthIn(min = 86.dp),
+                                                                textStyle = TextStyle(
+                                                                    fontSize = 14.sp,
+                                                                    fontFamily = fontFamily,
+                                                                    fontWeight = FontWeight.Bold,
+                                                                    color = Color.White,
+                                                                    textAlign = TextAlign.Center
+                                                                )
                                                             )
-                                                        )
+                                                        }
                                                     }
                                                 }
                                                 // Show info (who posted the feed and when) this can be swipe up with feed
                                                 Spacer(modifier = Modifier.height(16.dp))
                                                 Box(
-                                                    modifier = Modifier
-                                                        .wrapContentSize()
-                                                        .clip(
-                                                            RoundedCornerShape(
-                                                                50.dp
-                                                            )
-                                                        )
-                                                        .background(
-                                                            Color(0xFF272626).copy(alpha = 0.3f)
-                                                        )
+                                                    modifier = Modifier.wrapContentSize()
                                                 ) {
                                                     Row(
                                                         modifier = Modifier.padding(16.dp),
@@ -285,6 +319,11 @@ fun FeedScreen(
                                                         )
                                                     }
                                                 }
+                                                // Show the reaction bar (aka message bar)
+                                                Spacer(modifier = Modifier.height(16.dp))
+                                                ReactionBar(
+                                                    showRelyFeedTextField = showReplyTextField
+                                                )
                                             } else {
                                                 // Display a loading indicator
                                                 CircularProgressIndicator(
@@ -301,7 +340,24 @@ fun FeedScreen(
                             }
                         }
                     }
-                    Spacer(modifier = Modifier.weight(0.1f))
+                }
+                if (showReplyTextField.value) {
+                    // Show text field to reply feed
+                    TextField(value = "",
+                        onValueChange = {},
+                        label = { },
+                        modifier = Modifier
+                            .widthIn(max = 200.dp)
+                            .background(color = Color(0xFF272626))
+                            .focusRequester(focusRequester)
+                            .align(
+                                Alignment.Center
+                            )
+                            .zIndex(3f)
+                    )
+                    LaunchedEffect(Unit) {
+                        focusRequester.requestFocus()
+                    }
                 }
             }
         }

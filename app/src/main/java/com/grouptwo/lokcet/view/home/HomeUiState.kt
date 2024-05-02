@@ -11,7 +11,7 @@ data class HomeUiState(
     val capturedImage: Bitmap? = null,
     val compressedImage: ByteArray? = null,
     val imageCaption: String = "",
-    val visibleToUserIds: List<String>? = null,
+    val visibleToUserIds: List<String> = emptyList(),
     val isImageUpload: DataState<Unit>?= null,
     val isNetworkAvailable: Boolean = false,
     val friendList: DataState<List<User>> = DataState.Loading,
