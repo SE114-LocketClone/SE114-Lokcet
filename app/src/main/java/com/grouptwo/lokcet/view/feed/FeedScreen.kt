@@ -1,8 +1,8 @@
 package com.grouptwo.lokcet.view.feed
 
+import EmojiRain
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -30,6 +30,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.runtime.Composable
@@ -72,6 +73,7 @@ import com.grouptwo.lokcet.utils.noRippleClickable
 import com.grouptwo.lokcet.view.error.ErrorScreen
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.glide.GlideImage
+import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -88,6 +90,10 @@ fun FeedScreen(
     // Display the feed screen
     val showReplyTextField = remember { mutableStateOf(false) }
     val imeState = rememberImeState()
+
+    // Launch the effect to get current user feed
+
+
     when (uiState.value.friendList) {
         is DataState.Success -> {
             // Display the feed screen
@@ -224,7 +230,14 @@ fun FeedScreen(
                                         VerticalPager(
                                             state = pagerState
                                         ) { page ->
+                                            // Set current user
                                             val feed = feedState[page]
+                                            LaunchedEffect(key1 = feed) {
+                                                // Make sure the current user is set and only update if has changed
+                                                if (feed?.uploadImage?.userId != uiState.value.currentUser?.id) viewModel.setCurrentUser(
+                                                    feed?.uploadImage?.userId ?: ""
+                                                )
+                                            }
                                             if (feed != null) {
                                                 Box( // Display the feed image ensuring it is square
                                                     modifier = Modifier
@@ -321,9 +334,11 @@ fun FeedScreen(
                                                 }
                                                 // Show the reaction bar (aka message bar)
                                                 Spacer(modifier = Modifier.height(16.dp))
-                                                ReactionBar(
-                                                    showRelyFeedTextField = showReplyTextField
-                                                )
+                                                ReactionBar(showRelyFeedTextField = showReplyTextField,
+                                                    onSelectedEmoji = {
+                                                        // Update the selected emoji
+                                                        viewModel.onEmojiSelected(it)
+                                                    })
                                             } else {
                                                 // Display a loading indicator
                                                 CircularProgressIndicator(
@@ -343,20 +358,74 @@ fun FeedScreen(
                 }
                 if (showReplyTextField.value) {
                     // Show text field to reply feed
-                    TextField(value = "",
-                        onValueChange = {},
-                        label = { },
-                        modifier = Modifier
-                            .widthIn(max = 200.dp)
-                            .background(color = Color(0xFF272626))
-                            .focusRequester(focusRequester)
-                            .align(
-                                Alignment.Center
+                    val fabColor =
+                        if (uiState.value.isSendButtonEnabled) Color.White else Color(0xFF272626)
+                    TextField(value = uiState.value.reply, onValueChange = {
+                        viewModel.onReplyTextChanged(it)
+                    }, placeholder = {
+                        Text(
+                            text = "Trả lời ${uiState.value.currentUser?.firstName}...",
+                            style = TextStyle(
+                                fontSize = 14.sp,
+                                fontFamily = fontFamily,
+                                fontWeight = FontWeight.Bold,
+                                color = Color(0xFFACA4A4),
                             )
-                            .zIndex(3f)
-                    )
+                        )
+                    }, singleLine = true, modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(
+                            RoundedCornerShape(50.dp)
+                        )
+                        .focusRequester(focusRequester)
+                        .align(
+                            Alignment.Center
+                        )
+                        .zIndex(3f), textStyle = TextStyle(
+                        fontSize = 14.sp,
+                        fontFamily = fontFamily,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White,
+                    ), colors = TextFieldDefaults.textFieldColors(
+                        backgroundColor = Color(0xFF272626),
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        disabledIndicatorColor = Color.Transparent,
+                        cursorColor = Color.White,
+                        textColor = Color.White
+                    ), trailingIcon = {
+                        FloatingActionButton(
+                            onClick = {},
+                            shape = CircleShape,
+                            containerColor = fabColor,
+                            modifier = Modifier.padding(8.dp)
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.icon_send),
+                                contentDescription = "Send Logo",
+                                modifier = Modifier.size(40.dp),
+                                alignment = Alignment.Center
+                            )
+                        }
+                    })
                     LaunchedEffect(Unit) {
                         focusRequester.requestFocus()
+                    }
+                }
+                // Show the emoji animation
+                if (uiState.value.selectedEmoji.isNotEmpty()) {
+//                    Particles(
+//                        modifier = Modifier.fillMaxSize(),
+//                        quantity = 50,
+//                        emoji = uiState.value.selectedEmoji,
+//                        visible = true
+//                    )
+                    EmojiRain(emoji = uiState.value.selectedEmoji)
+                    LaunchedEffect(Unit) {
+                        // Clear the selected emoji
+                        delay(2000)
+                        viewModel.onEmojiSelected("")
+
                     }
                 }
             }

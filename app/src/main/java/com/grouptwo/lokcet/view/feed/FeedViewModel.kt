@@ -176,4 +176,27 @@ class FeedViewModel @Inject constructor(
         // Request feed for selected friend
         requestFeed()
     }
+
+    fun setCurrentUser(userId: String) {
+        // find in friend list
+        val friendList = _uiState.value.friendList
+        if (friendList is DataState.Success) {
+            val user = friendList.data.find { it.id == userId }
+            _uiState.update {
+                it.copy(currentUser = user)
+            }
+        }
+    }
+
+    fun onReplyTextChanged(reply: String) {
+        _uiState.update {
+            it.copy(reply = reply, isSendButtonEnabled = reply.isNotBlank())
+        }
+    }
+
+    fun onEmojiSelected(emoji: String) {
+        _uiState.update {
+            it.copy(selectedEmoji = emoji)
+        }
+    }
 }

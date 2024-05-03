@@ -211,3 +211,7 @@ q
 Aapp/src/main/java/com/grouptwo/lokcet/view/feed/FriendDropdown.kt,a/e/ae479537f3e10ea7b316b69e5aa5b959d1bc145a
 n
 >app/src/main/java/com/grouptwo/lokcet/view/feed/ReactionBar.kt,0/f/0ffc07f3bfe6bf17ad0d6c0e145f2fef5a4bde19
+Ö
+Uapp/src/main/java/com/grouptwo/lokcet/ui/component/global/composable/EmojiParticle.kt,2/a/2a22c0c35f6ef26fa9498b6e63125cec3c0d101b
+Å
+Qapp/src/main/java/com/grouptwo/lokcet/ui/component/global/composable/EmojiRain.kt,6/7/67a720271a73e6c361cdafd92b6b29c800d0e07e

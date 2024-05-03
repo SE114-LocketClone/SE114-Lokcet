@@ -26,7 +26,8 @@ import com.grouptwo.lokcet.R
 
 @Composable
 fun ReactionBar(
-    showRelyFeedTextField: MutableState<Boolean>
+    showRelyFeedTextField: MutableState<Boolean>,
+    onSelectedEmoji: (String) -> Unit
 ) {
     if (!showRelyFeedTextField.value) {
         Box(
@@ -57,14 +58,17 @@ fun ReactionBar(
                 // Emoji 💛
                 Text(text = "💛", fontSize = 20.sp, modifier = Modifier.clickable {
                     // Show emoji picker
+                    onSelectedEmoji("💛")
                 })
                 // Emoji 🔥
                 Text(text = "🔥", fontSize = 20.sp, modifier = Modifier.clickable {
                     // Show icon picker
+                    onSelectedEmoji("🔥")
                 })
                 // Emoji 😂
                 Text(text = "😂", fontSize = 20.sp, modifier = Modifier.clickable {
                     // Show icon picker
+                    onSelectedEmoji("😂")
                 })
                 // Emoji picker
                 Image(
