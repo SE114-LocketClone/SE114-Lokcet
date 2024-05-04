@@ -3,6 +3,8 @@ package com.grouptwo.lokcet.di.impl
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.GeoPoint
+import com.grouptwo.lokcet.data.model.EmojiReaction
+import com.grouptwo.lokcet.data.model.UploadImage
 import com.grouptwo.lokcet.data.model.User
 import com.grouptwo.lokcet.di.service.AccountService
 import com.grouptwo.lokcet.di.service.ContactService
@@ -419,4 +421,34 @@ class UserServiceImpl @Inject constructor(
         }
     }
 
+    override suspend fun addEmojiReaction(feedId: String, emoji: String): Flow<DataState<Unit>> {
+        return flow {
+            try {
+                emit(DataState.Loading)
+                val feedRef = firestore.collection("images").document(feedId)
+                val feed = feedRef.get().await().toObject(UploadImage::class.java)
+
+                val reactionRef = firestore.collection("reactions")
+                    .whereEqualTo("userId", accountService.currentUserId)
+                    .whereEqualTo("imageId", feedId)
+                val reaction = reactionRef.get().await().toObjects(EmojiReaction::class.java)
+                if (feed != null) {
+                    val emojiReaction = EmojiReaction(
+                        emojiId = emoji, userId = accountService.currentUserId, imageId = feedId
+                    )
+                    if (emoji !in reaction.map { it.emojiId }) {
+                        // Add the emoji reaction to the firestore
+                        firestore.collection("reactions").add(emojiReaction).await()
+                        emit(DataState.Success(Unit))
+                    } else {
+                        emit(DataState.Success(Unit))
+                    }
+                } else {
+                    emit(DataState.Error(Exception("Không tìm thấy bài viết")))
+                }
+            } catch (e: Exception) {
+                emit(DataState.Error(e))
+            }
+        }
+    }
 }

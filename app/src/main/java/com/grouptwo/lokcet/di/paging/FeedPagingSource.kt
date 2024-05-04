@@ -186,7 +186,7 @@ class FeedPagingSource(
 
             val data = currentPage.map { documentSnapshot ->
                 val uploadImage = documentSnapshot.toObject(UploadImage::class.java)
-                val emojiReactions = firestore.collection("reaction")
+                val emojiReactions = firestore.collection("reactions")
                     .whereEqualTo("imageId", uploadImage?.imageId).get().await()
                     .toObjects(EmojiReaction::class.java)
                 Feed(uploadImage!!, emojiReactions)

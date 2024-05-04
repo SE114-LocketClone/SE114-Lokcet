@@ -109,6 +109,7 @@ dependencies {
     implementation libs.androidx.camera.extensions
     implementation libs.ucrop
     implementation libs.androidx.paging.compose
+    implementation libs.compose.emoji.picker
 }
 
 // Allow references to generated code

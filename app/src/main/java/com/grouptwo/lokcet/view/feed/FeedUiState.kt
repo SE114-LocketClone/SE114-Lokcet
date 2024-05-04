@@ -1,6 +1,7 @@
 package com.grouptwo.lokcet.view.feed
 
 import com.google.firebase.Timestamp
+import com.grouptwo.lokcet.data.model.Feed
 import com.grouptwo.lokcet.data.model.User
 import com.grouptwo.lokcet.utils.DataState
 
@@ -15,4 +16,5 @@ data class FeedUiState(
     val isRequestingFeed: Boolean = false,
     val currentServerTime: Timestamp? = null,
     val currentUser: User? = null, // when you want to react feed of your friend then you need to know their user details
+    val currentFeed: Feed? = null,
 )

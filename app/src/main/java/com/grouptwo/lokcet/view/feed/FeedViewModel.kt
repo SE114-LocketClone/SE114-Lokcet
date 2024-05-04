@@ -188,6 +188,12 @@ class FeedViewModel @Inject constructor(
         }
     }
 
+    fun setCurrentFeed(feed: Feed) {
+        _uiState.update {
+            it.copy(currentFeed = feed)
+        }
+    }
+
     fun onReplyTextChanged(reply: String) {
         _uiState.update {
             it.copy(reply = reply, isSendButtonEnabled = reply.isNotBlank())
@@ -195,8 +201,43 @@ class FeedViewModel @Inject constructor(
     }
 
     fun onEmojiSelected(emoji: String) {
-        _uiState.update {
-            it.copy(selectedEmoji = emoji)
+        launchCatching {
+            try {
+                if (_uiState.value.isNetworkAvailable.not()) {
+                    throw Exception("Không có kết nối mạng")
+                }
+                // show emoji animation
+                _uiState.update {
+                    it.copy(selectedEmoji = emoji)
+                }
+                // Call API to react feed
+                userService.addEmojiReaction(
+                    _uiState.value.currentFeed!!.uploadImage.imageId,
+                    emoji
+                ).collect {dataState ->
+                    when (dataState) {
+                        is DataState.Loading -> {
+                            // Do nothing
+                        }
+
+                        is DataState.Success -> {
+                            // Reset emoji animation
+                            _uiState.update {
+                                it.copy(selectedEmoji = "")
+                            }
+                        }
+
+                        is DataState.Error -> {
+                            throw dataState.exception
+                        }
+                    }
+                }
+
+            } catch (e: CancellationException) {
+                // Do nothing
+            } catch (e: Exception) {
+                SnackbarManager.showMessage(e.toSnackbarMessage())
+            }
         }
     }
 }

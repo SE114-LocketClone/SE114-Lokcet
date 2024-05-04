@@ -1,6 +1,5 @@
 package com.grouptwo.lokcet.view.feed
 
-import EmojiRain
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -9,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -30,9 +30,12 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -64,18 +67,20 @@ import com.bumptech.glide.request.RequestOptions
 import com.grouptwo.lokcet.R
 import com.grouptwo.lokcet.data.model.Feed
 import com.grouptwo.lokcet.data.model.User
+import com.grouptwo.lokcet.ui.component.global.composable.Particles
 import com.grouptwo.lokcet.ui.component.global.ime.rememberImeState
+import com.grouptwo.lokcet.ui.theme.BlackSecondary
 import com.grouptwo.lokcet.ui.theme.YellowPrimary
 import com.grouptwo.lokcet.ui.theme.fontFamily
 import com.grouptwo.lokcet.utils.DataState
 import com.grouptwo.lokcet.utils.calculateTimePassed
 import com.grouptwo.lokcet.utils.noRippleClickable
 import com.grouptwo.lokcet.view.error.ErrorScreen
+import com.makeappssimple.abhimanyu.composeemojipicker.ComposeEmojiPickerBottomSheetUI
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.glide.GlideImage
-import kotlinx.coroutines.delay
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun FeedScreen(
     viewModel: FeedViewModel = hiltViewModel()
@@ -90,6 +95,15 @@ fun FeedScreen(
     // Display the feed screen
     val showReplyTextField = remember { mutableStateOf(false) }
     val imeState = rememberImeState()
+    val sheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true,
+    )
+
+    var isModalBottomSheetVisible = remember {
+        mutableStateOf(false)
+    }
+
+    val searchText = remember { mutableStateOf("") }
 
     // Launch the effect to get current user feed
 
@@ -237,6 +251,8 @@ fun FeedScreen(
                                                 if (feed?.uploadImage?.userId != uiState.value.currentUser?.id) viewModel.setCurrentUser(
                                                     feed?.uploadImage?.userId ?: ""
                                                 )
+                                                // Update the current view model feed for interaction with the feed
+                                                if (feed != null) viewModel.setCurrentFeed(feed)
                                             }
                                             if (feed != null) {
                                                 Box( // Display the feed image ensuring it is square
@@ -334,11 +350,14 @@ fun FeedScreen(
                                                 }
                                                 // Show the reaction bar (aka message bar)
                                                 Spacer(modifier = Modifier.height(16.dp))
-                                                ReactionBar(showRelyFeedTextField = showReplyTextField,
+                                                ReactionBar(
+                                                    showRelyFeedTextField = showReplyTextField,
                                                     onSelectedEmoji = {
                                                         // Update the selected emoji
                                                         viewModel.onEmojiSelected(it)
-                                                    })
+                                                    },
+                                                    showEmojiPicker = isModalBottomSheetVisible
+                                                )
                                             } else {
                                                 // Display a loading indicator
                                                 CircularProgressIndicator(
@@ -412,22 +431,61 @@ fun FeedScreen(
                         focusRequester.requestFocus()
                     }
                 }
+                if (isModalBottomSheetVisible.value) {
+                    ModalBottomSheet(
+                        sheetState = sheetState,
+                        shape = RoundedCornerShape(20.dp),
+                        tonalElevation = 0.dp,
+                        onDismissRequest = {
+                            isModalBottomSheetVisible.value = false
+                            searchText.value = ""
+                        },
+                        dragHandle = null,
+                        windowInsets = WindowInsets(
+                            0
+                        )
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .wrapContentSize(),
+                        ) {
+                            ComposeEmojiPickerBottomSheetUI(
+                                onEmojiClick = { emoji ->
+                                    isModalBottomSheetVisible.value = false
+                                    viewModel.onEmojiSelected(emoji.character)
+                                },
+                                searchText = searchText.value,
+                                updateSearchText = { updatedSearchText ->
+                                    searchText.value = updatedSearchText
+                                },
+                                backgroundColor = BlackSecondary,
+                                groupTitleTextColor = Color.White,
+                                groupTitleTextStyle = TextStyle(
+                                    fontSize = 16.sp,
+                                    fontFamily = fontFamily,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.White,
+                                ),
+                                searchBarColor = Color.White,
+                                modifier = Modifier
+                                    .heightIn(max = 400.dp)
+                                    .fillMaxWidth()
+                            )
+                        }
+                    }
+
+                }
                 // Show the emoji animation
                 if (uiState.value.selectedEmoji.isNotEmpty()) {
-//                    Particles(
-//                        modifier = Modifier.fillMaxSize(),
-//                        quantity = 50,
-//                        emoji = uiState.value.selectedEmoji,
-//                        visible = true
-//                    )
-                    EmojiRain(emoji = uiState.value.selectedEmoji)
-                    LaunchedEffect(Unit) {
-                        // Clear the selected emoji
-                        delay(2000)
-                        viewModel.onEmojiSelected("")
-
-                    }
+                    Particles(
+                        modifier = Modifier.fillMaxSize(),
+                        quantity = 50,
+                        emoji = uiState.value.selectedEmoji,
+                        visible = true
+                    )
                 }
+
+                // Show the emoji picker
             }
         }
 
