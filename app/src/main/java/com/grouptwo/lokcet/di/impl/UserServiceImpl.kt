@@ -7,6 +7,7 @@ import com.grouptwo.lokcet.data.model.EmojiReaction
 import com.grouptwo.lokcet.data.model.UploadImage
 import com.grouptwo.lokcet.data.model.User
 import com.grouptwo.lokcet.di.service.AccountService
+import com.grouptwo.lokcet.di.service.ChatService
 import com.grouptwo.lokcet.di.service.ContactService
 import com.grouptwo.lokcet.di.service.LocationService
 import com.grouptwo.lokcet.di.service.UserService
@@ -29,7 +30,9 @@ class UserServiceImpl @Inject constructor(
     private val firestore: FirebaseFirestore,
     private val accountService: AccountService,
     private val locationService: LocationService,
-    private val contactService: ContactService
+    private val contactService: ContactService,
+    private val chatService: ChatService
+
 ) : UserService {
 
 
@@ -189,6 +192,7 @@ class UserServiceImpl @Inject constructor(
                         userRef.update("friends", userFriends).await()
                         friendRef.update("friendWaitList", friendFriendWaitList).await()
                         friendRef.update("friends", friendFriends).await()
+                        chatService.createChatRoom(friendId)
                         emit(DataState.Success(Unit))
                     } else {
                         emit(DataState.Error(Exception("Không tìm thấy người dùng trong danh sách chờ")))

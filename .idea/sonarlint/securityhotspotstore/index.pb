@@ -215,3 +215,9 @@ n
 Uapp/src/main/java/com/grouptwo/lokcet/ui/component/global/composable/EmojiParticle.kt,2/a/2a22c0c35f6ef26fa9498b6e63125cec3c0d101b
 Å
 Qapp/src/main/java/com/grouptwo/lokcet/ui/component/global/composable/EmojiRain.kt,6/7/67a720271a73e6c361cdafd92b6b29c800d0e07e
+h
+8app/src/main/java/com/grouptwo/lokcet/data/model/Chat.kt,b/0/b0f8088f7668694eeff3e32759bc1ef0630217f1
+o
+?app/src/main/java/com/grouptwo/lokcet/di/service/ChatService.kt,3/5/35daae213bd459df295b0cadedceb5817839d989
+r
+Bapp/src/main/java/com/grouptwo/lokcet/di/impl/ChatServiceImpl.k.kt,c/2/c2deb91f80629b003705584c960d8b20a3222974
