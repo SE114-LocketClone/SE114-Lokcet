@@ -425,6 +425,7 @@ class UserServiceImpl @Inject constructor(
         return flow {
             try {
                 emit(DataState.Loading)
+                val currentUser = accountService.getCurrentUser()
                 val feedRef = firestore.collection("images").document(feedId)
                 val feed = feedRef.get().await().toObject(UploadImage::class.java)
 
@@ -434,11 +435,24 @@ class UserServiceImpl @Inject constructor(
                 val reaction = reactionRef.get().await().toObjects(EmojiReaction::class.java)
                 if (feed != null) {
                     val emojiReaction = EmojiReaction(
-                        emojiId = emoji, userId = accountService.currentUserId, imageId = feedId
+                        emojiId = emoji,
+                        userId = accountService.currentUserId,
+                        imageId = feedId,
+                        isViewed = false,
+                        userName = "${currentUser.firstName} ${currentUser.lastName}"
                     )
                     if (emoji !in reaction.map { it.emojiId }) {
                         // Add the emoji reaction to the firestore
                         firestore.collection("reactions").add(emojiReaction).await()
+                        // Update the emoji id in firestore
+                        firestore.collection("reactions")
+                            .whereEqualTo("userId", accountService.currentUserId)
+                            .whereEqualTo("emojiId", emoji)
+                            .whereEqualTo("imageId", feedId).get().await().documents.firstOrNull()
+                            ?.let {
+                                firestore.collection("reactions").document(it.id)
+                                    .update("reactionId", it.id).await()
+                            }
                         emit(DataState.Success(Unit))
                     } else {
                         emit(DataState.Success(Unit))
@@ -451,4 +465,6 @@ class UserServiceImpl @Inject constructor(
             }
         }
     }
+
+
 }

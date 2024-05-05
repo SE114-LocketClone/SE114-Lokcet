@@ -36,9 +36,9 @@ class FeedViewModel @Inject constructor(
     private val feedRepository: FeedRepository
 ) : LokcetViewModel() {
     private val _uiState = MutableStateFlow(FeedUiState())
+    val uiState: StateFlow<FeedUiState> = _uiState.asStateFlow()
     private val _feedState = MutableStateFlow<PagingData<Feed>>(PagingData.empty())
     val feedState: StateFlow<PagingData<Feed>> = _feedState.asStateFlow()
-    val uiState: StateFlow<FeedUiState> = _uiState
     private val networkStatus: StateFlow<ConnectionState> = internetService.networkStatus.stateIn(
         scope = viewModelScope,
         initialValue = ConnectionState.Unknown,
@@ -118,13 +118,19 @@ class FeedViewModel @Inject constructor(
                             // add current user to friend list
                             val currentUser = accountService.getCurrentUser()
                             val friendList = dataState.data.toMutableList()
+                            // Create avatar map for friend list
+                            val friendAvatar = friendList.associateBy({ it.id }, { it.profilePicture })
                             if (currentUser.id.isNotEmpty() && friendList.none { it.id == currentUser.id }) {
                                 friendList.add(currentUser)
+                                _uiState.update {
+                                    it.copy(ownerUser = currentUser)
+                                }
                             }
                             _uiState.update {
                                 it.copy(
                                     friendList = DataState.Success(friendList),
-                                    selectedFriend = null
+                                    selectedFriend = null,
+                                    friendAvatar = friendAvatar
                                 )
                             }
                             // Request feed for all friends
@@ -177,30 +183,13 @@ class FeedViewModel @Inject constructor(
         requestFeed()
     }
 
-    fun setCurrentUser(userId: String) {
-        // find in friend list
-        val friendList = _uiState.value.friendList
-        if (friendList is DataState.Success) {
-            val user = friendList.data.find { it.id == userId }
-            _uiState.update {
-                it.copy(currentUser = user)
-            }
-        }
-    }
-
-    fun setCurrentFeed(feed: Feed) {
-        _uiState.update {
-            it.copy(currentFeed = feed)
-        }
-    }
-
     fun onReplyTextChanged(reply: String) {
         _uiState.update {
             it.copy(reply = reply, isSendButtonEnabled = reply.isNotBlank())
         }
     }
 
-    fun onEmojiSelected(emoji: String) {
+    fun onEmojiSelected(emoji: String, feed: Feed) {
         launchCatching {
             try {
                 if (_uiState.value.isNetworkAvailable.not()) {
@@ -212,9 +201,9 @@ class FeedViewModel @Inject constructor(
                 }
                 // Call API to react feed
                 userService.addEmojiReaction(
-                    _uiState.value.currentFeed!!.uploadImage.imageId,
+                    feed.uploadImage.imageId,
                     emoji
-                ).collect {dataState ->
+                ).collect { dataState ->
                     when (dataState) {
                         is DataState.Loading -> {
                             // Do nothing
@@ -240,4 +229,29 @@ class FeedViewModel @Inject constructor(
             }
         }
     }
+
+    fun onSearchEmoji(searchText: String) {
+        _uiState.update {
+            it.copy(searchText = searchText)
+        }
+    }
+
+    fun onShowEmojiPicker(showEmojiPicker: Boolean) {
+        _uiState.update {
+            it.copy(isEmojiPickerVisible = showEmojiPicker)
+        }
+    }
+
+    fun onShowRelyFeedTextField(showRelyFeedTextField: Boolean) {
+        _uiState.update {
+            it.copy(isShowReplyTextField = showRelyFeedTextField)
+        }
+    }
+
+    fun onShowReactionList(showReactionList: Boolean) {
+        _uiState.update {
+            it.copy(isShowReactionList = showReactionList)
+        }
+    }
+
 }

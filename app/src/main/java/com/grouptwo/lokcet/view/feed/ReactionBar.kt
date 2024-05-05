@@ -26,12 +26,14 @@ import com.grouptwo.lokcet.R
 
 @Composable
 fun ReactionBar(
-    showRelyFeedTextField: MutableState<Boolean>,
+    showRelyFeedTextField: Boolean,
     onSelectedEmoji: (String) -> Unit,
-    showEmojiPicker: MutableState<Boolean>,
+    showEmojiPicker: Boolean,
+    onShowEmojiPicker : (Boolean) -> Unit,
+    onShowRelyFeedTextField: (Boolean) -> Unit,
 ) {
     // Show reaction bar only if reply feed text field and emoji picker is not visible
-    if (!showRelyFeedTextField.value && !showEmojiPicker.value) {
+    if (!showRelyFeedTextField && !showEmojiPicker) {
         Box(
             modifier = Modifier
                 .width(200.dp)
@@ -53,7 +55,7 @@ fun ReactionBar(
                         .size(40.dp)
                         .clickable {
                             // Show text field to reply feed
-                            showRelyFeedTextField.value = true
+                            onShowRelyFeedTextField(true)
                         },
                     colorFilter = ColorFilter.tint(Color(0xFFACA4A4)),
                 )
@@ -79,7 +81,7 @@ fun ReactionBar(
                     modifier = Modifier
                         .clickable {
                             // Show emoji picker
-                            showEmojiPicker.value = true
+                            onShowEmojiPicker(true)
                         }
                         .size(40.dp),
                 )

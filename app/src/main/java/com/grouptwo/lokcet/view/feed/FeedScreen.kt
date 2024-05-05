@@ -2,6 +2,7 @@ package com.grouptwo.lokcet.view.feed
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -24,8 +25,12 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
@@ -39,7 +44,6 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -68,13 +72,13 @@ import com.grouptwo.lokcet.R
 import com.grouptwo.lokcet.data.model.Feed
 import com.grouptwo.lokcet.data.model.User
 import com.grouptwo.lokcet.ui.component.global.composable.Particles
-import com.grouptwo.lokcet.ui.component.global.ime.rememberImeState
 import com.grouptwo.lokcet.ui.theme.BlackSecondary
 import com.grouptwo.lokcet.ui.theme.YellowPrimary
 import com.grouptwo.lokcet.ui.theme.fontFamily
 import com.grouptwo.lokcet.utils.DataState
 import com.grouptwo.lokcet.utils.calculateTimePassed
 import com.grouptwo.lokcet.utils.noRippleClickable
+import com.grouptwo.lokcet.utils.returnTimeMinutes
 import com.grouptwo.lokcet.view.error.ErrorScreen
 import com.makeappssimple.abhimanyu.composeemojipicker.ComposeEmojiPickerBottomSheetUI
 import com.skydoves.landscapist.ImageOptions
@@ -93,17 +97,13 @@ fun FeedScreen(
     val focusManager = LocalFocusManager.current
     val focusRequester = remember { FocusRequester() }
     // Display the feed screen
-    val showReplyTextField = remember { mutableStateOf(false) }
-    val imeState = rememberImeState()
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true,
     )
-
-    var isModalBottomSheetVisible = remember {
-        mutableStateOf(false)
-    }
-
-    val searchText = remember { mutableStateOf("") }
+    val reactState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true,
+    )
+    val scrollState = rememberScrollState()
 
     // Launch the effect to get current user feed
 
@@ -117,7 +117,7 @@ fun FeedScreen(
                     .pointerInput(Unit) {// If the user taps outside the text field, clear the focus
                         detectTapGestures(onTap = {
                             focusManager.clearFocus()
-                            showReplyTextField.value = false
+                            viewModel.onShowRelyFeedTextField(false)
                         })
                     },
             ) {
@@ -242,18 +242,11 @@ fun FeedScreen(
                                     } else {
                                         // Return VerticalPager with the feed list and the feed state
                                         VerticalPager(
-                                            state = pagerState
+                                            state = pagerState,
+                                            pageSpacing = 300.dp,
                                         ) { page ->
                                             // Set current user
                                             val feed = feedState[page]
-                                            LaunchedEffect(key1 = feed) {
-                                                // Make sure the current user is set and only update if has changed
-                                                if (feed?.uploadImage?.userId != uiState.value.currentUser?.id) viewModel.setCurrentUser(
-                                                    feed?.uploadImage?.userId ?: ""
-                                                )
-                                                // Update the current view model feed for interaction with the feed
-                                                if (feed != null) viewModel.setCurrentFeed(feed)
-                                            }
                                             if (feed != null) {
                                                 Box( // Display the feed image ensuring it is square
                                                     modifier = Modifier
@@ -350,14 +343,60 @@ fun FeedScreen(
                                                 }
                                                 // Show the reaction bar (aka message bar)
                                                 Spacer(modifier = Modifier.height(16.dp))
-                                                ReactionBar(
-                                                    showRelyFeedTextField = showReplyTextField,
-                                                    onSelectedEmoji = {
-                                                        // Update the selected emoji
-                                                        viewModel.onEmojiSelected(it)
-                                                    },
-                                                    showEmojiPicker = isModalBottomSheetVisible
-                                                )
+                                                // Owner of feed cannot react to their own feed
+                                                if (feed.uploadImage.userId != uiState.value.ownerUser?.id) {
+                                                    ReactionBar(showRelyFeedTextField = uiState.value.isShowReplyTextField,
+                                                        onSelectedEmoji = {
+                                                            // Update the selected emoji
+                                                            viewModel.onEmojiSelected(it, feed)
+                                                        },
+                                                        showEmojiPicker = uiState.value.isEmojiPickerVisible,
+                                                        onShowEmojiPicker = {
+                                                            // Update the emoji picker visibility
+                                                            viewModel.onShowEmojiPicker(it)
+                                                        },
+                                                        onShowRelyFeedTextField = {
+                                                            // Update the reply feed text field visibility
+                                                            viewModel.onShowRelyFeedTextField(it)
+                                                        })
+                                                } else {
+                                                    // Display a button to show reaction feed
+                                                    Button(
+                                                        onClick = {
+                                                            // Show reaction feed
+                                                            viewModel.onShowReactionList(true)
+                                                        },
+                                                        modifier = Modifier.wrapContentSize(),
+                                                        colors = ButtonDefaults.buttonColors(
+                                                            backgroundColor = Color(0xFF272626),
+                                                            contentColor = Color.White
+                                                        ),
+                                                        shape = RoundedCornerShape(50.dp)
+                                                    ) {
+                                                        Row(
+                                                            verticalAlignment = Alignment.CenterVertically,
+                                                            horizontalArrangement = Arrangement.Center,
+                                                            modifier = Modifier.padding(8.dp)
+                                                        ) {
+                                                            Text(
+                                                                text = "Activity",
+                                                                style = TextStyle(
+                                                                    fontSize = 16.sp,
+                                                                    fontFamily = fontFamily,
+                                                                    fontWeight = FontWeight.Bold,
+                                                                    color = Color.White,
+                                                                )
+                                                            )
+                                                            Spacer(modifier = Modifier.width(8.dp))
+                                                            Image(
+                                                                painter = painterResource(id = R.drawable.icon_sparkle),
+                                                                contentDescription = "Sparkle Logo",
+                                                                modifier = Modifier.size(20.dp),
+                                                                colorFilter = ColorFilter.tint(Color.White)
+                                                            )
+                                                        }
+                                                    }
+                                                }
                                             } else {
                                                 // Display a loading indicator
                                                 CircularProgressIndicator(
@@ -375,7 +414,8 @@ fun FeedScreen(
                         }
                     }
                 }
-                if (showReplyTextField.value) {
+
+                if (uiState.value.isShowReplyTextField) {
                     // Show text field to reply feed
                     val fabColor =
                         if (uiState.value.isSendButtonEnabled) Color.White else Color(0xFF272626)
@@ -383,7 +423,7 @@ fun FeedScreen(
                         viewModel.onReplyTextChanged(it)
                     }, placeholder = {
                         Text(
-                            text = "Trả lời ${uiState.value.currentUser?.firstName}...",
+                            text = "Trả lời ${feedState[pagerState.currentPage]?.uploadImage?.userName}...",
                             style = TextStyle(
                                 fontSize = 14.sp,
                                 fontFamily = fontFamily,
@@ -431,14 +471,24 @@ fun FeedScreen(
                         focusRequester.requestFocus()
                     }
                 }
-                if (isModalBottomSheetVisible.value) {
+                // Show the emoji animation
+                if (uiState.value.selectedEmoji.isNotEmpty()) {
+                    Particles(
+                        modifier = Modifier.fillMaxSize(),
+                        quantity = 50,
+                        emoji = uiState.value.selectedEmoji,
+                        visible = true
+                    )
+                }
+                // Show the emoji picker
+                if (uiState.value.isEmojiPickerVisible) {
                     ModalBottomSheet(
                         sheetState = sheetState,
                         shape = RoundedCornerShape(20.dp),
                         tonalElevation = 0.dp,
                         onDismissRequest = {
-                            isModalBottomSheetVisible.value = false
-                            searchText.value = ""
+                            viewModel.onShowEmojiPicker(false)
+                            viewModel.onSearchEmoji("")
                         },
                         dragHandle = null,
                         windowInsets = WindowInsets(
@@ -446,17 +496,21 @@ fun FeedScreen(
                         )
                     ) {
                         Column(
-                            modifier = Modifier
-                                .wrapContentSize(),
+                            modifier = Modifier.wrapContentSize(),
                         ) {
                             ComposeEmojiPickerBottomSheetUI(
                                 onEmojiClick = { emoji ->
-                                    isModalBottomSheetVisible.value = false
-                                    viewModel.onEmojiSelected(emoji.character)
+                                    viewModel.onShowEmojiPicker(false)
+                                    feedState[pagerState.currentPage]?.let {
+                                        viewModel.onEmojiSelected(
+                                            emoji.character,
+                                            it
+                                        )
+                                    }
                                 },
-                                searchText = searchText.value,
+                                searchText = uiState.value.searchText,
                                 updateSearchText = { updatedSearchText ->
-                                    searchText.value = updatedSearchText
+                                    viewModel.onSearchEmoji(updatedSearchText)
                                 },
                                 backgroundColor = BlackSecondary,
                                 groupTitleTextColor = Color.White,
@@ -473,19 +527,152 @@ fun FeedScreen(
                             )
                         }
                     }
-
                 }
-                // Show the emoji animation
-                if (uiState.value.selectedEmoji.isNotEmpty()) {
-                    Particles(
-                        modifier = Modifier.fillMaxSize(),
-                        quantity = 50,
-                        emoji = uiState.value.selectedEmoji,
-                        visible = true
-                    )
-                }
+                // Show emoji reaction
+                if (uiState.value.isShowReactionList) {
+                    ModalBottomSheet(
+                        onDismissRequest = {
+                            viewModel.onShowReactionList(false)
 
-                // Show the emoji picker
+                        },
+                        sheetState = reactState,
+                        shape = RoundedCornerShape(20.dp),
+                        tonalElevation = 0.dp,
+                        dragHandle = null,
+                        windowInsets = WindowInsets(
+                            0
+                        ),
+                        containerColor = BlackSecondary
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .heightIn(max = 400.dp)
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .verticalScroll(scrollState),
+                                verticalArrangement = Arrangement.Top,
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Spacer(modifier = Modifier.height(16.dp))
+                                Text(
+                                    text = "Reaction", style = TextStyle(
+                                        fontSize = 20.sp,
+                                        fontFamily = fontFamily,
+                                        fontWeight = FontWeight.Bold,
+                                        color = Color.White,
+                                        textAlign = TextAlign.Center
+                                    )
+                                )
+                                Spacer(modifier = Modifier.height(16.dp))
+                                if (feedState[pagerState.currentPage]?.emojiReactions!!.isEmpty()) {
+                                    Box(
+                                        modifier = Modifier.fillMaxSize(),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(
+                                            text = "Không có react nào", style = TextStyle(
+                                                fontSize = 16.sp,
+                                                fontFamily = fontFamily,
+                                                fontWeight = FontWeight.Bold,
+                                                color = Color.White,
+                                                textAlign = TextAlign.Center
+                                            )
+                                        )
+                                    }
+                                } else {
+                                    // Show the emoji reaction list using the feed state
+                                    feedState[pagerState.currentPage]?.emojiReactions?.forEach {
+                                        Row(
+                                            modifier = Modifier
+                                                .padding(16.dp)
+                                                .fillMaxWidth(),
+                                            horizontalArrangement = Arrangement.SpaceBetween,
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            Row(
+                                                horizontalArrangement = Arrangement.Start,
+                                                verticalAlignment = Alignment.CenterVertically
+                                            ) {
+                                                GlideImage(
+                                                    imageModel = { uiState.value.friendAvatar[it.userId] },
+                                                    imageOptions = ImageOptions(
+                                                        contentScale = ContentScale.Crop,
+                                                        alignment = Alignment.Center
+                                                    ),
+                                                    requestOptions = {
+                                                        RequestOptions().diskCacheStrategy(
+                                                            DiskCacheStrategy.ALL
+                                                        ).centerCrop()
+                                                    },
+                                                    loading = {
+                                                        // Show a circular progress indicator when loading.
+                                                        CircularProgressIndicator(
+                                                            modifier = Modifier.size(36.dp),
+                                                            color = Color(0xFFE5A500)
+                                                        )
+                                                    },
+                                                    failure = {
+                                                        // Show a circular progress indicator when loading.
+                                                        Image(
+                                                            painter = painterResource(id = R.drawable.icon_friend),
+                                                            contentDescription = "Friend Icon",
+                                                            modifier = Modifier
+                                                                .size(36.dp)
+                                                                .padding(2.dp)
+                                                        )
+                                                    },
+                                                    modifier = Modifier
+                                                        .size(38.dp)
+                                                        .padding(4.dp)
+                                                        .clip(shape = CircleShape)
+                                                        .border(
+                                                            width = 1.dp,
+                                                            color = Color(0xFFE5A500),
+                                                            shape = CircleShape
+                                                        )
+                                                )
+                                                Text(
+                                                    modifier = Modifier.padding(start = 20.dp),
+                                                    text = it.userName,
+                                                    style = TextStyle(
+                                                        fontSize = 20.sp,
+                                                        fontFamily = fontFamily,
+                                                        fontWeight = FontWeight.Bold,
+                                                        color = Color(0xFFEDEDED)
+                                                    )
+                                                )
+                                            }
+                                            Row(
+                                                horizontalArrangement = Arrangement.End,
+                                                verticalAlignment = Alignment.CenterVertically
+                                            ) {
+                                                // Show the time sent
+                                                Text(
+                                                    text = returnTimeMinutes(it.createdAt),
+                                                    style = TextStyle(
+                                                        fontSize = 16.sp,
+                                                        fontFamily = fontFamily,
+                                                        fontWeight = FontWeight.Bold,
+                                                        color = Color(0xFF737070),
+                                                    )
+                                                )
+                                                Spacer(modifier = Modifier.width(16.dp))
+                                                Text(
+                                                    text = it.emojiId,
+                                                    fontSize = 30.sp,
+                                                    modifier = Modifier.padding(4.dp),
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
 

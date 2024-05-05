@@ -14,7 +14,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import com.google.firebase.Timestamp
 import java.io.ByteArrayOutputStream
+import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Locale
 import java.util.concurrent.TimeUnit
 
 // Define validate function for app
@@ -116,4 +118,9 @@ fun Date.calculateTimePassed(currentServerTime: Timestamp): String {
         seconds > 0 -> "$seconds giây trước"
         else -> "Vừa xong"
     }
+}
+
+fun returnTimeMinutes(currentServerTime: Date): String {
+    val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
+    return sdf.format(currentServerTime)
 }

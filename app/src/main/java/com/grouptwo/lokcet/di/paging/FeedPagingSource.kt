@@ -1,6 +1,5 @@
 package com.grouptwo.lokcet.di.paging
 
-import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.google.firebase.firestore.DocumentSnapshot
@@ -187,7 +186,8 @@ class FeedPagingSource(
             val data = currentPage.map { documentSnapshot ->
                 val uploadImage = documentSnapshot.toObject(UploadImage::class.java)
                 val emojiReactions = firestore.collection("reactions")
-                    .whereEqualTo("imageId", uploadImage?.imageId).get().await()
+                    .whereEqualTo("imageId", uploadImage?.imageId)
+                    .orderBy("createdAt", Query.Direction.DESCENDING).get().await()
                     .toObjects(EmojiReaction::class.java)
                 Feed(uploadImage!!, emojiReactions)
             }
