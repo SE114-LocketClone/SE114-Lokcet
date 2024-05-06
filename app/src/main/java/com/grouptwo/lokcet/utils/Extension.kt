@@ -124,3 +124,8 @@ fun returnTimeMinutes(currentServerTime: Date): String {
     val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
     return sdf.format(currentServerTime)
 }
+
+//Extension function to get the friend id from current chat room id
+fun String.getFriendId(currentUserId: String): String {
+    return this.replace(currentUserId, "").replace("_", "")
+}

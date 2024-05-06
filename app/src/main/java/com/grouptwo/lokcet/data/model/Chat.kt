@@ -18,5 +18,11 @@ data class Message(
     val messageContent: String = "",
     val isReplyToFeed: Boolean = false,
     val feedId: String = "", // This is the document id of the feed if the message is a reply to a feed(Upload Image id)
+    val seenAt: Date? = null, // When the message is seen by the receiver user it is a timestamp by the server (null if not seen)
     @ServerTimestamp val createdAt: Date = Date()
+)
+
+data class LatestMessage(
+    val chatRoomId: String = "",
+    val message: Message = Message(),
 )

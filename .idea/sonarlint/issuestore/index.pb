@@ -221,3 +221,5 @@ o
 ?app/src/main/java/com/grouptwo/lokcet/di/service/ChatService.kt,3/5/35daae213bd459df295b0cadedceb5817839d989
 r
 Bapp/src/main/java/com/grouptwo/lokcet/di/impl/ChatServiceImpl.k.kt,c/2/c2deb91f80629b003705584c960d8b20a3222974
+p
+@app/src/main/java/com/grouptwo/lokcet/di/impl/ChatServiceImpl.kt,e/9/e94b6f854d0630cc7af2aae4a9bb3e64c9c6075f

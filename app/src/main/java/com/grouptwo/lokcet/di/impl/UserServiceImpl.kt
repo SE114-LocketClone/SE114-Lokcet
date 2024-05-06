@@ -258,6 +258,9 @@ class UserServiceImpl @Inject constructor(
                         friendFriends.remove(userId)
                         userRef.update("friends", userFriends).await()
                         friendRef.update("friends", friendFriends).await()
+                        val chatRoomId = if (userId < friendId) "${userId}_$friendId" else "${friendId}_$userId"
+                        // Delete the chat room between the user and the friend if it exists
+                        chatService.deleteChatRoom(chatRoomId)
                         emit(DataState.Success(Unit))
                     } else {
                         emit(DataState.Error(Exception("Không tìm thấy người dùng trong danh sách bạn bè")))
