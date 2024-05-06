@@ -1,7 +1,8 @@
 
-dkotlin:S6309."@Functions returning "Flow" or "Channel" should not be suspending(Øõùãşÿÿÿÿ8¤•şÜô1
-_kotlin:S6309N"@Functions returning "Flow" or "Channel" should not be suspending(Î±µ…8¥•şÜô1
-_kotlin:S6309o"@Functions returning "Flow" or "Channel" should not be suspending(ØÖ‰Ò8¥•şÜô1
-ekotlin:S6309›"@Functions returning "Flow" or "Channel" should not be suspending(ÊÃ™£ıÿÿÿÿ8¥•şÜô1
-ekotlin:S6309¼"@Functions returning "Flow" or "Channel" should not be suspending(×åÒûÿÿÿÿ8¥•şÜô1
-qkotlin:S3776o"RRefactor this method to reduce its Cognitive Complexity from 17 to the 15 allowed.(ØÖ‰Ò8©•şÜô1
+Škotlin:S63090"@Functions returning "Flow" or "Channel" should not be suspending(Øõùãşÿÿÿÿ8Ö«Óßô1J$6b9ece56-85e1-4ac6-850a-3d9cbdb17b66
+…kotlin:S6309P"@Functions returning "Flow" or "Channel" should not be suspending(Î±µ…8×«Óßô1J$2be7623e-b7fb-43fc-b690-293bca522acf
+…kotlin:S6309q"@Functions returning "Flow" or "Channel" should not be suspending(ØÖ‰Ò8×«Óßô1J$942a36d8-4558-49b6-9691-aef79e79ffbe
+‹kotlin:S6309 "@Functions returning "Flow" or "Channel" should not be suspending(ÊÃ™£ıÿÿÿÿ8×«Óßô1J$aa7ddf2b-a2f4-4884-9286-37fba983e6a6
+…kotlin:S6309À"@Functions returning "Flow" or "Channel" should not be suspending(ƒ²µQ8×«Óßô1J$46cf6711-9b0c-448b-ac84-a0198fad9bab
+dkotlin:S1128"Remove this unused import.(ÊÒÅ­ùÿÿÿÿ8İ«Óßô1J$e973aa7b-34c9-4f19-bafc-d8b6aedf14cf
+—kotlin:S3776q"RRefactor this method to reduce its Cognitive Complexity from 16 to the 15 allowed.(ØÖ‰Ò8ä«Óßô1J$ca3a5ecd-7e81-4aba-aa2c-cbc9c789f006

@@ -127,7 +127,9 @@ fun HomeScreen1(
                     }
                 }
                 IconButton(
-                    onClick = { /*TODO*/ }, colors = IconButtonDefaults.iconButtonColors(
+                    onClick = {
+                        viewModel.onChatButtonClick(navigate)
+                    }, colors = IconButtonDefaults.iconButtonColors(
                         Color(0xFF272626)
                     ), modifier = Modifier
                         .size(40.dp)

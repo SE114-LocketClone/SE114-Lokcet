@@ -297,6 +297,11 @@ class HomeViewModel @Inject constructor(
         navigate(Screen.FriendScreen.route)
     }
 
+    fun onChatButtonClick(navigate: (String) -> Unit) {
+        // Navigate to the ChatScreen
+        navigate(Screen.ChatScreen_1.route)
+    }
+
     fun startCropping(
         activity: Activity,
         sourceUri: Uri,

@@ -223,3 +223,9 @@ r
 Bapp/src/main/java/com/grouptwo/lokcet/di/impl/ChatServiceImpl.k.kt,c/2/c2deb91f80629b003705584c960d8b20a3222974
 p
 @app/src/main/java/com/grouptwo/lokcet/di/impl/ChatServiceImpl.kt,e/9/e94b6f854d0630cc7af2aae4a9bb3e64c9c6075f
+o
+?app/src/main/java/com/grouptwo/lokcet/view/chat/ChatScreen_1.kt,0/e/0e3e5d2fe5bd08325c6473ca15460a526cb77467
+n
+>app/src/main/java/com/grouptwo/lokcet/view/chat/ChatUiState.kt,4/2/421ffbaac2b990dd9683260d6ac1d4491a2681fd
+p
+@app/src/main/java/com/grouptwo/lokcet/view/chat/ChatViewModel.kt,c/f/cf86657a291e3d2d260ef68a4bbbd94d11069ac8

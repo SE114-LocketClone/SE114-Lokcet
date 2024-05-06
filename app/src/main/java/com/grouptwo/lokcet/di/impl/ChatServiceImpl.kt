@@ -1,6 +1,8 @@
 package com.grouptwo.lokcet.di.impl
 
+import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ListenerRegistration
 import com.grouptwo.lokcet.data.model.ChatRoom
 import com.grouptwo.lokcet.data.model.LatestMessage
 import com.grouptwo.lokcet.data.model.Message
@@ -116,9 +118,10 @@ class ChatServiceImpl @Inject constructor(
                 trySend(DataState.Loading)
                 // Get chat room list of current user from friend list real time updates
                 val chatRoomList = mutableListOf<ChatRoom>()
+                val listener = mutableListOf<ListenerRegistration>()
                 val jobs = friendList.map { friend ->
                     // Launch a separate coroutine for each listener
-                    CoroutineScope(Dispatchers.IO).launch {
+                    CoroutineScope(Dispatchers.IO).async {
                         val chatRoomId =
                             if (accountService.currentUserId < friend.id) "${accountService.currentUserId}_${friend.id}" else "${friend.id}_${accountService.currentUserId}"
                         val chatRoomListener =
@@ -131,20 +134,22 @@ class ChatServiceImpl @Inject constructor(
                                     val chatRoom = value?.toObject(ChatRoom::class.java)
                                     if (chatRoom != null) {
                                         chatRoomList.add(chatRoom)
-                                    } else {
-                                        trySend(DataState.Error(Exception("Không tìm thấy phòng chat")))
                                     }
                                     trySend(DataState.Success(chatRoomList))
                                 }
-                        awaitClose {
-                            // Close listener
-                            chatRoomListener.remove()
-                        }
+                        listener.add(chatRoomListener)
                     }
                 }
 
                 // Wait for all coroutines to finish
-                jobs.forEach { it.join() }
+                jobs.awaitAll()
+
+                // Call awaitClose at the end of callbackFlow block
+                awaitClose {
+                    channel.close()
+                    // Close all listeners
+                    listener.forEach { it.remove() }
+                }
 
             } catch (e: Exception) {
                 trySend(DataState.Error(e))
@@ -171,11 +176,10 @@ class ChatServiceImpl @Inject constructor(
                                 messageList.clear()
                                 messageList.addAll(messages)
                                 trySend(DataState.Success(messageList))
-                            } else {
-                                trySend(DataState.Error(Exception("Không tìm thấy tin nhắn")))
                             }
                         }
                 awaitClose {
+                    channel.close()
                     // Close listener
                     messagesListener.remove()
                 }
@@ -185,28 +189,39 @@ class ChatServiceImpl @Inject constructor(
         }
     }
 
-    override suspend fun getLastestMessage(chatRoomId: String): Flow<DataState<LatestMessage>> {
+    override suspend fun getLastestMessage(chatRoomList: List<ChatRoom>): Flow<DataState<Map<String, LatestMessage>>> {
         return callbackFlow {
             try {
                 trySend(DataState.Loading)
                 // Get last message of chat room to show in chat list screen real time updates
-                val latestMessageListener =
-                    firestore.collection("latest_messages").document(chatRoomId)
-                        .addSnapshotListener { value, error ->
-                            if (error != null) {
-                                trySend(DataState.Error(error))
-                                return@addSnapshotListener
-                            }
-                            val latestMessage = value?.toObject(LatestMessage::class.java)
-                            if (latestMessage != null) {
-                                trySend(DataState.Success(latestMessage))
-                            } else {
-                                trySend(DataState.Error(Exception("Không tìm thấy tin nhắn mới nhất")))
-                            }
-                        }
+                val latestMessageMap = mutableMapOf<String, LatestMessage>()
+                val listeners = mutableListOf<ListenerRegistration>()
+                val jobs = chatRoomList.map { chatRoom ->
+                    // Launch a separate coroutine for each listener
+                    CoroutineScope(Dispatchers.IO).launch {
+                        val latestMessageListener =
+                            firestore.collection("latest_messages").document(chatRoom.chatRoomId)
+                                .addSnapshotListener { value, error ->
+                                    if (error != null) {
+                                        trySend(DataState.Error(error))
+                                        return@addSnapshotListener
+                                    }
+                                    val latestMessage = value?.toObject(LatestMessage::class.java)
+                                    if (latestMessage != null) {
+                                        latestMessageMap[chatRoom.chatRoomId] = latestMessage
+                                    }
+                                    trySend(DataState.Success(latestMessageMap))
+                                }
+                        listeners.add(latestMessageListener)
+                    }
+                }
+                // Wait for all coroutines to finish
+                jobs.forEach { it.join() }
+
+                // Call awaitClose at the end of callbackFlow block
                 awaitClose {
-                    // Close listener
-                    latestMessageListener.remove()
+                    channel.close()
+                    listeners.forEach { it.remove() }
                 }
             } catch (e: Exception) {
                 trySend(DataState.Error(e))

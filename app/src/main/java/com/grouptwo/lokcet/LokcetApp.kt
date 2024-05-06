@@ -32,6 +32,7 @@ import com.grouptwo.lokcet.ui.theme.LokcetTheme
 import com.grouptwo.lokcet.ui.theme.YellowPrimary
 import com.grouptwo.lokcet.view.add_friend.AddFriendScreen
 import com.grouptwo.lokcet.view.add_widget.AddWidgetScreen
+import com.grouptwo.lokcet.view.chat.ChatScreen1
 import com.grouptwo.lokcet.view.feed.FeedScreen
 import com.grouptwo.lokcet.view.friend.FriendScreen
 import com.grouptwo.lokcet.view.home.HomeScreen1
@@ -207,6 +208,14 @@ fun NavGraphBuilder.LokcetGraph(appState: LokcetAppState) {
         FriendScreen(clearAndNavigate = { route ->
             appState.clearAndNavigate(route)
         })
+    }
+
+    // Chat screen
+    composable(Screen.ChatScreen_1.route) {
+        ChatScreen1(
+            viewModel = hiltViewModel(),
+            popUp = { appState.popUp() }
+        )
     }
 }
 
