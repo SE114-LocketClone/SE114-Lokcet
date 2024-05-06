@@ -1,11 +1,11 @@
 package com.grouptwo.lokcet.di.impl
 
-import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.grouptwo.lokcet.data.model.ChatRoom
 import com.grouptwo.lokcet.data.model.LatestMessage
 import com.grouptwo.lokcet.data.model.Message
+import com.grouptwo.lokcet.data.model.UploadImage
 import com.grouptwo.lokcet.data.model.User
 import com.grouptwo.lokcet.di.service.AccountService
 import com.grouptwo.lokcet.di.service.ChatService
@@ -78,7 +78,7 @@ class ChatServiceImpl @Inject constructor(
     }
 
     override suspend fun sendReplyMessage(
-        chatRoomId: String, messageContent: String, feedId: String
+        chatRoomId: String, messageContent: String, feed: UploadImage
     ): Flow<DataState<Unit>> {
         return flow {
             try {
@@ -89,7 +89,7 @@ class ChatServiceImpl @Inject constructor(
                     receiverId = chatRoomId.getFriendId(user1Id),
                     messageContent = messageContent,
                     isReplyToFeed = true,
-                    feedId = feedId
+                    feed = feed
                 )
                 val chatRoomRef = firestore.collection("chatrooms").document(chatRoomId)
                 val messagesRef = chatRoomRef.collection("messages")
@@ -251,5 +251,7 @@ class ChatServiceImpl @Inject constructor(
             throw e
         }
     }
+
+
 }
 

@@ -3,6 +3,7 @@ package com.grouptwo.lokcet.di.service
 import com.grouptwo.lokcet.data.model.ChatRoom
 import com.grouptwo.lokcet.data.model.LatestMessage
 import com.grouptwo.lokcet.data.model.Message
+import com.grouptwo.lokcet.data.model.UploadImage
 import com.grouptwo.lokcet.data.model.User
 import com.grouptwo.lokcet.utils.DataState
 import kotlinx.coroutines.flow.Flow
@@ -21,7 +22,7 @@ interface ChatService {
     suspend fun sendReplyMessage(
         chatRoomId: String,
         messageContent: String,
-        feedId: String,
+        feed: UploadImage,
     ): Flow<DataState<Unit>> // Send reply message to feed
 
     // get chat room list

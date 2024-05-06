@@ -33,6 +33,8 @@ import com.grouptwo.lokcet.ui.theme.YellowPrimary
 import com.grouptwo.lokcet.view.add_friend.AddFriendScreen
 import com.grouptwo.lokcet.view.add_widget.AddWidgetScreen
 import com.grouptwo.lokcet.view.chat.ChatScreen1
+import com.grouptwo.lokcet.view.chat.ChatScreen2
+import com.grouptwo.lokcet.view.chat.ChatViewModel
 import com.grouptwo.lokcet.view.feed.FeedScreen
 import com.grouptwo.lokcet.view.friend.FriendScreen
 import com.grouptwo.lokcet.view.home.HomeScreen1
@@ -212,10 +214,15 @@ fun NavGraphBuilder.LokcetGraph(appState: LokcetAppState) {
 
     // Chat screen
     composable(Screen.ChatScreen_1.route) {
-        ChatScreen1(
-            viewModel = hiltViewModel(),
-            popUp = { appState.popUp() }
-        )
+        ChatScreen1(viewModel = hiltViewModel(), popUp = { appState.popUp() })
+    }
+
+    composable(Screen.ChatScreen_2.route) { backStackEntry ->
+        val parentEntry = remember(backStackEntry) {
+            appState.navController.getBackStackEntry(Screen.ChatScreen_1.route)
+        }
+        val vm = hiltViewModel<ChatViewModel>(parentEntry)
+        ChatScreen2(viewModel = vm, popUp = { appState.popUp() })
     }
 }
 

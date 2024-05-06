@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,10 +29,9 @@ import com.grouptwo.lokcet.ui.component.global.composable.BasicIconButton
 import com.grouptwo.lokcet.ui.theme.YellowPrimary
 import com.grouptwo.lokcet.ui.theme.fontFamily
 import com.grouptwo.lokcet.utils.DataState
-import com.grouptwo.lokcet.utils.getFriendId
 
 @Composable
-fun ChatScreen1(
+fun ChatScreen2(
     viewModel: ChatViewModel = hiltViewModel(),
     popUp: () -> Unit
 ) {
@@ -82,9 +80,25 @@ fun ChatScreen1(
                     )
                 )
             }
-            // Check the chat room is empty or not
-            when (uiState.value.friendList) {
+            // Chat content list
+            when ( uiState.value.messageList) {
+                is DataState.Success -> {
+
+                }
+                is DataState.Error -> {
+                    Text(
+                        text = "Đã xảy ra lỗi khi tải dữ liệu",
+                        style = TextStyle(
+                            color = Color.White,
+                            fontFamily = fontFamily,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 20.sp,
+                            textAlign = TextAlign.Center
+                        )
+                    )
+                }
                 is DataState.Loading -> {
+                    // Loading
                     // Loading state
                     Box(
                         modifier = Modifier.fillMaxSize(),
@@ -99,67 +113,6 @@ fun ChatScreen1(
                                 ), color = YellowPrimary
                         )
                     }
-                }
-
-                is DataState.Success -> { // Get all data successfully (friend list, chat room list, latest message map)
-                    // Success state
-                    Column(
-                        modifier = Modifier
-                            .verticalScroll(scrollState)
-                            .weight(1f),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Top
-                    ) {
-                        if (uiState.value.chatRoomList.isEmpty()) {
-                            // No chat room
-                            Box(
-                                modifier = Modifier.fillMaxSize(),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(
-                                    text = "Không có tin nhắn",
-                                    style = TextStyle(
-                                        color = Color.White,
-                                        fontFamily = fontFamily,
-                                        fontWeight = FontWeight.Bold,
-                                        fontSize = 20.sp,
-                                        textAlign = TextAlign.Center
-                                    )
-                                )
-                            }
-                        } else {
-                            // Have chat room then display the chat room list
-                            uiState.value.chatRoomList.forEach { chatRoom ->
-                                ChatItem(
-                                    chatRoomId = chatRoom.chatRoomId,
-                                    friend = uiState.value.friendMap[uiState.value.currentUser?.id?.let {
-                                        chatRoom.chatRoomId.getFriendId(
-                                            it
-                                        )
-                                    }]!!,
-                                    latestMessage = uiState.value.latestMessageMap[chatRoom.chatRoomId],
-                                    currentServerTime = uiState.value.currentServerTime,
-                                    onSelectChat = { chatRoomId ->
-                                        viewModel.onChatItemClick(chatRoomId)
-                                    }
-                                )
-                            }
-                        }
-                    }
-                }
-
-                is DataState.Error -> {
-                    // Error state
-                    Text(
-                        text = "Đã xảy ra lỗi khi tải dữ liệu",
-                        style = TextStyle(
-                            color = Color.White,
-                            fontFamily = fontFamily,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 20.sp,
-                            textAlign = TextAlign.Center
-                        )
-                    )
                 }
             }
         }

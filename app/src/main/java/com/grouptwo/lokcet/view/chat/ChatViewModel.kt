@@ -1,6 +1,7 @@
 package com.grouptwo.lokcet.view.chat
 
 import androidx.lifecycle.viewModelScope
+import com.grouptwo.lokcet.data.model.UploadImage
 import com.grouptwo.lokcet.di.service.AccountService
 import com.grouptwo.lokcet.di.service.ChatService
 import com.grouptwo.lokcet.di.service.InternetService
@@ -13,6 +14,7 @@ import com.grouptwo.lokcet.view.LokcetViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -27,7 +29,7 @@ class ChatViewModel @Inject constructor(
     private val internetService: InternetService
 ) : LokcetViewModel() {
     private val _uiState = MutableStateFlow(ChatUiState())
-    val uiState = _uiState.asStateFlow()
+    val uiState: StateFlow<ChatUiState> = _uiState.asStateFlow()
     private val networkStatus = internetService.networkStatus.stateIn(
         scope = viewModelScope,
         initialValue = ConnectionState.Unknown,
@@ -40,12 +42,31 @@ class ChatViewModel @Inject constructor(
                 _uiState.update {
                     it.copy(isNetworkAvailable = connectionState == ConnectionState.Available || connectionState == ConnectionState.Unknown)
                 }
+                fetchCurrentServerTime()
                 // When the state changes then try to fetch the friend list
                 getFriendList()
             }
         }
     }
-
+    fun fetchCurrentServerTime() {
+        launchCatching {
+            try {
+                if (_uiState.value.isNetworkAvailable.not()) {
+                    throw Exception("Không có kết nối mạng")
+                }
+                val currentServerTime = accountService.getCurrentServerTime()
+                if (currentServerTime != null) {
+                    _uiState.update {
+                        it.copy(currentServerTime = currentServerTime)
+                    }
+                }
+            } catch (e: CancellationException) {
+                // Do nothing
+            } catch (e: Exception) {
+                SnackbarManager.showMessage(e.toSnackbarMessage())
+            }
+        }
+    }
     // get friend list
     fun getFriendList() {
         launchCatching {
@@ -53,6 +74,7 @@ class ChatViewModel @Inject constructor(
                 if (_uiState.value.isNetworkAvailable.not()) {
                     throw Exception("Không có kết nối mạng")
                 }
+                val currentUser = accountService.getCurrentUser()
                 userService.getFriendList().collect { dataState ->
                     when (dataState) {
                         is DataState.Loading -> {
@@ -66,7 +88,8 @@ class ChatViewModel @Inject constructor(
                             _uiState.update {
                                 it.copy(
                                     friendList = DataState.Success(dataState.data),
-                                    friendMap = friendMap
+                                    friendMap = friendMap,
+                                    currentUser = currentUser
                                 )
                             }
                             // Get chat room list
@@ -79,7 +102,7 @@ class ChatViewModel @Inject constructor(
                     }
                 }
             } catch (e: CancellationException) {
-                throw e
+                // Do nothing
             } catch (e: Exception) {
                 _uiState.update {
                     it.copy(friendList = DataState.Error(e))
@@ -124,8 +147,11 @@ class ChatViewModel @Inject constructor(
                     }
                 }
             } catch (e: CancellationException) {
-                throw e
+                // Do nothing
             } catch (e: Exception) {
+                _uiState.update {
+                    it.copy(chatRoomList = emptyList())
+                }
                 SnackbarManager.showMessage(e.toSnackbarMessage())
             }
         }
@@ -160,8 +186,11 @@ class ChatViewModel @Inject constructor(
                     }
                 }
             } catch (e: CancellationException) {
-                throw e
+                // Do nothing
             } catch (e: Exception) {
+                _uiState.update {
+                    it.copy(latestMessageMap = emptyMap())
+                }
                 SnackbarManager.showMessage(e.toSnackbarMessage())
             }
         }
@@ -172,4 +201,50 @@ class ChatViewModel @Inject constructor(
     ) {
         popUp()
     }
+
+    fun onChatItemClick(chatRoomId: String) {
+        // Navigate to ChatDetail screen
+    }
+
+    // get message list
+    fun getMessageList(chatRoomId: String) {
+        launchCatching {
+            try {
+                if (_uiState.value.isNetworkAvailable.not()) {
+                    throw Exception("Không có kết nối mạng")
+                }
+                chatService.getMessageList(
+                    chatRoomId = chatRoomId
+                ).collect { dataState ->
+                    when (dataState) {
+                        is DataState.Loading -> {
+                            _uiState.update {
+                                it.copy(messageList = DataState.Loading)
+                            }
+                        }
+
+                        is DataState.Success -> {
+                            // Do nothing
+                            _uiState.update {
+                                it.copy(messageList = DataState.Success(dataState.data))
+                            }
+                        }
+
+                        is DataState.Error -> {
+                            throw dataState.exception
+                        }
+                    }
+                }
+            } catch (e: CancellationException) {
+                // Do nothing
+            } catch (e: Exception) {
+                _uiState.update {
+                    it.copy(messageList = DataState.Error(e))
+                }
+                SnackbarManager.showMessage(e.toSnackbarMessage())
+            }
+        }
+    }
+    // Get upload image
+
 }

@@ -219,8 +219,6 @@ h
 8app/src/main/java/com/grouptwo/lokcet/data/model/Chat.kt,b/0/b0f8088f7668694eeff3e32759bc1ef0630217f1
 o
 ?app/src/main/java/com/grouptwo/lokcet/di/service/ChatService.kt,3/5/35daae213bd459df295b0cadedceb5817839d989
-r
-Bapp/src/main/java/com/grouptwo/lokcet/di/impl/ChatServiceImpl.k.kt,c/2/c2deb91f80629b003705584c960d8b20a3222974
 p
 @app/src/main/java/com/grouptwo/lokcet/di/impl/ChatServiceImpl.kt,e/9/e94b6f854d0630cc7af2aae4a9bb3e64c9c6075f
 o
@@ -229,3 +227,11 @@ n
 >app/src/main/java/com/grouptwo/lokcet/view/chat/ChatUiState.kt,4/2/421ffbaac2b990dd9683260d6ac1d4491a2681fd
 p
 @app/src/main/java/com/grouptwo/lokcet/view/chat/ChatViewModel.kt,c/f/cf86657a291e3d2d260ef68a4bbbd94d11069ac8
+k
+;app/src/main/java/com/grouptwo/lokcet/view/chat/ChatItem.kt,a/d/ad2a34544266211e1bd8adade6100af469abf386
+o
+?app/src/main/java/com/grouptwo/lokcet/view/chat/ChatScreen_2.kt,4/f/4f85793708390816bb648a2905ed37577219630b
+n
+>app/src/main/java/com/grouptwo/lokcet/view/chat/MessageList.kt,d/5/d5285410d5af3f7392a744aa04c4c888648c2be9
+n
+>app/src/main/java/com/grouptwo/lokcet/view/chat/MessageItem.kt,c/1/c1ff55b755dc6a9056e5e10d44f32a38d983502d

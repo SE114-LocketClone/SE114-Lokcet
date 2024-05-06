@@ -129,3 +129,31 @@ fun returnTimeMinutes(currentServerTime: Date): String {
 fun String.getFriendId(currentUserId: String): String {
     return this.replace(currentUserId, "").replace("_", "")
 }
+
+fun Date.toDayMonth(
+    currentServerTime: Timestamp
+): String {
+    val currentTimestamp = currentServerTime.toDate().time
+    val timestamp = this.time
+
+    val diff = currentTimestamp - timestamp
+    val diffInHours = TimeUnit.MILLISECONDS.toHours(diff)
+
+    return if (diffInHours < 24) {
+        "$diffInHours giờ"
+    } else {
+        val sdf = SimpleDateFormat("dd 'tháng' MM", Locale.getDefault())
+        sdf.format(this)
+    }
+}
+
+
+fun Date.toCustomTimeFormat(): String {
+    val format = SimpleDateFormat("HH:mm dd 'tháng' MM 'năm' yyyy", Locale.getDefault())
+    return format.format(this)
+}
+
+fun Date.toCustomDateFormat(): String {
+    val format = SimpleDateFormat("dd 'tháng' MM 'năm' yyyy", Locale.getDefault())
+    return format.format(this)
+}
