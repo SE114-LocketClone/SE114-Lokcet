@@ -214,7 +214,9 @@ fun NavGraphBuilder.LokcetGraph(appState: LokcetAppState) {
 
     // Chat screen
     composable(Screen.ChatScreen_1.route) {
-        ChatScreen1(viewModel = hiltViewModel(), popUp = { appState.popUp() })
+        ChatScreen1(viewModel = hiltViewModel(), popUp = { appState.popUp() }, navigate = { route ->
+            appState.navigate(route)
+        })
     }
 
     composable(Screen.ChatScreen_2.route) { backStackEntry ->

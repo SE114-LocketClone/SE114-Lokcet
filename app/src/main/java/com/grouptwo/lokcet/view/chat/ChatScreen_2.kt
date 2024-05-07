@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -81,9 +82,23 @@ fun ChatScreen2(
                 )
             }
             // Chat content list
-            when ( uiState.value.messageList) {
+            when (val messageList = uiState.value.messageList) {
                 is DataState.Success -> {
-
+                    Column(
+                        modifier = Modifier
+//                            .verticalScroll(scrollState)
+                            .weight(1f),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Top
+                    ) {
+                        uiState.value.currentUser?.let {
+                            MessageList(
+                                messageList = messageList.data,
+                                currentUser = it,
+                                friendMap = uiState.value.friendMap
+                            )
+                        }
+                    }
                 }
                 is DataState.Error -> {
                     Text(
@@ -97,6 +112,7 @@ fun ChatScreen2(
                         )
                     )
                 }
+
                 is DataState.Loading -> {
                     // Loading
                     // Loading state

@@ -15,5 +15,6 @@ data class ChatUiState(
     val latestMessageMap: Map<String, LatestMessage> = emptyMap(),
     val currentServerTime: Timestamp? = null,
     val currentUser: User? = null,
+    val selectedChatRoomId: String = "",
     val messageList: DataState<List<Message>> = DataState.Loading
 )

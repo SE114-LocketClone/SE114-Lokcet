@@ -35,7 +35,8 @@ import com.grouptwo.lokcet.utils.getFriendId
 @Composable
 fun ChatScreen1(
     viewModel: ChatViewModel = hiltViewModel(),
-    popUp: () -> Unit
+    popUp: () -> Unit,
+    navigate: (String) -> Unit
 ) {
     val scrollState = rememberScrollState()
     val uiState = viewModel.uiState.collectAsState()
@@ -140,7 +141,7 @@ fun ChatScreen1(
                                     latestMessage = uiState.value.latestMessageMap[chatRoom.chatRoomId],
                                     currentServerTime = uiState.value.currentServerTime,
                                     onSelectChat = { chatRoomId ->
-                                        viewModel.onChatItemClick(chatRoomId)
+                                        viewModel.onChatItemClick(chatRoomId, navigate)
                                     }
                                 )
                             }

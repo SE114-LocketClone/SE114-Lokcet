@@ -1,11 +1,11 @@
 package com.grouptwo.lokcet.view.chat
 
 import androidx.lifecycle.viewModelScope
-import com.grouptwo.lokcet.data.model.UploadImage
 import com.grouptwo.lokcet.di.service.AccountService
 import com.grouptwo.lokcet.di.service.ChatService
 import com.grouptwo.lokcet.di.service.InternetService
 import com.grouptwo.lokcet.di.service.UserService
+import com.grouptwo.lokcet.navigation.Screen
 import com.grouptwo.lokcet.ui.component.global.snackbar.SnackbarManager
 import com.grouptwo.lokcet.ui.component.global.snackbar.SnackbarMessage.Companion.toSnackbarMessage
 import com.grouptwo.lokcet.utils.ConnectionState
@@ -48,6 +48,7 @@ class ChatViewModel @Inject constructor(
             }
         }
     }
+
     fun fetchCurrentServerTime() {
         launchCatching {
             try {
@@ -67,6 +68,7 @@ class ChatViewModel @Inject constructor(
             }
         }
     }
+
     // get friend list
     fun getFriendList() {
         launchCatching {
@@ -201,11 +203,6 @@ class ChatViewModel @Inject constructor(
     ) {
         popUp()
     }
-
-    fun onChatItemClick(chatRoomId: String) {
-        // Navigate to ChatDetail screen
-    }
-
     // get message list
     fun getMessageList(chatRoomId: String) {
         launchCatching {
@@ -244,6 +241,16 @@ class ChatViewModel @Inject constructor(
                 SnackbarManager.showMessage(e.toSnackbarMessage())
             }
         }
+    }
+    fun onChatItemClick(chatRoomId: String, navigate: (String) -> Unit){
+        // Navigate to ChatDetail screen
+        _uiState.update {
+            it.copy(selectedChatRoomId = chatRoomId)
+        }
+        // Navigate to ChatDetail screen
+        navigate(Screen.ChatScreen_2.route)
+        // Fetch message list
+        getMessageList(chatRoomId)
     }
     // Get upload image
 
