@@ -1,5 +1,6 @@
 package com.grouptwo.lokcet.view.chat
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.grouptwo.lokcet.di.service.AccountService
 import com.grouptwo.lokcet.di.service.ChatService
@@ -177,9 +178,18 @@ class ChatViewModel @Inject constructor(
                         }
 
                         is DataState.Success -> {
-                            _uiState.update {
-                                it.copy(latestMessageMap = dataState.data)
+                            // Convert data to new instance of LatestMessageWrapper and map it to jetpack compose state management could detect the change
+                            // If use the same instance of LatestMessageWrapper, jetpack compose state management could not detect the change (because key is the same)
+                            val latestMessageMap = dataState.data.mapValues {
+                                LatestMessageWrapper(it.value)
                             }
+                            _uiState.update {
+                                it.copy(latestMessageMap = latestMessageMap)
+                            }
+                            Log.d(
+                                "ChatViewModel",
+                                "getLatestMessage: ${uiState.value.latestMessageMap}"
+                            )
                         }
 
                         is DataState.Error -> {
@@ -203,6 +213,7 @@ class ChatViewModel @Inject constructor(
     ) {
         popUp()
     }
+
     // get message list
     fun getMessageList(chatRoomId: String) {
         launchCatching {
@@ -242,7 +253,8 @@ class ChatViewModel @Inject constructor(
             }
         }
     }
-    fun onChatItemClick(chatRoomId: String, navigate: (String) -> Unit){
+
+    fun onChatItemClick(chatRoomId: String, navigate: (String) -> Unit) {
         // Navigate to ChatDetail screen
         _uiState.update {
             it.copy(selectedChatRoomId = chatRoomId)
@@ -252,6 +264,51 @@ class ChatViewModel @Inject constructor(
         // Fetch message list
         getMessageList(chatRoomId)
     }
-    // Get upload image
 
+    fun onMessageChange(message: String) {
+        _uiState.update {
+            it.copy(isButtonSendEnable = message.isNotEmpty(), messageInput = message)
+        }
+    }
+
+    fun onSendClick() {
+        if (!_uiState.value.isButtonSendEnable) {
+            return
+        }
+        launchCatching {
+            try {
+                if (_uiState.value.isNetworkAvailable.not()) {
+                    throw Exception("Không có kết nối mạng")
+                }
+                chatService.sendMessage(
+                    chatRoomId = _uiState.value.selectedChatRoomId,
+                    messageContent = _uiState.value.messageInput
+                ).collect { state ->
+                    when (state) {
+                        is DataState.Loading -> {
+                            // handle loading state, why send message cannot press again
+                            _uiState.update {
+                                it.copy(isButtonSendEnable = false, messageInput = "")
+                            }
+                        }
+
+                        is DataState.Success -> {
+                            _uiState.update {
+                                it.copy(messageInput = "", isButtonSendEnable = false)
+                            }
+                        }
+
+                        is DataState.Error -> {
+                            // handle error state
+                            throw state.exception
+                        }
+                    }
+                }
+            } catch (e: CancellationException) {
+                // Do nothing
+            } catch (e: Exception) {
+                SnackbarManager.showMessage(e.toSnackbarMessage())
+            }
+        }
+    }
 }

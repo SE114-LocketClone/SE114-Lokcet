@@ -4,9 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -49,119 +47,120 @@ fun ChatItem(
     currentServerTime: Timestamp? = null
 ) {
     // Chat item
+    Row(
+        Modifier
+            .clickable { onSelectChat(chatRoomId) }
+            .padding(16.dp)
+            .fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween) {
+        // Avatar and name, last message and time
         Row(
-            Modifier
-                .clickable { onSelectChat(chatRoomId) }
-                .padding(16.dp)
-                .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            // Avatar and name, last message and time
+            // Avatar and name
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.Start
             ) {
-                // Avatar and name
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Start
-                ) {
-                    // Avatar
-                    GlideImage(imageModel = { friend.profilePicture }, imageOptions = ImageOptions(
+                // Avatar
+                GlideImage(imageModel = { friend.profilePicture },
+                    imageOptions = ImageOptions(
                         contentScale = ContentScale.Crop, alignment = Alignment.Center
-                    ), requestOptions = {
+                    ),
+                    requestOptions = {
                         RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL).centerCrop()
-                    }, loading = {
+                    },
+                    loading = {
                         // Show a circular progress indicator when loading.
                         CircularProgressIndicator(
                             modifier = Modifier.size(36.dp), color = Color(0xFFE5A500)
                         )
-                    }, failure = {
+                    },
+                    failure = {
                         // Show a circular progress indicator when loading.
                         Image(
                             painter = painterResource(id = R.drawable.icon_friend),
                             contentDescription = "Friend Icon",
                             modifier = Modifier.size(38.dp)
                         )
-                    }, modifier = Modifier
+                    },
+                    modifier = Modifier
                         .size(40.dp)
                         .padding(4.dp)
                         .clip(shape = CircleShape)
                         .border(
                             width = 1.dp, color = Color(0xFFE5A500), shape = CircleShape
                         )
-                    )
-                    // Name latest message and time
-                    Spacer(modifier = Modifier.width(16.dp))
-                    Column(
-                        verticalArrangement = Arrangement.SpaceBetween,
-                        horizontalAlignment = Alignment.Start
+                )
+                // Name latest message and time
+                Spacer(modifier = Modifier.width(16.dp))
+                Column(
+                    verticalArrangement = Arrangement.SpaceBetween,
+                    horizontalAlignment = Alignment.Start
+                ) {
+                    // Name
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Start
                     ) {
-                        // Name
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Start
-                        ) {
-                            Text(
-                                text = "${friend.firstName} ${friend.lastName}",
-                                style = TextStyle(
-                                    color = Color.White,
-                                    fontFamily = fontFamily,
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 16.sp,
-                                    textAlign = TextAlign.Start
-                                )
-                            )
-                            // Last message and time
-                            Spacer(modifier = Modifier.width(8.dp))
-                            if (latestMessage != null && currentServerTime != null) {
-                                Text(
-                                    text = latestMessage.message.createdAt.toDayMonth(
-                                        currentServerTime
-                                    ),
-                                    style = TextStyle(
-                                        color = Color(0xFF948F8F),
-                                        fontFamily = fontFamily,
-                                        fontWeight = FontWeight.Normal,
-                                        fontSize = 12.sp,
-                                        textAlign = TextAlign.Start
-                                    )
-                                )
-                            }
-                        }
-                        // Last message
-                        val messageContent = // Has latest message
-                            latestMessage?.message?.messageContent ?: // No latest message
-                            "Chưa có tin nhắn"
-                        // Color if seen or not
-                        val colorMessage = if (latestMessage?.message?.seenAt == null) {
-                            // Not seen
-                            Color.White
-                        } else {
-                            // Seen
-                            Color(0xFF948F8F)
-                        }
                         Text(
-                            text = messageContent,
-                            style = TextStyle(
-                                color = colorMessage,
+                            text = "${friend.firstName} ${friend.lastName}", style = TextStyle(
+                                color = Color.White,
                                 fontFamily = fontFamily,
-                                fontWeight = FontWeight.Normal,
-                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 16.sp,
                                 textAlign = TextAlign.Start
                             )
                         )
+                        // Last message and time
+                        Spacer(modifier = Modifier.width(8.dp))
+                        if (latestMessage != null && currentServerTime != null) {
+                            Text(
+                                text = latestMessage.message.createdAt.toDayMonth(
+                                    currentServerTime
+                                ), style = TextStyle(
+                                    color = Color(0xFF948F8F),
+                                    fontFamily = fontFamily,
+                                    fontWeight = FontWeight.Normal,
+                                    fontSize = 14.sp,
+                                    textAlign = TextAlign.Start
+                                )
+                            )
+                        }
                     }
-                    // Arrow icon right
-                    Spacer(modifier = Modifier.weight(1f))
-                    Image(
-                        painter = painterResource(id = R.drawable.right_direction),
-                        contentDescription = "Arrow Icon",
-                        modifier = Modifier.size(24.dp),
-                        colorFilter = ColorFilter.tint(Color.White)
+                    // Last message
+                    val messageContent = // Has latest message
+                        latestMessage?.message?.messageContent ?: // No latest message
+                        "Chưa có tin nhắn"
+                    // Color if seen or not
+                    val colorMessage = if (latestMessage?.message?.seenAt == null) {
+                        // Not seen
+                        Color.White
+                    } else {
+                        // Seen
+                        Color(0xFF948F8F)
+                    }
+                    Text(
+                        text = messageContent, style = TextStyle(
+                            color = colorMessage,
+                            fontFamily = fontFamily,
+                            fontWeight = FontWeight.Normal,
+                            fontSize = 14.sp,
+                            textAlign = TextAlign.Start
+                        )
                     )
                 }
+                // Arrow icon right
+                Spacer(modifier = Modifier.weight(1f))
+                Image(
+                    painter = painterResource(id = R.drawable.right_direction),
+                    contentDescription = "Arrow Icon",
+                    modifier = Modifier.size(24.dp),
+                    colorFilter = ColorFilter.tint(Color.White)
+                )
             }
         }
     }
+}

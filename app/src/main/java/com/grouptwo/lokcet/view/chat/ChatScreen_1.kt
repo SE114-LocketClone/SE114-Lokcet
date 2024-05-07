@@ -15,7 +15,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,6 +24,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.grouptwo.lokcet.R
 import com.grouptwo.lokcet.ui.component.global.composable.BasicIconButton
 import com.grouptwo.lokcet.ui.theme.YellowPrimary
@@ -39,7 +39,8 @@ fun ChatScreen1(
     navigate: (String) -> Unit
 ) {
     val scrollState = rememberScrollState()
-    val uiState = viewModel.uiState.collectAsState()
+    val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+
     Box(modifier = Modifier.fillMaxSize()) {
         // Chat screen
         Column(
@@ -138,7 +139,7 @@ fun ChatScreen1(
                                             it
                                         )
                                     }]!!,
-                                    latestMessage = uiState.value.latestMessageMap[chatRoom.chatRoomId],
+                                    latestMessage = uiState.value.latestMessageMap[chatRoom.chatRoomId]?.latestMessage,
                                     currentServerTime = uiState.value.currentServerTime,
                                     onSelectChat = { chatRoomId ->
                                         viewModel.onChatItemClick(chatRoomId, navigate)

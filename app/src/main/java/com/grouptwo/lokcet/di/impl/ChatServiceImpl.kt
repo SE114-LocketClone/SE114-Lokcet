@@ -1,7 +1,9 @@
 package com.grouptwo.lokcet.di.impl
 
+import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
+import com.google.firebase.firestore.MetadataChanges
 import com.grouptwo.lokcet.data.model.ChatRoom
 import com.grouptwo.lokcet.data.model.LatestMessage
 import com.grouptwo.lokcet.data.model.Message
@@ -70,8 +72,10 @@ class ChatServiceImpl @Inject constructor(
                 )
                 firestore.collection("latest_messages").document(chatRoomId).set(latestMessage)
                     .await()
+                Log.e("ChatServiceImpl", "sendMessage: $updatedMessage")
                 emit(DataState.Success(Unit))
             } catch (e: Exception) {
+                Log.e("ChatServiceImpl", "sendMessage: $e")
                 emit(DataState.Error(e))
             }
         }
@@ -166,7 +170,10 @@ class ChatServiceImpl @Inject constructor(
                 val messagesListener =
                     firestore.collection("chatrooms").document(chatRoomId).collection("messages")
                         .orderBy("createdAt")
-                        .addSnapshotListener { value, error ->
+                        .addSnapshotListener(
+                            MetadataChanges.INCLUDE
+                        )
+                        { value, error ->
                             if (error != null) {
                                 trySend(DataState.Error(error))
                                 return@addSnapshotListener
@@ -213,6 +220,7 @@ class ChatServiceImpl @Inject constructor(
                                     trySend(DataState.Success(latestMessageMap))
                                 }
                         listeners.add(latestMessageListener)
+
                     }
                 }
                 // Wait for all coroutines to finish

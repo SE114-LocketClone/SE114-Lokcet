@@ -137,9 +137,14 @@ fun Date.toDayMonth(
     val timestamp = this.time
 
     val diff = currentTimestamp - timestamp
+    val diffInMins = TimeUnit.MILLISECONDS.toMinutes(diff)
     val diffInHours = TimeUnit.MILLISECONDS.toHours(diff)
 
-    return if (diffInHours < 24) {
+    return if (
+        diffInMins < 60
+    ) {
+        "$diffInMins phút"
+    } else if (diffInMins > 60 && diffInHours < 24) {
         "$diffInHours giờ"
     } else {
         val sdf = SimpleDateFormat("dd 'tháng' MM", Locale.getDefault())

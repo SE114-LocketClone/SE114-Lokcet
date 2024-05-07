@@ -12,9 +12,12 @@ data class ChatUiState(
     val chatRoomList: List<ChatRoom> = emptyList(),
     val friendList: DataState<List<User>> = DataState.Loading,
     val friendMap: Map<String, User> = emptyMap(),
-    val latestMessageMap: Map<String, LatestMessage> = emptyMap(),
+    val latestMessageMap: Map<String, LatestMessageWrapper> = emptyMap(),
     val currentServerTime: Timestamp? = null,
     val currentUser: User? = null,
     val selectedChatRoomId: String = "",
-    val messageList: DataState<List<Message>> = DataState.Loading
+    val messageList: DataState<List<Message>> = DataState.Loading,
+    val isButtonSendEnable: Boolean = false,
+    val messageInput: String = "",
 )
+class LatestMessageWrapper(val latestMessage: LatestMessage)

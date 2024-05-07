@@ -198,7 +198,7 @@ fun MessageItem(
             }
             // Check if friend avatar should be shown
             if (shouldShowFriendAvatar) {
-                // Show message item with friend avatar
+                // Show friend message item with friend avatar
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Start
@@ -210,12 +210,13 @@ fun MessageItem(
                             contentScale = ContentScale.Crop, alignment = Alignment.Center
                         ),
                         requestOptions = {
-                            RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL).centerCrop()
+                            RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL)
+                                .centerCrop()
                         },
                         loading = {
                             // Show a circular progress indicator when loading.
                             CircularProgressIndicator(
-                                modifier = Modifier.size(36.dp), color = Color(0xFFE5A500)
+                                modifier = Modifier.size(30.dp), color = Color(0xFFE5A500)
                             )
                         },
                         failure = {
@@ -223,11 +224,11 @@ fun MessageItem(
                             Image(
                                 painter = painterResource(id = R.drawable.icon_friend),
                                 contentDescription = "Friend Icon",
-                                modifier = Modifier.size(38.dp)
+                                modifier = Modifier.size(30.dp)
                             )
                         },
                         modifier = Modifier
-                            .size(40.dp)
+                            .size(30.dp)
                             .padding(4.dp)
                             .clip(shape = CircleShape)
                             .border(
@@ -248,19 +249,43 @@ fun MessageItem(
                     )
                 }
             } else {
-                // Show message item
-                Text(
-                    text = message.messageContent,
-                    color = textColor,
-                    fontSize = 16.sp,
-                    modifier = Modifier
-                        .background(
-                            color = backgroundColor,
-                            shape = shape
+                if (currentUser.id != message.senderId) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Start
+                    ) {
+                        // Friend message without avatar
+                        Spacer(modifier = Modifier.width(34.dp))// Add space between avatar and message
+                        // Show message item
+                        Text(
+                            text = message.messageContent,
+                            color = textColor,
+                            fontSize = 16.sp,
+                            modifier = Modifier
+                                .background(
+                                    color = backgroundColor,
+                                    shape = shape
+                                )
+                                .padding(8.dp)
                         )
-                        .align(alignment)
-                        .padding(8.dp)
-                )
+                    }
+                }
+                // Show message item
+                else {
+                    // Current user message
+                    Text(
+                        text = message.messageContent,
+                        color = textColor,
+                        fontSize = 16.sp,
+                        modifier = Modifier
+                            .background(
+                                color = backgroundColor,
+                                shape = shape
+                            )
+                            .align(alignment)
+                            .padding(8.dp)
+                    )
+                }
             }
         }
     }
