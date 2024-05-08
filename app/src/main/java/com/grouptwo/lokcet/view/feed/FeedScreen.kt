@@ -2,6 +2,7 @@ package com.grouptwo.lokcet.view.feed
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -40,6 +41,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Surface
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -84,7 +86,9 @@ import com.makeappssimple.abhimanyu.composeemojipicker.ComposeEmojiPickerBottomS
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.glide.GlideImage
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
+@OptIn(
+    ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class
+)
 @Composable
 fun FeedScreen(
     viewModel: FeedViewModel = hiltViewModel()
@@ -106,7 +110,6 @@ fun FeedScreen(
     val scrollState = rememberScrollState()
 
     // Launch the effect to get current user feed
-
 
     when (uiState.value.friendList) {
         is DataState.Success -> {
@@ -392,7 +395,9 @@ fun FeedScreen(
                                                                 painter = painterResource(id = R.drawable.icon_sparkle),
                                                                 contentDescription = "Sparkle Logo",
                                                                 modifier = Modifier.size(20.dp),
-                                                                colorFilter = ColorFilter.tint(Color.White)
+                                                                colorFilter = ColorFilter.tint(
+                                                                    Color.White
+                                                                )
                                                             )
                                                         }
                                                     }
@@ -416,65 +421,86 @@ fun FeedScreen(
                 }
 
                 if (uiState.value.isShowReplyTextField) {
-                    // Show text field to reply feed
-                    val fabColor =
-                        if (uiState.value.isSendButtonEnabled) Color.White else Color(0xFF272626)
-                    TextField(value = uiState.value.reply, onValueChange = {
-                        viewModel.onReplyTextChanged(it)
-                    }, placeholder = {
-                        Text(
-                            text = "Trả lời ${feedState[pagerState.currentPage]?.uploadImage?.userName}...",
-                            style = TextStyle(
+                    // Create a blur around text field
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(
+                                color = Color.Black.copy(alpha = 0.7f) // Semi-transparent black background
+                            )
+                            .padding(16.dp) // Add padding as needed
+                    ) {
+                        // Force the blur not blur the textfield inside because surface transparent override
+                        Surface(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .align(Alignment.Center),
+                            color = Color.Transparent, // Transparent background for the Surface
+                            tonalElevation = 8.dp // Adjust the elevation value for the desired blur effect
+                        ) {
+                            // Show text field to reply feed
+                            val fabColor =
+                                if (uiState.value.isSendButtonEnabled) Color.White else Color(
+                                    0xFF272626
+                                )
+                            TextField(value = uiState.value.reply, onValueChange = {
+                                viewModel.onReplyTextChanged(it)
+                            }, placeholder = {
+                                Text(
+                                    text = "Trả lời ${feedState[pagerState.currentPage]?.uploadImage?.userName}...",
+                                    style = TextStyle(
+                                        fontSize = 14.sp,
+                                        fontFamily = fontFamily,
+                                        fontWeight = FontWeight.Bold,
+                                        color = Color(0xFFACA4A4),
+                                    )
+                                )
+                            }, singleLine = true, modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(
+                                    RoundedCornerShape(50.dp)
+                                )
+                                .focusRequester(focusRequester)
+                                .align(
+                                    Alignment.Center
+                                )
+                                .zIndex(3f), textStyle = TextStyle(
                                 fontSize = 14.sp,
                                 fontFamily = fontFamily,
                                 fontWeight = FontWeight.Bold,
-                                color = Color(0xFFACA4A4),
-                            )
-                        )
-                    }, singleLine = true, modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(
-                            RoundedCornerShape(50.dp)
-                        )
-                        .focusRequester(focusRequester)
-                        .align(
-                            Alignment.Center
-                        )
-                        .zIndex(3f), textStyle = TextStyle(
-                        fontSize = 14.sp,
-                        fontFamily = fontFamily,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White,
-                    ), colors = TextFieldDefaults.textFieldColors(
-                        backgroundColor = Color(0xFF272626),
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent,
-                        disabledIndicatorColor = Color.Transparent,
-                        cursorColor = Color.White,
-                        textColor = Color.White
-                    ), trailingIcon = {
-                        FloatingActionButton(
-                            onClick = {
-                                feedState[pagerState.currentPage]?.let {
-                                    viewModel.onSendReply(
-                                        feed = it
+                                color = Color.White,
+                            ), colors = TextFieldDefaults.textFieldColors(
+                                backgroundColor = Color(0xFF272626),
+                                focusedIndicatorColor = Color.Transparent,
+                                unfocusedIndicatorColor = Color.Transparent,
+                                disabledIndicatorColor = Color.Transparent,
+                                cursorColor = Color.White,
+                                textColor = Color.White
+                            ), trailingIcon = {
+                                FloatingActionButton(
+                                    onClick = {
+                                        feedState[pagerState.currentPage]?.let {
+                                            viewModel.onSendReply(
+                                                feed = it
+                                            )
+                                        }
+                                    },
+                                    shape = CircleShape,
+                                    containerColor = fabColor,
+                                    modifier = Modifier.padding(8.dp)
+                                ) {
+                                    Image(
+                                        painter = painterResource(id = R.drawable.icon_send),
+                                        contentDescription = "Send Logo",
+                                        modifier = Modifier.size(40.dp),
+                                        alignment = Alignment.Center
                                     )
                                 }
-                            },
-                            shape = CircleShape,
-                            containerColor = fabColor,
-                            modifier = Modifier.padding(8.dp)
-                        ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.icon_send),
-                                contentDescription = "Send Logo",
-                                modifier = Modifier.size(40.dp),
-                                alignment = Alignment.Center
-                            )
+                            })
+                            LaunchedEffect(Unit) {
+                                focusRequester.requestFocus()
+                            }
                         }
-                    })
-                    LaunchedEffect(Unit) {
-                        focusRequester.requestFocus()
                     }
                 }
                 // Show the emoji animation
@@ -504,14 +530,15 @@ fun FeedScreen(
                         Column(
                             modifier = Modifier.wrapContentSize(),
                         ) {
-                            ComposeEmojiPickerBottomSheetUI(onEmojiClick = { emoji ->
-                                viewModel.onShowEmojiPicker(false)
-                                feedState[pagerState.currentPage]?.let {
-                                    viewModel.onEmojiSelected(
-                                        emoji.character, it
-                                    )
-                                }
-                            },
+                            ComposeEmojiPickerBottomSheetUI(
+                                onEmojiClick = { emoji ->
+                                    viewModel.onShowEmojiPicker(false)
+                                    feedState[pagerState.currentPage]?.let {
+                                        viewModel.onEmojiSelected(
+                                            emoji.character, it
+                                        )
+                                    }
+                                },
                                 searchText = uiState.value.searchText,
                                 updateSearchText = { updatedSearchText ->
                                     viewModel.onSearchEmoji(updatedSearchText)

@@ -98,6 +98,7 @@ inline fun View.afterMeasured(crossinline block: () -> Unit) {
     }
 }
 
+
 fun Date.calculateTimePassed(currentServerTime: Timestamp): String {
     val milliseconds = currentServerTime.toDate().time - this.time
     val seconds = TimeUnit.MILLISECONDS.toSeconds(milliseconds)
@@ -140,9 +141,10 @@ fun Date.toDayMonth(
     val diffInMins = TimeUnit.MILLISECONDS.toMinutes(diff)
     val diffInHours = TimeUnit.MILLISECONDS.toHours(diff)
 
-    return if (
-        diffInMins < 60
+    return if (diffInMins < 1
     ) {
+        "Vừa xong"
+    } else if (diffInMins < 60) {
         "$diffInMins phút"
     } else if (diffInMins > 60 && diffInHours < 24) {
         "$diffInHours giờ"
