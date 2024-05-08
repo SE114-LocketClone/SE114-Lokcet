@@ -9,6 +9,7 @@ import com.grouptwo.lokcet.data.model.Feed
 import com.grouptwo.lokcet.data.model.User
 import com.grouptwo.lokcet.di.paging.FeedRepository
 import com.grouptwo.lokcet.di.service.AccountService
+import com.grouptwo.lokcet.di.service.ChatService
 import com.grouptwo.lokcet.di.service.InternetService
 import com.grouptwo.lokcet.di.service.UserService
 import com.grouptwo.lokcet.ui.component.global.snackbar.SnackbarManager
@@ -33,7 +34,8 @@ class FeedViewModel @Inject constructor(
     private val internetService: InternetService,
     private val userService: UserService,
     private val accountService: AccountService,
-    private val feedRepository: FeedRepository
+    private val feedRepository: FeedRepository,
+    private val chatService: ChatService
 ) : LokcetViewModel() {
     private val _uiState = MutableStateFlow(FeedUiState())
     val uiState: StateFlow<FeedUiState> = _uiState.asStateFlow()
@@ -119,7 +121,8 @@ class FeedViewModel @Inject constructor(
                             val currentUser = accountService.getCurrentUser()
                             val friendList = dataState.data.toMutableList()
                             // Create avatar map for friend list
-                            val friendAvatar = friendList.associateBy({ it.id }, { it.profilePicture })
+                            val friendAvatar =
+                                friendList.associateBy({ it.id }, { it.profilePicture })
                             if (currentUser.id.isNotEmpty() && friendList.none { it.id == currentUser.id }) {
                                 friendList.add(currentUser)
                                 _uiState.update {
@@ -186,6 +189,56 @@ class FeedViewModel @Inject constructor(
     fun onReplyTextChanged(reply: String) {
         _uiState.update {
             it.copy(reply = reply, isSendButtonEnabled = reply.isNotBlank())
+        }
+    }
+
+    fun onSendReply(feed: Feed) {
+        if (_uiState.value.isSendButtonEnabled.not()) {
+            return
+        }
+        launchCatching {
+            try {
+                if (_uiState.value.isNetworkAvailable.not()) {
+                    throw Exception("Không có kết nối mạng")
+                }
+                val currentUserId = accountService.currentUserId
+                val chatRoomId =
+                    if (currentUserId < feed.uploadImage.userId) "${currentUserId}_${feed.uploadImage.userId}" else "${feed.uploadImage.userId}_$currentUserId"
+                // Call API to reply feed
+                chatService.sendReplyMessage(
+                    chatRoomId,
+                    _uiState.value.reply,
+                    feed = feed.uploadImage
+                ).collect { dataState ->
+                    when (dataState) {
+                        is DataState.Loading -> {
+                            // Send button disabled
+                            _uiState.update {
+                                it.copy(isSendButtonEnabled = false, reply = "")
+                            }
+                        }
+
+                        is DataState.Success -> {
+                            // Reset reply text field
+                            _uiState.update {
+                                it.copy(
+                                    reply = "",
+                                    isSendButtonEnabled = false,
+                                    isShowReplyTextField = false
+                                )
+                            }
+                        }
+
+                        is DataState.Error -> {
+                            throw dataState.exception
+                        }
+                    }
+                }
+            } catch (e: CancellationException) {
+                // Do nothing
+            } catch (e: Exception) {
+                SnackbarManager.showMessage(e.toSnackbarMessage())
+            }
         }
     }
 

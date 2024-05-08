@@ -1,5 +1,6 @@
 package com.grouptwo.lokcet.data.model
 
+import com.google.firebase.firestore.PropertyName
 import com.google.firebase.firestore.ServerTimestamp
 import java.util.Date
 
@@ -16,7 +17,7 @@ data class Message(
     val senderId: String = "",
     val receiverId: String = "",
     val messageContent: String = "",
-    val isReplyToFeed: Boolean = false,
+    @PropertyName("replyToFeed") var isReplyToFeed: Boolean = false,
     val feed: UploadImage = UploadImage(), // This is the document id of the feed if the message is a reply to a feed(Upload Image id)
     val seenAt: Date? = null, // When the message is seen by the receiver user it is a timestamp by the server (null if not seen)
     @ServerTimestamp val createdAt: Date = Date()
