@@ -4,6 +4,7 @@ import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.MetadataChanges
+import com.google.firebase.firestore.Query
 import com.grouptwo.lokcet.data.model.ChatRoom
 import com.grouptwo.lokcet.data.model.LatestMessage
 import com.grouptwo.lokcet.data.model.Message
@@ -58,7 +59,8 @@ class ChatServiceImpl @Inject constructor(
                 val message = Message(
                     senderId = user1Id,
                     receiverId = chatRoomId.getFriendId(user1Id),
-                    messageContent = messageContent
+                    messageContent = messageContent,
+                    seenAt = false
                 )
                 val chatRoomRef = firestore.collection("chatrooms").document(chatRoomId)
                 val messagesRef = chatRoomRef.collection("messages")
@@ -93,7 +95,8 @@ class ChatServiceImpl @Inject constructor(
                     receiverId = chatRoomId.getFriendId(user1Id),
                     messageContent = messageContent,
                     isReplyToFeed = true,
-                    feed = feed
+                    feed = feed,
+                    seenAt = false
                 )
                 val chatRoomRef = firestore.collection("chatrooms").document(chatRoomId)
                 val messagesRef = chatRoomRef.collection("messages")
@@ -161,6 +164,35 @@ class ChatServiceImpl @Inject constructor(
         }
     }
 
+    override suspend fun markLastMessageAsSeen(chatRoomId: String) {
+        try {
+            // Get the last message of the chat room and mark it as seen
+            val lastMessage =
+                firestore.collection("chatrooms").document(chatRoomId).collection("messages")
+                    .orderBy("createdAt", Query.Direction.DESCENDING).limit(1).get()
+                    .await().documents.firstOrNull()?.toObject(Message::class.java)
+            // Query the latest message of the chat room
+            if (lastMessage != null && lastMessage.messageId.isNotEmpty() && lastMessage.receiverId == accountService.currentUserId && !lastMessage.seenAt) {
+                // Update the 'seenAt' field of the last message with the current server timestamp
+                firestore.collection("chatrooms").document(chatRoomId).collection("messages")
+                    .document(lastMessage.messageId).update("seenAt", true).await()
+                val latestMessage =
+                    firestore.collection("latest_messages").document(chatRoomId).get().await()
+                        .toObject(LatestMessage::class.java)
+                // Check if the latest message matches the last message and has not been seen
+                if (latestMessage != null && latestMessage.message.receiverId == accountService.currentUserId && !latestMessage.message.seenAt) {
+                    // Update the 'seenAt' field of the latest message with the current server timestamp
+                    firestore.collection("latest_messages").document(chatRoomId)
+                        .update("message.seenAt", true).await()
+                }
+            }
+
+        } catch (e: Exception) {
+            // Handle the exception
+            throw e
+        }
+    }
+
     override suspend fun getMessageList(chatRoomId: String): Flow<DataState<List<Message>>> {
         return callbackFlow {
             try {
@@ -169,11 +201,10 @@ class ChatServiceImpl @Inject constructor(
                 val messageList = mutableListOf<Message>()
                 val messagesListener =
                     firestore.collection("chatrooms").document(chatRoomId).collection("messages")
-                        .orderBy("createdAt")
-                        .addSnapshotListener(
+                        .orderBy("createdAt").addSnapshotListener(
                             MetadataChanges.INCLUDE
-                        )
-                        { value, error ->
+                        ) { value, error ->
+
                             if (error != null) {
                                 trySend(DataState.Error(error))
                                 return@addSnapshotListener
@@ -244,8 +275,8 @@ class ChatServiceImpl @Inject constructor(
             firestore.collection("latest_messages").document(chatRoomId).delete().await()
             // Delete all messages in chat room
             val deleteMessages = CoroutineScope(Dispatchers.IO).async {
-                val messagesRef = firestore.collection("chatrooms").document(chatRoomId)
-                    .collection("messages")
+                val messagesRef =
+                    firestore.collection("chatrooms").document(chatRoomId).collection("messages")
                 val messages = messagesRef.get().await().documents
                 val deletionJobs = messages.map { message ->
                     async {
@@ -259,7 +290,6 @@ class ChatServiceImpl @Inject constructor(
             throw e
         }
     }
-
 
 }
 

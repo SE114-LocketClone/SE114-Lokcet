@@ -19,7 +19,7 @@ data class Message(
     val messageContent: String = "",
     @PropertyName("replyToFeed") var isReplyToFeed: Boolean = false,
     val feed: UploadImage = UploadImage(), // This is the document id of the feed if the message is a reply to a feed(Upload Image id)
-    val seenAt: Date? = null, // When the message is seen by the receiver user it is a timestamp by the server (null if not seen)
+    val seenAt: Boolean = false, // When the message is seen by the receiver user it is true (false if not seen)
     @ServerTimestamp val createdAt: Date = Date()
 )
 

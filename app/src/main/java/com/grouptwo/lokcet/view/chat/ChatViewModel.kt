@@ -236,6 +236,11 @@ class ChatViewModel @Inject constructor(
                             _uiState.update {
                                 it.copy(messageList = DataState.Success(dataState.data))
                             }
+                            // If success, update the latest message as seen to true (update seenAt field of message)
+                            // Trigger by get message list because when user open chat room, the message is seen
+                            chatService.markLastMessageAsSeen(chatRoomId)
+                            // Update latest message
+                            getLatestMessage()
                         }
 
                         is DataState.Error -> {
@@ -255,14 +260,25 @@ class ChatViewModel @Inject constructor(
     }
 
     fun onChatItemClick(chatRoomId: String, navigate: (String) -> Unit) {
-        // Navigate to ChatDetail screen
-        _uiState.update {
-            it.copy(selectedChatRoomId = chatRoomId)
+        launchCatching {
+            try {
+                if (_uiState.value.isNetworkAvailable.not()) {
+                    throw Exception("Không có kết nối mạng")
+                }
+                // Navigate to ChatDetail screen
+                _uiState.update {
+                    it.copy(selectedChatRoomId = chatRoomId)
+                }
+                // Navigate to ChatDetail screen
+                navigate(Screen.ChatScreen_2.route)
+                // Fetch message list
+                getMessageList(chatRoomId)
+            } catch (e: CancellationException) {
+                // Do nothing
+            } catch (e: Exception) {
+                SnackbarManager.showMessage(e.toSnackbarMessage())
+            }
         }
-        // Navigate to ChatDetail screen
-        navigate(Screen.ChatScreen_2.route)
-        // Fetch message list
-        getMessageList(chatRoomId)
     }
 
     fun onMessageChange(message: String) {

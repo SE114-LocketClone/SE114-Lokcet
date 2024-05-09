@@ -34,9 +34,12 @@ interface ChatService {
     suspend fun getMessageList(chatRoomId: String): Flow<DataState<List<Message>>> // Get message list of chat room
 
     // get last message of chat room to show in Chat List screen
-    suspend fun getLastestMessage(chatRoomList: List<ChatRoom>): Flow<DataState<Map<String,LatestMessage>> >// Get last message of chat room to show in Chat List screen
+    suspend fun getLastestMessage(chatRoomList: List<ChatRoom>): Flow<DataState<Map<String, LatestMessage>>>// Get last message of chat room to show in Chat List screen
 
     // delete chat room
     suspend fun deleteChatRoom(chatRoomId: String) // Delete chat room and all messages in chat room when user unfriend with friend or delete account
+
+    // Mark message as seen (update seenAt field of message)
+    suspend fun markLastMessageAsSeen(chatRoomId: String)
 
 }

@@ -123,8 +123,8 @@ fun ChatItem(
                                 ), style = TextStyle(
                                     color = Color(0xFF948F8F),
                                     fontFamily = fontFamily,
-                                    fontWeight = FontWeight.Normal,
-                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 16.sp,
                                     textAlign = TextAlign.Start
                                 )
                             )
@@ -135,7 +135,7 @@ fun ChatItem(
                         latestMessage?.message?.messageContent ?: // No latest message
                         "Chưa có tin nhắn"
                     // Color if seen or not
-                    val colorMessage = if (latestMessage?.message?.seenAt == null) {
+                    val colorMessage = if (latestMessage?.message?.seenAt == false) {
                         // Not seen
                         Color.White
                     } else {
@@ -146,8 +146,8 @@ fun ChatItem(
                         text = messageContent, style = TextStyle(
                             color = colorMessage,
                             fontFamily = fontFamily,
-                            fontWeight = FontWeight.Normal,
-                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 16.sp,
                             textAlign = TextAlign.Start
                         )
                     )
