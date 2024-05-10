@@ -4,11 +4,13 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -25,6 +27,8 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
@@ -84,6 +88,9 @@ import com.grouptwo.lokcet.view.error.ErrorScreen
 import com.makeappssimple.abhimanyu.composeemojipicker.ComposeEmojiPickerBottomSheetUI
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.glide.GlideImage
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @OptIn(
     ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class
@@ -254,6 +261,48 @@ fun FeedScreen(
                                             )
                                         }
                                     } else {
+                                        if (uiState.value.isShowGridView) {
+                                            LazyVerticalGrid(
+                                                columns = GridCells.Fixed(3),
+                                                contentPadding = PaddingValues(16.dp)
+                                            ){
+                                                        items (feedState.itemCount) { index -> // Show the feed list
+                                                    feedState[index]?.let {
+                                                        Box(
+                                                            modifier = Modifier
+                                                                .aspectRatio(1f).clickable {
+                                                                    CoroutineScope(Dispatchers.IO).launch {
+                                                                        pagerState.scrollToPage(
+                                                                            index
+                                                                        )
+                                                                        viewModel.onShowGridView(
+                                                                            false
+                                                                        )
+                                                                    }
+                                                                }
+                                                        ) {
+                                                            GlideImage(
+                                                                imageModel = { it.uploadImage.imageUrl },
+                                                                modifier = Modifier
+                                                                    .heightIn(max = 120.dp)
+                                                                    .clip(
+                                                                        RoundedCornerShape(20)
+                                                                    ),
+                                                                imageOptions = ImageOptions(
+                                                                    contentScale = ContentScale.Crop,
+                                                                    alignment = Alignment.Center
+                                                                ),
+                                                                requestOptions = {
+                                                                    RequestOptions().diskCacheStrategy(
+                                                                        DiskCacheStrategy.ALL
+                                                                    ).centerCrop()
+                                                                },
+                                                            )
+                                                        }
+                                                    }
+                                                }
+                                        }
+                                    } else {
                                         // Return VerticalPager with the feed list and the feed state
                                         VerticalPager(
                                             state = pagerState,
@@ -358,58 +407,85 @@ fun FeedScreen(
                                                 // Show the reaction bar (aka message bar)
                                                 Spacer(modifier = Modifier.height(16.dp))
                                                 // Owner of feed cannot react to their own feed
-                                                if (feed.uploadImage.userId != uiState.value.ownerUser?.id) {
-                                                    ReactionBar(showRelyFeedTextField = uiState.value.isShowReplyTextField,
-                                                        onSelectedEmoji = {
-                                                            // Update the selected emoji
-                                                            viewModel.onEmojiSelected(it, feed)
-                                                        },
-                                                        showEmojiPicker = uiState.value.isEmojiPickerVisible,
-                                                        onShowEmojiPicker = {
-                                                            // Update the emoji picker visibility
-                                                            viewModel.onShowEmojiPicker(it)
-                                                        },
-                                                        onShowRelyFeedTextField = {
-                                                            // Update the reply feed text field visibility
-                                                            viewModel.onShowRelyFeedTextField(it)
-                                                        })
-                                                } else {
-                                                    // Display a button to show reaction feed
-                                                    Button(
-                                                        onClick = {
-                                                            // Show reaction feed
-                                                            viewModel.onShowReactionList(true)
-                                                        },
-                                                        modifier = Modifier.wrapContentSize(),
-                                                        colors = ButtonDefaults.buttonColors(
-                                                            backgroundColor = Color(0xFF272626),
-                                                            contentColor = Color.White
-                                                        ),
-                                                        shape = RoundedCornerShape(50.dp)
-                                                    ) {
-                                                        Row(
-                                                            verticalAlignment = Alignment.CenterVertically,
-                                                            horizontalArrangement = Arrangement.Center,
-                                                            modifier = Modifier.padding(8.dp)
+                                                Row(
+                                                    modifier = Modifier.fillMaxWidth(),
+                                                    horizontalArrangement = Arrangement.Center,
+                                                    verticalAlignment = Alignment.CenterVertically
+                                                ) {
+                                                    // Show grid view button
+                                                    BasicIconButton(
+                                                        drawableResource = R.drawable.gallery,
+                                                        modifier = Modifier.size(45.dp),
+                                                        action = { viewModel.onShowGridView(true) },
+                                                        description = "Grid icon",
+                                                        colors = Color(0xFF272626),
+                                                        tint = Color.White
+                                                    )
+                                                    Spacer(modifier = Modifier.width(16.dp))
+                                                    if (feed.uploadImage.userId != uiState.value.ownerUser?.id) {
+                                                        ReactionBar(showRelyFeedTextField = uiState.value.isShowReplyTextField,
+                                                            onSelectedEmoji = {
+                                                                // Update the selected emoji
+                                                                viewModel.onEmojiSelected(
+                                                                    it, feed
+                                                                )
+                                                            },
+                                                            showEmojiPicker = uiState.value.isEmojiPickerVisible,
+                                                            onShowEmojiPicker = {
+                                                                // Update the emoji picker visibility
+                                                                viewModel.onShowEmojiPicker(it)
+                                                            },
+                                                            onShowRelyFeedTextField = {
+                                                                // Update the reply feed text field visibility
+                                                                viewModel.onShowRelyFeedTextField(
+                                                                    it
+                                                                )
+                                                            })
+                                                    } else {
+                                                        // Display a button to show reaction feed
+                                                        Button(
+                                                            onClick = {
+                                                                // Show reaction feed
+                                                                viewModel.onShowReactionList(
+                                                                    true
+                                                                )
+                                                            },
+                                                            modifier = Modifier.wrapContentSize(),
+                                                            colors = ButtonDefaults.buttonColors(
+                                                                backgroundColor = Color(
+                                                                    0xFF272626
+                                                                ), contentColor = Color.White
+                                                            ),
+                                                            shape = RoundedCornerShape(50.dp)
                                                         ) {
-                                                            Text(
-                                                                text = "Activity",
-                                                                style = TextStyle(
-                                                                    fontSize = 16.sp,
-                                                                    fontFamily = fontFamily,
-                                                                    fontWeight = FontWeight.Bold,
-                                                                    color = Color.White,
+                                                            Row(
+                                                                verticalAlignment = Alignment.CenterVertically,
+                                                                horizontalArrangement = Arrangement.Center,
+                                                                modifier = Modifier.padding(8.dp)
+                                                            ) {
+                                                                Text(
+                                                                    text = "Activity",
+                                                                    style = TextStyle(
+                                                                        fontSize = 16.sp,
+                                                                        fontFamily = fontFamily,
+                                                                        fontWeight = FontWeight.Bold,
+                                                                        color = Color.White,
+                                                                    )
                                                                 )
-                                                            )
-                                                            Spacer(modifier = Modifier.width(8.dp))
-                                                            Image(
-                                                                painter = painterResource(id = R.drawable.icon_sparkle),
-                                                                contentDescription = "Sparkle Logo",
-                                                                modifier = Modifier.size(20.dp),
-                                                                colorFilter = ColorFilter.tint(
-                                                                    Color.White
+                                                                Spacer(
+                                                                    modifier = Modifier.width(
+                                                                        8.dp
+                                                                    )
                                                                 )
-                                                            )
+                                                                Image(
+                                                                    painter = painterResource(id = R.drawable.icon_sparkle),
+                                                                    contentDescription = "Sparkle Logo",
+                                                                    modifier = Modifier.size(20.dp),
+                                                                    colorFilter = ColorFilter.tint(
+                                                                        Color.White
+                                                                    )
+                                                                )
+                                                            }
                                                         }
                                                     }
                                                 }
@@ -430,330 +506,193 @@ fun FeedScreen(
                         }
                     }
                 }
+            }
 
-                if (uiState.value.isShowReplyTextField) {
-                    // Create a blur around text field
-                    Box(
+            if (uiState.value.isShowReplyTextField) {
+                // Create a blur around text field
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(
+                            color = Color.Black.copy(alpha = 0.7f) // Semi-transparent black background
+                        )
+                        .padding(16.dp) // Add padding as needed
+                ) {
+                    // Force the blur not blur the textfield inside because surface transparent override
+                    Surface(
                         modifier = Modifier
-                            .fillMaxSize()
-                            .background(
-                                color = Color.Black.copy(alpha = 0.7f) // Semi-transparent black background
-                            )
-                            .padding(16.dp) // Add padding as needed
+                            .fillMaxWidth()
+                            .align(Alignment.Center),
+                        color = Color.Transparent, // Transparent background for the Surface
+                        tonalElevation = 8.dp // Adjust the elevation value for the desired blur effect
                     ) {
-                        // Force the blur not blur the textfield inside because surface transparent override
-                        Surface(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .align(Alignment.Center),
-                            color = Color.Transparent, // Transparent background for the Surface
-                            tonalElevation = 8.dp // Adjust the elevation value for the desired blur effect
-                        ) {
-                            // Show text field to reply feed
-                            val fabColor =
-                                if (uiState.value.isSendButtonEnabled) Color.White else Color(
-                                    0xFF272626
+                        // Show text field to reply feed
+                        val fabColor =
+                            if (uiState.value.isSendButtonEnabled) Color.White else Color(
+                                0xFF272626
+                            )
+                        TextField(value = uiState.value.reply, onValueChange = {
+                            viewModel.onReplyTextChanged(it)
+                        }, placeholder = {
+                            Text(
+                                text = "Trả lời ${feedState[pagerState.currentPage]?.uploadImage?.userName}...",
+                                style = TextStyle(
+                                    fontSize = 14.sp,
+                                    fontFamily = fontFamily,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color(0xFFACA4A4),
                                 )
-                            TextField(value = uiState.value.reply, onValueChange = {
-                                viewModel.onReplyTextChanged(it)
-                            }, placeholder = {
-                                Text(
-                                    text = "Trả lời ${feedState[pagerState.currentPage]?.uploadImage?.userName}...",
-                                    style = TextStyle(
-                                        fontSize = 14.sp,
-                                        fontFamily = fontFamily,
-                                        fontWeight = FontWeight.Bold,
-                                        color = Color(0xFFACA4A4),
+                            )
+                        }, singleLine = true, modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(
+                                RoundedCornerShape(50.dp)
+                            )
+                            .focusRequester(focusRequester)
+                            .align(
+                                Alignment.Center
+                            )
+                            .zIndex(3f), textStyle = TextStyle(
+                            fontSize = 14.sp,
+                            fontFamily = fontFamily,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White,
+                        ), colors = TextFieldDefaults.textFieldColors(
+                            backgroundColor = Color(0xFF272626),
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent,
+                            disabledIndicatorColor = Color.Transparent,
+                            cursorColor = Color.White,
+                            textColor = Color.White
+                        ), trailingIcon = {
+                            FloatingActionButton(
+                                onClick = {
+                                    feedState[pagerState.currentPage]?.let {
+                                        viewModel.onSendReply(
+                                            feed = it
+                                        )
+                                    }
+                                },
+                                shape = CircleShape,
+                                containerColor = fabColor,
+                                modifier = Modifier.padding(8.dp)
+                            ) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.icon_send),
+                                    contentDescription = "Send Logo",
+                                    modifier = Modifier.size(40.dp),
+                                    alignment = Alignment.Center
+                                )
+                            }
+                        })
+                        LaunchedEffect(Unit) {
+                            focusRequester.requestFocus()
+                        }
+                    }
+                }
+            }
+            // Show the emoji animation
+            if (uiState.value.selectedEmoji.isNotEmpty()) {
+                Particles(
+                    modifier = Modifier.fillMaxSize(),
+                    quantity = 50,
+                    emoji = uiState.value.selectedEmoji,
+                    visible = true
+                )
+            }
+            // Show the emoji picker
+            if (uiState.value.isEmojiPickerVisible) {
+                ModalBottomSheet(
+                    sheetState = sheetState,
+                    shape = RoundedCornerShape(20.dp),
+                    tonalElevation = 0.dp,
+                    onDismissRequest = {
+                        viewModel.onShowEmojiPicker(false)
+                        viewModel.onSearchEmoji("")
+                    },
+                    dragHandle = null,
+                    windowInsets = WindowInsets(
+                        0
+                    )
+                ) {
+                    Column(
+                        modifier = Modifier.wrapContentSize(),
+                    ) {
+                        ComposeEmojiPickerBottomSheetUI(
+                            onEmojiClick = { emoji ->
+                                viewModel.onShowEmojiPicker(false)
+                                feedState[pagerState.currentPage]?.let {
+                                    viewModel.onEmojiSelected(
+                                        emoji.character, it
                                     )
-                                )
-                            }, singleLine = true, modifier = Modifier
-                                .fillMaxWidth()
-                                .clip(
-                                    RoundedCornerShape(50.dp)
-                                )
-                                .focusRequester(focusRequester)
-                                .align(
-                                    Alignment.Center
-                                )
-                                .zIndex(3f), textStyle = TextStyle(
-                                fontSize = 14.sp,
+                                }
+                            },
+                            searchText = uiState.value.searchText,
+                            updateSearchText = { updatedSearchText ->
+                                viewModel.onSearchEmoji(updatedSearchText)
+                            },
+                            backgroundColor = BlackSecondary,
+                            groupTitleTextColor = Color.White,
+                            groupTitleTextStyle = TextStyle(
+                                fontSize = 16.sp,
                                 fontFamily = fontFamily,
                                 fontWeight = FontWeight.Bold,
                                 color = Color.White,
-                            ), colors = TextFieldDefaults.textFieldColors(
-                                backgroundColor = Color(0xFF272626),
-                                focusedIndicatorColor = Color.Transparent,
-                                unfocusedIndicatorColor = Color.Transparent,
-                                disabledIndicatorColor = Color.Transparent,
-                                cursorColor = Color.White,
-                                textColor = Color.White
-                            ), trailingIcon = {
-                                FloatingActionButton(
-                                    onClick = {
-                                        feedState[pagerState.currentPage]?.let {
-                                            viewModel.onSendReply(
-                                                feed = it
-                                            )
-                                        }
-                                    },
-                                    shape = CircleShape,
-                                    containerColor = fabColor,
-                                    modifier = Modifier.padding(8.dp)
-                                ) {
-                                    Image(
-                                        painter = painterResource(id = R.drawable.icon_send),
-                                        contentDescription = "Send Logo",
-                                        modifier = Modifier.size(40.dp),
-                                        alignment = Alignment.Center
-                                    )
-                                }
-                            })
-                            LaunchedEffect(Unit) {
-                                focusRequester.requestFocus()
-                            }
-                        }
+                            ),
+                            searchBarColor = Color.White,
+                            modifier = Modifier
+                                .heightIn(max = 400.dp)
+                                .fillMaxWidth()
+                        )
                     }
                 }
-                // Show the emoji animation
-                if (uiState.value.selectedEmoji.isNotEmpty()) {
-                    Particles(
-                        modifier = Modifier.fillMaxSize(),
-                        quantity = 50,
-                        emoji = uiState.value.selectedEmoji,
-                        visible = true
-                    )
-                }
-                // Show the emoji picker
-                if (uiState.value.isEmojiPickerVisible) {
-                    ModalBottomSheet(
-                        sheetState = sheetState,
-                        shape = RoundedCornerShape(20.dp),
-                        tonalElevation = 0.dp,
-                        onDismissRequest = {
-                            viewModel.onShowEmojiPicker(false)
-                            viewModel.onSearchEmoji("")
-                        },
-                        dragHandle = null,
-                        windowInsets = WindowInsets(
-                            0
-                        )
+            }
+            // Show emoji reaction
+            if (uiState.value.isShowReactionList) {
+                ModalBottomSheet(
+                    onDismissRequest = {
+                        viewModel.onShowReactionList(false)
+
+                    },
+                    sheetState = reactState,
+                    shape = RoundedCornerShape(20.dp),
+                    tonalElevation = 0.dp,
+                    dragHandle = null,
+                    windowInsets = WindowInsets(
+                        0
+                    ),
+                    containerColor = BlackSecondary
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(max = 400.dp)
                     ) {
                         Column(
-                            modifier = Modifier.wrapContentSize(),
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .verticalScroll(scrollState),
+                            verticalArrangement = Arrangement.Top,
+                            horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            ComposeEmojiPickerBottomSheetUI(
-                                onEmojiClick = { emoji ->
-                                    viewModel.onShowEmojiPicker(false)
-                                    feedState[pagerState.currentPage]?.let {
-                                        viewModel.onEmojiSelected(
-                                            emoji.character, it
-                                        )
-                                    }
-                                },
-                                searchText = uiState.value.searchText,
-                                updateSearchText = { updatedSearchText ->
-                                    viewModel.onSearchEmoji(updatedSearchText)
-                                },
-                                backgroundColor = BlackSecondary,
-                                groupTitleTextColor = Color.White,
-                                groupTitleTextStyle = TextStyle(
-                                    fontSize = 16.sp,
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Text(
+                                text = "Reaction", style = TextStyle(
+                                    fontSize = 20.sp,
                                     fontFamily = fontFamily,
                                     fontWeight = FontWeight.Bold,
                                     color = Color.White,
-                                ),
-                                searchBarColor = Color.White,
-                                modifier = Modifier
-                                    .heightIn(max = 400.dp)
-                                    .fillMaxWidth()
-                            )
-                        }
-                    }
-                }
-                // Show emoji reaction
-                if (uiState.value.isShowReactionList) {
-                    ModalBottomSheet(
-                        onDismissRequest = {
-                            viewModel.onShowReactionList(false)
-
-                        },
-                        sheetState = reactState,
-                        shape = RoundedCornerShape(20.dp),
-                        tonalElevation = 0.dp,
-                        dragHandle = null,
-                        windowInsets = WindowInsets(
-                            0
-                        ),
-                        containerColor = BlackSecondary
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .heightIn(max = 400.dp)
-                        ) {
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .verticalScroll(scrollState),
-                                verticalArrangement = Arrangement.Top,
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
-                                Spacer(modifier = Modifier.height(16.dp))
-                                Text(
-                                    text = "Reaction", style = TextStyle(
-                                        fontSize = 20.sp,
-                                        fontFamily = fontFamily,
-                                        fontWeight = FontWeight.Bold,
-                                        color = Color.White,
-                                        textAlign = TextAlign.Center
-                                    )
+                                    textAlign = TextAlign.Center
                                 )
-                                Spacer(modifier = Modifier.height(16.dp))
-                                if (feedState[pagerState.currentPage]?.emojiReactions!!.isEmpty()) {
-                                    Box(
-                                        modifier = Modifier.fillMaxSize(),
-                                        contentAlignment = Alignment.Center
-                                    ) {
-                                        Text(
-                                            text = "Không có react nào", style = TextStyle(
-                                                fontSize = 16.sp,
-                                                fontFamily = fontFamily,
-                                                fontWeight = FontWeight.Bold,
-                                                color = Color.White,
-                                                textAlign = TextAlign.Center
-                                            )
-                                        )
-                                    }
-                                } else {
-                                    // Show the emoji reaction list using the feed state
-                                    feedState[pagerState.currentPage]?.emojiReactions?.forEach {
-                                        Row(
-                                            modifier = Modifier
-                                                .padding(16.dp)
-                                                .fillMaxWidth(),
-                                            horizontalArrangement = Arrangement.SpaceBetween,
-                                            verticalAlignment = Alignment.CenterVertically
-                                        ) {
-                                            Row(
-                                                horizontalArrangement = Arrangement.Start,
-                                                verticalAlignment = Alignment.CenterVertically
-                                            ) {
-                                                GlideImage(
-                                                    imageModel = { uiState.value.friendAvatar[it.userId] },
-                                                    imageOptions = ImageOptions(
-                                                        contentScale = ContentScale.Crop,
-                                                        alignment = Alignment.Center
-                                                    ),
-                                                    requestOptions = {
-                                                        RequestOptions().diskCacheStrategy(
-                                                            DiskCacheStrategy.ALL
-                                                        ).centerCrop()
-                                                    },
-                                                    loading = {
-                                                        // Show a circular progress indicator when loading.
-                                                        CircularProgressIndicator(
-                                                            modifier = Modifier.size(36.dp),
-                                                            color = Color(0xFFE5A500)
-                                                        )
-                                                    },
-                                                    failure = {
-                                                        // Show a circular progress indicator when loading.
-                                                        Image(
-                                                            painter = painterResource(id = R.drawable.icon_friend),
-                                                            contentDescription = "Friend Icon",
-                                                            modifier = Modifier
-                                                                .size(36.dp)
-                                                                .padding(2.dp)
-                                                        )
-                                                    },
-                                                    modifier = Modifier
-                                                        .size(38.dp)
-                                                        .padding(4.dp)
-                                                        .clip(shape = CircleShape)
-                                                        .border(
-                                                            width = 1.dp,
-                                                            color = Color(0xFFE5A500),
-                                                            shape = CircleShape
-                                                        )
-                                                )
-                                                Text(
-                                                    modifier = Modifier.padding(start = 20.dp),
-                                                    text = it.userName,
-                                                    style = TextStyle(
-                                                        fontSize = 20.sp,
-                                                        fontFamily = fontFamily,
-                                                        fontWeight = FontWeight.Bold,
-                                                        color = Color(0xFFEDEDED)
-                                                    )
-                                                )
-                                            }
-                                            Row(
-                                                horizontalArrangement = Arrangement.End,
-                                                verticalAlignment = Alignment.CenterVertically
-                                            ) {
-                                                // Show the time sent
-                                                Text(
-                                                    text = returnTimeMinutes(it.createdAt),
-                                                    style = TextStyle(
-                                                        fontSize = 16.sp,
-                                                        fontFamily = fontFamily,
-                                                        fontWeight = FontWeight.Bold,
-                                                        color = Color(0xFF737070),
-                                                    )
-                                                )
-                                                Spacer(modifier = Modifier.width(16.dp))
-                                                Text(
-                                                    text = it.emojiId,
-                                                    fontSize = 30.sp,
-                                                    modifier = Modifier.padding(4.dp),
-                                                )
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                // Show option menu
-                if (uiState.value.showOptionMenu) {
-                    ModalBottomSheet(
-                        sheetState = reactState,
-                        shape = RoundedCornerShape(20.dp),
-                        tonalElevation = 0.dp,
-                        onDismissRequest = {
-                            viewModel.onShowOptionMenu(false)
-                        },
-                        dragHandle = null,
-                        windowInsets = WindowInsets(
-                            0
-                        ),
-                        containerColor = BlackSecondary
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .heightIn(max = 100.dp)
-                        ) {
-                            Column(
-                                modifier = Modifier.wrapContentSize()
-                            ) {
-                                Button(
-                                    onClick = {
-                                        feedState[pagerState.currentPage]?.let {
-                                            viewModel.downloadImage(
-                                                it
-                                            )
-                                        }
-                                    }, colors = ButtonDefaults.buttonColors(
-                                        backgroundColor = BlackSecondary,
-                                        contentColor = Color.White
-                                    ), modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(16.dp)
+                            )
+                            Spacer(modifier = Modifier.height(16.dp))
+                            if (feedState[pagerState.currentPage]?.emojiReactions!!.isEmpty()) {
+                                Box(
+                                    modifier = Modifier.fillMaxSize(),
+                                    contentAlignment = Alignment.Center
                                 ) {
                                     Text(
-                                        text = "Tải ảnh xuống", style = TextStyle(
+                                        text = "Không có react nào", style = TextStyle(
                                             fontSize = 16.sp,
                                             fontFamily = fontFamily,
                                             fontWeight = FontWeight.Bold,
@@ -762,29 +701,166 @@ fun FeedScreen(
                                         )
                                     )
                                 }
+                            } else {
+                                // Show the emoji reaction list using the feed state
+                                feedState[pagerState.currentPage]?.emojiReactions?.forEach {
+                                    Row(
+                                        modifier = Modifier
+                                            .padding(16.dp)
+                                            .fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Row(
+                                            horizontalArrangement = Arrangement.Start,
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            GlideImage(
+                                                imageModel = { uiState.value.friendAvatar[it.userId] },
+                                                imageOptions = ImageOptions(
+                                                    contentScale = ContentScale.Crop,
+                                                    alignment = Alignment.Center
+                                                ),
+                                                requestOptions = {
+                                                    RequestOptions().diskCacheStrategy(
+                                                        DiskCacheStrategy.ALL
+                                                    ).centerCrop()
+                                                },
+                                                loading = {
+                                                    // Show a circular progress indicator when loading.
+                                                    CircularProgressIndicator(
+                                                        modifier = Modifier.size(36.dp),
+                                                        color = Color(0xFFE5A500)
+                                                    )
+                                                },
+                                                failure = {
+                                                    // Show a circular progress indicator when loading.
+                                                    Image(
+                                                        painter = painterResource(id = R.drawable.icon_friend),
+                                                        contentDescription = "Friend Icon",
+                                                        modifier = Modifier
+                                                            .size(36.dp)
+                                                            .padding(2.dp)
+                                                    )
+                                                },
+                                                modifier = Modifier
+                                                    .size(38.dp)
+                                                    .padding(4.dp)
+                                                    .clip(shape = CircleShape)
+                                                    .border(
+                                                        width = 1.dp,
+                                                        color = Color(0xFFE5A500),
+                                                        shape = CircleShape
+                                                    )
+                                            )
+                                            Text(
+                                                modifier = Modifier.padding(start = 20.dp),
+                                                text = it.userName,
+                                                style = TextStyle(
+                                                    fontSize = 20.sp,
+                                                    fontFamily = fontFamily,
+                                                    fontWeight = FontWeight.Bold,
+                                                    color = Color(0xFFEDEDED)
+                                                )
+                                            )
+                                        }
+                                        Row(
+                                            horizontalArrangement = Arrangement.End,
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            // Show the time sent
+                                            Text(
+                                                text = returnTimeMinutes(it.createdAt),
+                                                style = TextStyle(
+                                                    fontSize = 16.sp,
+                                                    fontFamily = fontFamily,
+                                                    fontWeight = FontWeight.Bold,
+                                                    color = Color(0xFF737070),
+                                                )
+                                            )
+                                            Spacer(modifier = Modifier.width(16.dp))
+                                            Text(
+                                                text = it.emojiId,
+                                                fontSize = 30.sp,
+                                                modifier = Modifier.padding(4.dp),
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            // Show option menu
+            if (uiState.value.showOptionMenu) {
+                ModalBottomSheet(
+                    sheetState = reactState,
+                    shape = RoundedCornerShape(20.dp),
+                    tonalElevation = 0.dp,
+                    onDismissRequest = {
+                        viewModel.onShowOptionMenu(false)
+                    },
+                    dragHandle = null,
+                    windowInsets = WindowInsets(
+                        0
+                    ),
+                    containerColor = BlackSecondary
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(max = 100.dp)
+                    ) {
+                        Column(
+                            modifier = Modifier.wrapContentSize()
+                        ) {
+                            Button(
+                                onClick = {
+                                    feedState[pagerState.currentPage]?.let {
+                                        viewModel.downloadImage(
+                                            it
+                                        )
+                                    }
+                                }, colors = ButtonDefaults.buttonColors(
+                                    backgroundColor = BlackSecondary, contentColor = Color.White
+                                ), modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp)
+                            ) {
+                                Text(
+                                    text = "Tải ảnh xuống", style = TextStyle(
+                                        fontSize = 16.sp,
+                                        fontFamily = fontFamily,
+                                        fontWeight = FontWeight.Bold,
+                                        color = Color.White,
+                                        textAlign = TextAlign.Center
+                                    )
+                                )
                             }
                         }
                     }
                 }
             }
         }
+    }
 
-        is DataState.Loading -> {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                // Display a loading indicator
-                CircularProgressIndicator(
-                    modifier = Modifier
-                        .size(50.dp)
-                        .align(
-                            Alignment.Center
-                        ), color = YellowPrimary
-                )
-            }
-        }
-
-        is DataState.Error -> {
-            // Display the error screen
+    is DataState.Loading -> {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            // Display a loading indicator
+            CircularProgressIndicator(
+                modifier = Modifier
+                    .size(50.dp)
+                    .align(
+                        Alignment.Center
+                    ), color = YellowPrimary
+            )
         }
     }
+
+    is DataState.Error -> {
+        // Display the error screen
+    }
+}
 
 }

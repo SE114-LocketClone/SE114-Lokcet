@@ -29,4 +29,5 @@ data class FeedUiState(
     val curentUserReactList: List<EmojiReaction> = emptyList(),
     val friendAvatar: Map<String, String> = emptyMap(),
     val showOptionMenu: Boolean = false,
+    val isShowGridView: Boolean = false,
 )

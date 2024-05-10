@@ -396,4 +396,10 @@ class FeedViewModel @Inject constructor(
             }
         }
     }
+
+    fun onShowGridView(showGridView: Boolean) {
+        _uiState.update {
+            it.copy(isShowGridView = showGridView)
+        }
+    }
 }
