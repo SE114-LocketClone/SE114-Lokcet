@@ -118,12 +118,6 @@ fun NavGraphBuilder.LokcetGraph(appState: LokcetAppState) {
             appState.navigate(route)
         })
     }
-    // Add widget screen
-    composable(Screen.AddWidgetTutorialScreen.route) {
-        AddWidgetScreen(clearAndNavigate = { route ->
-            appState.clearAndNavigate(route)
-        })
-    }
     // Register screens
     composable(Screen.RegisterScreen_1.route) {
         RegisterScreen1(popUp = { appState.popUp() }, navigate = { route ->

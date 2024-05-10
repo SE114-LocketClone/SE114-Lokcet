@@ -130,7 +130,7 @@ class AddFriendViewModel @Inject constructor(
     }
 
     fun onContinueClick(clearAndNavigate: (String) -> Unit) {
-        clearAndNavigate(Screen.AddWidgetTutorialScreen.route)
+        clearAndNavigate(Screen.HomeScreen_1.route)
     }
 
     fun onAddFriendClick(
