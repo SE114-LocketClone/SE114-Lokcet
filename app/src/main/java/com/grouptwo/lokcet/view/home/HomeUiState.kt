@@ -17,4 +17,5 @@ data class HomeUiState(
     val friendList: DataState<List<User>> = DataState.Loading,
     val savedImageSuccess: Boolean = false,
     val imagePicked: Uri? = null,
+    val numOfNewFeeds: Int = 0,
 )

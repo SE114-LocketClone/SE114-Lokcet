@@ -4,6 +4,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -38,8 +39,6 @@ import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Surface
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -73,13 +72,13 @@ import com.bumptech.glide.request.RequestOptions
 import com.grouptwo.lokcet.R
 import com.grouptwo.lokcet.data.model.Feed
 import com.grouptwo.lokcet.data.model.User
+import com.grouptwo.lokcet.ui.component.global.composable.BasicIconButton
 import com.grouptwo.lokcet.ui.component.global.composable.Particles
 import com.grouptwo.lokcet.ui.theme.BlackSecondary
 import com.grouptwo.lokcet.ui.theme.YellowPrimary
 import com.grouptwo.lokcet.ui.theme.fontFamily
 import com.grouptwo.lokcet.utils.DataState
 import com.grouptwo.lokcet.utils.calculateTimePassed
-import com.grouptwo.lokcet.utils.noRippleClickable
 import com.grouptwo.lokcet.utils.returnTimeMinutes
 import com.grouptwo.lokcet.view.error.ErrorScreen
 import com.makeappssimple.abhimanyu.composeemojipicker.ComposeEmojiPickerBottomSheetUI
@@ -91,7 +90,7 @@ import com.skydoves.landscapist.glide.GlideImage
 )
 @Composable
 fun FeedScreen(
-    viewModel: FeedViewModel = hiltViewModel()
+    viewModel: FeedViewModel = hiltViewModel(), clearAndNavigate: (String) -> Unit
 ) {
     val uiState = viewModel.uiState.collectAsState()
     // Observe the feed state from the view model
@@ -114,16 +113,20 @@ fun FeedScreen(
     when (uiState.value.friendList) {
         is DataState.Success -> {
             // Display the feed screen
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .pointerInput(Unit) {// If the user taps outside the text field, clear the focus
-                        detectTapGestures(onTap = {
-                            focusManager.clearFocus()
-                            viewModel.onShowRelyFeedTextField(false)
-                        })
-                    },
-            ) {
+            Box(modifier = Modifier
+                .fillMaxSize()
+                .pointerInput(Unit) {// If the user taps outside the text field, clear the focus
+                    detectTapGestures(onTap = {
+                        focusManager.clearFocus()
+                        viewModel.onShowRelyFeedTextField(false)
+                    })
+                    detectDragGestures { change, dragAmount ->
+                        if (change.position.y > 0 && pagerState.currentPage == 0) {
+                            // Perform navigation back to HomeScreen
+                            viewModel.onSwipeBack(clearAndNavigate)
+                        }
+                    }
+                }) {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
@@ -140,15 +143,15 @@ fun FeedScreen(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        // User Section
-                        Image(painter = painterResource(id = R.drawable.icon_friend),
-                            contentDescription = "User Logo",
-                            colorFilter = ColorFilter.tint(Color(0xFF272626)),
-                            modifier = Modifier
-                                .size(50.dp)
-                                .noRippleClickable {
-                                    // Navigate to the user profile screen
-                                })
+                        // Back to Home Screen
+                        BasicIconButton(
+                            drawableResource = R.drawable.arrow_left,
+                            modifier = Modifier.size(40.dp),
+                            action = { viewModel.onSwipeBack(clearAndNavigate) },
+                            description = "Back icon",
+                            colors = Color(0xFF272626),
+                            tint = Color.White
+                        )
                         // View from Button (all people or specific people)
                         FriendDropdown(selectedFriend = uiState.value.selectedFriend,
                             friendList = (uiState.value.friendList as DataState.Success<List<User>>).data,
@@ -157,19 +160,27 @@ fun FeedScreen(
                                 viewModel.onSelectedFriendChanged(it)
                             })
                         // Chat Button
-                        IconButton(
-                            onClick = { /*TODO*/ }, colors = IconButtonDefaults.iconButtonColors(
-                                Color(0xFF272626)
-                            ), modifier = Modifier
-                                .size(40.dp)
-                                .clip(CircleShape)
-                        ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.icon_chat),
-                                contentDescription = "Chat Logo",
-                                modifier = Modifier.size(30.dp)
-                            )
-                        }
+//                        IconButton(
+//                            onClick = { /*TODO*/ }, colors = IconButtonDefaults.iconButtonColors(
+//                                Color(0xFF272626)
+//                            ), modifier = Modifier
+//                                .size(40.dp)
+//                                .clip(CircleShape)
+//                        ) {
+//                            Image(
+//                                painter = painterResource(id = R.drawable.icon_chat),
+//                                contentDescription = "Chat Logo",
+//                                modifier = Modifier.size(30.dp)
+//                            )
+//                        }
+                        BasicIconButton(
+                            drawableResource = R.drawable.icon_menu,
+                            modifier = Modifier.size(40.dp),
+                            action = { viewModel.onShowOptionMenu(true) },
+                            description = "Menu icon",
+                            colors = Color(0xFF272626),
+                            tint = Color.White
+                        )
                     }
                     Spacer(modifier = Modifier.height(64.dp))
                     // Show the feed
@@ -699,6 +710,57 @@ fun FeedScreen(
                                             }
                                         }
                                     }
+                                }
+                            }
+                        }
+                    }
+                }
+                // Show option menu
+                if (uiState.value.showOptionMenu) {
+                    ModalBottomSheet(
+                        sheetState = reactState,
+                        shape = RoundedCornerShape(20.dp),
+                        tonalElevation = 0.dp,
+                        onDismissRequest = {
+                            viewModel.onShowOptionMenu(false)
+                        },
+                        dragHandle = null,
+                        windowInsets = WindowInsets(
+                            0
+                        ),
+                        containerColor = BlackSecondary
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .heightIn(max = 100.dp)
+                        ) {
+                            Column(
+                                modifier = Modifier.wrapContentSize()
+                            ) {
+                                Button(
+                                    onClick = {
+                                        feedState[pagerState.currentPage]?.let {
+                                            viewModel.downloadImage(
+                                                it
+                                            )
+                                        }
+                                    }, colors = ButtonDefaults.buttonColors(
+                                        backgroundColor = BlackSecondary,
+                                        contentColor = Color.White
+                                    ), modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(16.dp)
+                                ) {
+                                    Text(
+                                        text = "Tải ảnh xuống", style = TextStyle(
+                                            fontSize = 16.sp,
+                                            fontFamily = fontFamily,
+                                            fontWeight = FontWeight.Bold,
+                                            color = Color.White,
+                                            textAlign = TextAlign.Center
+                                        )
+                                    )
                                 }
                             }
                         }

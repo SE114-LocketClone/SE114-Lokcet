@@ -1,17 +1,28 @@
 package com.grouptwo.lokcet.view.feed
 
+import android.content.ContentResolver
+import android.content.ContentValues
+import android.content.SharedPreferences
+import android.graphics.Bitmap
+import android.os.Build
+import android.os.Environment
+import android.provider.MediaStore
 import android.util.Log
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewModelScope
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.grouptwo.lokcet.R
 import com.grouptwo.lokcet.data.model.Feed
 import com.grouptwo.lokcet.data.model.User
 import com.grouptwo.lokcet.di.paging.FeedRepository
 import com.grouptwo.lokcet.di.service.AccountService
 import com.grouptwo.lokcet.di.service.ChatService
 import com.grouptwo.lokcet.di.service.InternetService
+import com.grouptwo.lokcet.di.service.StorageService
 import com.grouptwo.lokcet.di.service.UserService
+import com.grouptwo.lokcet.navigation.Screen
 import com.grouptwo.lokcet.ui.component.global.snackbar.SnackbarManager
 import com.grouptwo.lokcet.ui.component.global.snackbar.SnackbarMessage.Companion.toSnackbarMessage
 import com.grouptwo.lokcet.utils.ConnectionState
@@ -25,6 +36,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import java.io.File
+import java.io.FileOutputStream
 import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException
 
@@ -35,7 +48,10 @@ class FeedViewModel @Inject constructor(
     private val userService: UserService,
     private val accountService: AccountService,
     private val feedRepository: FeedRepository,
-    private val chatService: ChatService
+    private val chatService: ChatService,
+    private val sharedPreferences: SharedPreferences,
+    private val storageService: StorageService,
+    private val contentResolver: ContentResolver
 ) : LokcetViewModel() {
     private val _uiState = MutableStateFlow(FeedUiState())
     val uiState: StateFlow<FeedUiState> = _uiState.asStateFlow()
@@ -307,4 +323,77 @@ class FeedViewModel @Inject constructor(
         }
     }
 
+    override fun onCleared() {
+        super.onCleared()
+        // Save the current server time to shared preferences when view model is cleared as a point
+        // of reference for the next time the app is opened to retrieve how many feeds have been posted
+        // since the last time the app was opened
+
+        // Convert the current server time to a long value and save it to shared preferences
+        val currentServerTime = _uiState.value.currentServerTime?.seconds ?: 0
+        sharedPreferences.edit().putLong("currentServerTime", currentServerTime).apply()
+    }
+
+    fun onSwipeBack(clearAndNavigate: (String) -> Unit) {
+        clearAndNavigate(Screen.HomeScreen_1.route)
+    }
+
+    fun onShowOptionMenu(showOptionMenu: Boolean) {
+        _uiState.update {
+            it.copy(showOptionMenu = showOptionMenu)
+        }
+    }
+
+    fun downloadImage(feed: Feed) {
+        launchCatching {
+            try {
+                if (_uiState.value.isNetworkAvailable.not()) {
+                    throw Exception("Không có kết nối mạng")
+                }
+                // Show progress bar
+                _uiState.update {
+                    it.copy(showOptionMenu = false)
+                }
+                // Download image and save to gallery
+                val bitmap = storageService.downloadImage(feed.uploadImage.imageUrl)
+                // Save image to gallery
+                bitmap.let {
+                    // File name is IMG_yyyyMMdd_HHmmss.jpg
+                    val fileName = "IMG_${System.currentTimeMillis()}.jpg"
+                    val values = ContentValues().apply {
+                        put(MediaStore.Images.Media.DISPLAY_NAME, fileName)
+                        put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+                        // Check android version
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {  // If Android 10 or higher
+                            put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
+                        }
+                    }
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                        val uri =
+                            contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+                        uri?.let {
+                            val outputStream = contentResolver.openOutputStream(uri)
+                            outputStream?.let {
+                                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+                                outputStream.close()
+                            }
+                        }
+                    } else { // If Android 9 or lower
+                        val imagesDir =
+                            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+                                .toString()
+                        val imageFile = File(imagesDir, fileName)
+                        val fos = FileOutputStream(imageFile)
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos)
+                        fos.close()
+                    }
+                }
+                SnackbarManager.showMessage(R.string.save_image_success)
+            } catch (e: CancellationException) {
+                // Do nothing
+            } catch (e: Exception) {
+                SnackbarManager.showMessage(e.toSnackbarMessage())
+            }
+        }
+    }
 }

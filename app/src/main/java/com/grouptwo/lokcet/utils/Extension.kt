@@ -2,6 +2,7 @@ package com.grouptwo.lokcet.utils
 
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.util.Patterns
 import android.view.View
@@ -81,6 +82,11 @@ fun Bitmap.rotateBitmap(rotationDegrees: Int): Bitmap {
     return Bitmap.createBitmap(this, 0, 0, width, height, matrix, true)
 }
 
+fun ByteArray.toBitmap(): Bitmap {
+    return BitmapFactory.decodeByteArray(this, 0, this.size)
+}
+
+
 // Observer for listener to focus change in camera view
 inline fun View.afterMeasured(crossinline block: () -> Unit) {
     if (measuredWidth > 0 && measuredHeight > 0) {
@@ -98,6 +104,10 @@ inline fun View.afterMeasured(crossinline block: () -> Unit) {
     }
 }
 
+fun String.getImageNameFromUrl(): String {
+    val fileName = this.substringAfterLast("/").substringBefore("?").replace("images%2F", "")
+    return fileName
+}
 
 fun Date.calculateTimePassed(currentServerTime: Timestamp): String {
     val milliseconds = currentServerTime.toDate().time - this.time
@@ -141,8 +151,7 @@ fun Date.toDayMonth(
     val diffInMins = TimeUnit.MILLISECONDS.toMinutes(diff)
     val diffInHours = TimeUnit.MILLISECONDS.toHours(diff)
 
-    return if (diffInMins < 1
-    ) {
+    return if (diffInMins < 1) {
         "Vừa xong"
     } else if (diffInMins < 60) {
         "$diffInMins phút"

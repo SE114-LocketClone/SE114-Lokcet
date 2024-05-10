@@ -112,7 +112,8 @@ dependencies {
     implementation libs.ucrop
     implementation libs.androidx.paging.compose
     implementation libs.compose.emoji.picker
-
+    // Coil for image loading in Widgets
+    implementation libs.coil
 }
 
 // Allow references to generated code

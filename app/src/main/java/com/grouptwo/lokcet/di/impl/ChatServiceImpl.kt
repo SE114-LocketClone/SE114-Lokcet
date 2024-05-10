@@ -20,6 +20,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
@@ -54,27 +55,50 @@ class ChatServiceImpl @Inject constructor(
     ): Flow<DataState<Unit>> {
         return flow {
             try {
+//                emit(DataState.Loading)
+//                val user1Id = accountService.currentUserId
+//                val message = Message(
+//                    senderId = user1Id,
+//                    receiverId = chatRoomId.getFriendId(user1Id),
+//                    messageContent = messageContent,
+//                    seenAt = false
+//                )
+//                val chatRoomRef = firestore.collection("chatrooms").document(chatRoomId)
+//                val messagesRef = chatRoomRef.collection("messages")
+//                val messageDocRef = messagesRef.add(message).await()
+//                messageDocRef.update("messageId", messageDocRef.id).await()
+//                // Get the updated message
+//                val updatedMessage = messageDocRef.get().await().toObject(Message::class.java)!!
+//                // Save latest message of chat room in latest messages collection to show in chat list (OPTIMIZATION)
+//                val latestMessage = LatestMessage(
+//                    chatRoomId = chatRoomId, message = updatedMessage
+//                )
+//                firestore.collection("latest_messages").document(chatRoomId).set(latestMessage)
+//                    .await()
+//                Log.e("ChatServiceImpl", "sendMessage: $updatedMessage")
+//                emit(DataState.Success(Unit))
                 emit(DataState.Loading)
                 val user1Id = accountService.currentUserId
+                val chatRoomRef = firestore.collection("chatrooms").document(chatRoomId)
+                val messagesRef = chatRoomRef.collection("messages")
+                val newDocRef = messagesRef.document()
                 val message = Message(
+                    messageId = newDocRef.id,
                     senderId = user1Id,
                     receiverId = chatRoomId.getFriendId(user1Id),
                     messageContent = messageContent,
                     seenAt = false
                 )
-                val chatRoomRef = firestore.collection("chatrooms").document(chatRoomId)
-                val messagesRef = chatRoomRef.collection("messages")
-                val messageDocRef = messagesRef.add(message).await()
-                messageDocRef.update("messageId", messageDocRef.id).await()
-                // Get the updated message
-                val updatedMessage = messageDocRef.get().await().toObject(Message::class.java)!!
+                newDocRef.set(message).await()
+                // Get the message
+                val newMessage = newDocRef.get().await().toObject(Message::class.java)!!
                 // Save latest message of chat room in latest messages collection to show in chat list (OPTIMIZATION)
                 val latestMessage = LatestMessage(
-                    chatRoomId = chatRoomId, message = updatedMessage
+                    chatRoomId = chatRoomId, message = newMessage
                 )
                 firestore.collection("latest_messages").document(chatRoomId).set(latestMessage)
                     .await()
-                Log.e("ChatServiceImpl", "sendMessage: $updatedMessage")
+                Log.e("ChatServiceImpl", "sendMessage: $newMessage")
                 emit(DataState.Success(Unit))
             } catch (e: Exception) {
                 Log.e("ChatServiceImpl", "sendMessage: $e")
@@ -88,9 +112,36 @@ class ChatServiceImpl @Inject constructor(
     ): Flow<DataState<Unit>> {
         return flow {
             try {
+//                emit(DataState.Loading)
+//                val user1Id = accountService.currentUserId
+//                val message = Message(
+//                    senderId = user1Id,
+//                    receiverId = chatRoomId.getFriendId(user1Id),
+//                    messageContent = messageContent,
+//                    isReplyToFeed = true,
+//                    feed = feed,
+//                    seenAt = false
+//                )
+//                val chatRoomRef = firestore.collection("chatrooms").document(chatRoomId)
+//                val messagesRef = chatRoomRef.collection("messages")
+//                val messageDocRef = messagesRef.add(message).await()
+//                messageDocRef.update("messageId", messageDocRef.id).await()
+//                // Get the updated message
+//                val updatedMessage = messageDocRef.get().await().toObject(Message::class.java)!!
+//                // Save latest message of chat room in latest messages collection to show in chat list (OPTIMIZATION)
+//                val latestMessage = LatestMessage(
+//                    chatRoomId = chatRoomId, message = updatedMessage
+//                )
+//                firestore.collection("latest_messages").document(chatRoomId).set(latestMessage)
+//                    .await()
+//                emit(DataState.Success(Unit))
                 emit(DataState.Loading)
                 val user1Id = accountService.currentUserId
+                val chatRoomRef = firestore.collection("chatrooms").document(chatRoomId)
+                val messagesRef = chatRoomRef.collection("messages")
+                val newDocRef = messagesRef.document()
                 val message = Message(
+                    messageId = newDocRef.id,
                     senderId = user1Id,
                     receiverId = chatRoomId.getFriendId(user1Id),
                     messageContent = messageContent,
@@ -98,15 +149,12 @@ class ChatServiceImpl @Inject constructor(
                     feed = feed,
                     seenAt = false
                 )
-                val chatRoomRef = firestore.collection("chatrooms").document(chatRoomId)
-                val messagesRef = chatRoomRef.collection("messages")
-                val messageDocRef = messagesRef.add(message).await()
-                messageDocRef.update("messageId", messageDocRef.id).await()
-                // Get the updated message
-                val updatedMessage = messageDocRef.get().await().toObject(Message::class.java)!!
+                newDocRef.set(message).await()
+                // Get the message
+                val newMessage = newDocRef.get().await().toObject(Message::class.java)!!
                 // Save latest message of chat room in latest messages collection to show in chat list (OPTIMIZATION)
                 val latestMessage = LatestMessage(
-                    chatRoomId = chatRoomId, message = updatedMessage
+                    chatRoomId = chatRoomId, message = newMessage
                 )
                 firestore.collection("latest_messages").document(chatRoomId).set(latestMessage)
                     .await()
@@ -164,31 +212,66 @@ class ChatServiceImpl @Inject constructor(
         }
     }
 
+    //    override suspend fun markLastMessageAsSeen(chatRoomId: String) {
+//        try {
+//            // Get the last message of the chat room and mark it as seen
+//            val lastMessage =
+//                firestore.collection("chatrooms").document(chatRoomId).collection("messages")
+//                    .orderBy("createdAt", Query.Direction.DESCENDING).limit(1).get()
+//                    .await().documents.firstOrNull()?.toObject(Message::class.java)
+//            // Query the latest message of the chat room
+//            if (lastMessage != null  && lastMessage.receiverId == accountService.currentUserId && !lastMessage.seenAt) {
+//                // Update the 'seenAt' field of the last message with the current server timestamp
+//                firestore.collection("chatrooms").document(chatRoomId).collection("messages")
+//                    .document(lastMessage.messageId).update("seenAt", true).await()
+//                val latestMessage =
+//                    firestore.collection("latest_messages").document(chatRoomId).get().await()
+//                        .toObject(LatestMessage::class.java)
+//                // Check if the latest message matches the last message and has not been seen
+//                if (latestMessage != null && latestMessage.message.receiverId == accountService.currentUserId && !latestMessage.message.seenAt) {
+//                    // Update the 'seenAt' field of the latest message with the current server timestamp
+//                    firestore.collection("latest_messages").document(chatRoomId)
+//                        .update("message.seenAt", true).await()
+//                }
+//            }
+//
+//        } catch (e: Exception) {
+//            // Handle the exception
+//            Log.d("ChatServiceImpl", "markLastMessageAsSeen: $e")
+//            throw e
+//        }
+//    }
     override suspend fun markLastMessageAsSeen(chatRoomId: String) {
         try {
-            // Get the last message of the chat room and mark it as seen
-            val lastMessage =
-                firestore.collection("chatrooms").document(chatRoomId).collection("messages")
-                    .orderBy("createdAt", Query.Direction.DESCENDING).limit(1).get()
-                    .await().documents.firstOrNull()?.toObject(Message::class.java)
-            // Query the latest message of the chat room
-            if (lastMessage != null && lastMessage.messageId.isNotEmpty() && lastMessage.receiverId == accountService.currentUserId && !lastMessage.seenAt) {
-                // Update the 'seenAt' field of the last message with the current server timestamp
-                firestore.collection("chatrooms").document(chatRoomId).collection("messages")
-                    .document(lastMessage.messageId).update("seenAt", true).await()
-                val latestMessage =
-                    firestore.collection("latest_messages").document(chatRoomId).get().await()
-                        .toObject(LatestMessage::class.java)
-                // Check if the latest message matches the last message and has not been seen
-                if (latestMessage != null && latestMessage.message.receiverId == accountService.currentUserId && !latestMessage.message.seenAt) {
-                    // Update the 'seenAt' field of the latest message with the current server timestamp
-                    firestore.collection("latest_messages").document(chatRoomId)
-                        .update("message.seenAt", true).await()
+            var attempts = 0
+            while (attempts < 3) {
+                // Get the last message of the chat room and mark it as seen
+                val lastMessage =
+                    firestore.collection("chatrooms").document(chatRoomId).collection("messages")
+                        .orderBy("createdAt", Query.Direction.DESCENDING).limit(1).get()
+                        .await().documents.firstOrNull()?.toObject(Message::class.java)
+                if (lastMessage != null && lastMessage.messageId.isNotEmpty() && lastMessage.receiverId == accountService.currentUserId && !lastMessage.seenAt) {
+                    // Update the 'seenAt' field of the last message with the current server timestamp
+                    firestore.collection("chatrooms").document(chatRoomId).collection("messages")
+                        .document(lastMessage.messageId).update("seenAt", true).await()
+                    val latestMessage =
+                        firestore.collection("latest_messages").document(chatRoomId).get().await()
+                            .toObject(LatestMessage::class.java)
+                    // Check if the latest message matches the last message and has not been seen
+                    if (latestMessage != null && latestMessage.message.receiverId == accountService.currentUserId && !latestMessage.message.seenAt) {
+                        // Update the 'seenAt' field of the latest message with the current server timestamp
+                        firestore.collection("latest_messages").document(chatRoomId)
+                            .update("message.seenAt", true).await()
+                    }
+                    break
+                } else {
+                    attempts++
+                    delay(1000)  // wait for 1 second before retrying
                 }
             }
-
         } catch (e: Exception) {
             // Handle the exception
+            Log.d("ChatServiceImpl", "markLastMessageAsSeen: $e")
             throw e
         }
     }

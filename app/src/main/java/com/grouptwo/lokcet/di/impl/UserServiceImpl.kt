@@ -1,5 +1,6 @@
 package com.grouptwo.lokcet.di.impl
 
+import android.content.SharedPreferences
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.GeoPoint
@@ -14,15 +15,18 @@ import com.grouptwo.lokcet.di.service.UserService
 import com.grouptwo.lokcet.utils.Constants
 import com.grouptwo.lokcet.utils.DataState
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import java.util.Date
 import javax.inject.Inject
 
 class UserServiceImpl @Inject constructor(
@@ -31,7 +35,8 @@ class UserServiceImpl @Inject constructor(
     private val accountService: AccountService,
     private val locationService: LocationService,
     private val contactService: ContactService,
-    private val chatService: ChatService
+    private val chatService: ChatService,
+    private val sharedPreferences: SharedPreferences
 
 ) : UserService {
 
@@ -258,7 +263,8 @@ class UserServiceImpl @Inject constructor(
                         friendFriends.remove(userId)
                         userRef.update("friends", userFriends).await()
                         friendRef.update("friends", friendFriends).await()
-                        val chatRoomId = if (userId < friendId) "${userId}_$friendId" else "${friendId}_$userId"
+                        val chatRoomId =
+                            if (userId < friendId) "${userId}_$friendId" else "${friendId}_$userId"
                         // Delete the chat room between the user and the friend if it exists
                         chatService.deleteChatRoom(chatRoomId)
                         emit(DataState.Success(Unit))
@@ -473,5 +479,44 @@ class UserServiceImpl @Inject constructor(
         }
     }
 
+    override suspend fun getNumOfNewFeeds(friendIds: List<String>): Flow<DataState<Int>> {
+        return callbackFlow {
+            try {
+                trySend(DataState.Loading)
+                // Get the current user's id
+                val currentUserId = accountService.currentUserId
+                val lastCheckedTime = sharedPreferences.getLong("currentServerTime", 0)
+                // Convert the lastCheckedTime to a Date object
+                val lastCheckedDate = Date(lastCheckedTime * 1000L)
+                // Create a list to hold all the deferred results
+                val deferredResults = mutableListOf<Deferred<Int>>()
+                // For each friend, start a coroutine to count the number of feeds posted since `lastCheckedDate`
+                for (friendId in friendIds) {
+                    deferredResults.add(coroutineScope {
+                        async {
+                            val visibleToAllImagesCount = firestore.collection("images")
+                                .whereEqualTo("userId", friendId)
+                                .whereEqualTo("isVisibleToAll", true)
+                                .whereGreaterThan("createdAt", lastCheckedDate)
+                                .get().await().size()
 
+                            val visibleToUserImagesCount = firestore.collection("images")
+                                .whereEqualTo("userId", friendId)
+                                .whereArrayContains("visibleUserIds", currentUserId)
+                                .whereGreaterThan("createdAt", lastCheckedDate)
+                                .get().await().size()
+
+                            visibleToAllImagesCount + visibleToUserImagesCount
+                        }
+                    })
+                }
+                // Wait for all coroutines to finish and sum their results
+                val count = deferredResults.awaitAll().sum()
+                trySend(DataState.Success(count))
+            } catch (e: Exception) {
+                trySend(DataState.Error(e))
+            }
+            awaitClose { channel.close() }
+        }
+    }
 }

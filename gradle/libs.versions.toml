@@ -6,6 +6,7 @@ accompanistPermissions = "0.34.0"
 agp = "8.4.0"
 animation = "1.6.5"
 cameraExtensions = "1.4.0-alpha05"
+coil = "2.6.0"
 compiler = "4.14.2"
 composeEmojiPicker = "1.0.0-alpha16"
 firebaseBom = "32.8.0"
@@ -52,6 +53,7 @@ androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = 
 androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
 androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycleRuntimeKtx" }
 androidx-paging-compose = { module = "androidx.paging:paging-compose", version.ref = "pagingCompose" }
+coil = { module = "io.coil-kt:coil", version.ref = "coil" }
 compose-emoji-picker = { module = "com.github.Abhimanyu14:compose-emoji-picker", version.ref = "composeEmojiPicker" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }

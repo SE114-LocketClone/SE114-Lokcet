@@ -152,6 +152,46 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    fun getNumOfNewFeeds() {
+        launchCatching {
+            try {
+                if (_uiState.value.isNetworkAvailable.not()) {
+                    throw Exception("Không có kết nối mạng")
+                }
+                val friendList = _uiState.value.friendList
+                if (friendList is DataState.Success) {
+                    userService.getNumOfNewFeeds(friendList.data.map { it.id } ?: emptyList())
+                        .collect { dataState ->
+                            when (dataState) {
+                                is DataState.Loading -> {
+                                    _uiState.update {
+                                        it.copy(numOfNewFeeds = 0)
+                                    }
+                                }
+
+                                is DataState.Success -> {
+                                    _uiState.update {
+                                        it.copy(numOfNewFeeds = dataState.data)
+                                    }
+                                }
+
+                                is DataState.Error -> {
+                                    throw dataState.exception
+                                }
+                            }
+                        }
+                }
+            } catch (
+                e: CancellationException
+            ) {
+                // Do nothing only make sure not show the "Job was cancelled" notification
+            } catch (e: Exception) {
+                // Show snackbar with throwable message if there is an exception for UX
+                SnackbarManager.showMessage(e.toSnackbarMessage())
+            }
+        }
+    }
+
     fun fetchFriendList() {
         launchCatching {
             try {
@@ -170,6 +210,8 @@ class HomeViewModel @Inject constructor(
                             _uiState.update {
                                 it.copy(friendList = DataState.Success(dataState.data))
                             }
+                            // Get the number of new feeds
+                            getNumOfNewFeeds()
                         }
 
                         is DataState.Error -> {
@@ -272,8 +314,10 @@ class HomeViewModel @Inject constructor(
                         val source = ImageDecoder.createSource(contentResolver, uri)
                         ImageDecoder.decodeBitmap(source)
                     } else {
-                        @Suppress("DEPRECATION")
-                        MediaStore.Images.Media.getBitmap(contentResolver, uri)
+                        @Suppress("DEPRECATION") MediaStore.Images.Media.getBitmap(
+                            contentResolver,
+                            uri
+                        )
                     }
                 }
                 it.copy(imagePicked = uri, capturedImage = bitmap)
@@ -288,6 +332,10 @@ class HomeViewModel @Inject constructor(
 
     // ViewModel for the HomeScreen
     fun onSwipeUp(navigate: (String) -> Unit) {
+        // Set the number of new feeds to 0 because the user has seen the new feeds
+        _uiState.update {
+            it.copy(numOfNewFeeds = 0)
+        }
         // Navigate to the FeedScreen
         navigate(Screen.FeedScreen.route)
     }
@@ -303,14 +351,10 @@ class HomeViewModel @Inject constructor(
     }
 
     fun startCropping(
-        activity: Activity,
-        sourceUri: Uri,
-        cropResultLauncher: ActivityResultLauncher<Intent>
+        activity: Activity, sourceUri: Uri, cropResultLauncher: ActivityResultLauncher<Intent>
     ) {
         val destinationUri = Uri.fromFile(File(activity.cacheDir, "cropped"))
-        val intent = UCrop.of(sourceUri, destinationUri)
-            .withAspectRatio(1f, 1f)
-            .getIntent(activity)
+        val intent = UCrop.of(sourceUri, destinationUri).withAspectRatio(1f, 1f).getIntent(activity)
         cropResultLauncher.launch(intent)
     }
 }

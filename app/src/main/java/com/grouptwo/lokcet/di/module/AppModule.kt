@@ -2,6 +2,7 @@ package com.grouptwo.lokcet.di.module
 
 import android.content.ContentResolver
 import android.content.Context
+import android.content.SharedPreferences
 import androidx.paging.PagingConfig
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.gson.Gson
@@ -46,4 +47,11 @@ object AppModule {
     ): FeedRepository {
         return FeedRepository(pagingConfig, firestore, accountService)
     }
+
+
+    @Provides
+    fun provideSharedPref(@ApplicationContext context: Context): SharedPreferences {
+        return context.getSharedPreferences("local_shared_pref", Context.MODE_PRIVATE)
+    }
+
 }

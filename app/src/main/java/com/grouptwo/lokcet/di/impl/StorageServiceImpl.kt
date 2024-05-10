@@ -1,6 +1,8 @@
 package com.grouptwo.lokcet.di.impl
 
+import android.graphics.Bitmap
 import android.icu.text.SimpleDateFormat
+import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -9,6 +11,8 @@ import com.grouptwo.lokcet.data.model.UploadImage
 import com.grouptwo.lokcet.di.service.AccountService
 import com.grouptwo.lokcet.di.service.StorageService
 import com.grouptwo.lokcet.utils.DataState
+import com.grouptwo.lokcet.utils.getImageNameFromUrl
+import com.grouptwo.lokcet.utils.toBitmap
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
@@ -79,6 +83,26 @@ class StorageServiceImpl @Inject constructor(
 
     override suspend fun getImagesUploadByUser(userId: String): List<UploadImage> {
         TODO("Not yet implemented")
+    }
+
+    override suspend fun downloadImage(imageUrl: String): Bitmap {
+        try {
+            // Download image from Firebase Storage
+            val storage = storage.reference
+            // get the image name from url
+            val imageName = imageUrl.getImageNameFromUrl()
+            // get the image from storage
+            Log.d("TAG", "downloadImage: $imageName")
+            val imageRef = storage.child("images/$imageName")
+            val image = imageRef.getBytes(2 * 1024 * 1024).await()
+            if (image.isEmpty()) {
+                throw Exception("Không thể tải ảnh")
+            } else {
+                return image.toBitmap()
+            }
+        } catch (e: Exception) {
+            throw e
+        }
     }
 
 }

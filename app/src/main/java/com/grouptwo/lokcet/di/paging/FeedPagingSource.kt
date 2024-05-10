@@ -100,14 +100,7 @@ import kotlinx.coroutines.tasks.await
 //        }
 //    }
 //}
-class FeedPagingSource(
-    private val firestore: FirebaseFirestore,
-    private val friendIds: List<String>,
-    private val accountService: AccountService
-) : PagingSource<DocumentSnapshot, Feed>() {
 
-    override suspend fun load(params: LoadParams<DocumentSnapshot>): LoadResult<DocumentSnapshot, Feed> {
-        return try {
 //            val currentPage = coroutineScope {
 //                params.key?.let { key ->
 //                    friendIds.map { friendId ->
@@ -127,6 +120,14 @@ class FeedPagingSource(
 //                }.awaitAll().flatten().sortedByDescending { it.getDate("createdAt") }
 //                    .take(Constants.PAGE_SIZE.toInt())
 //            }
+class FeedPagingSource(
+    private val firestore: FirebaseFirestore,
+    private val friendIds: List<String>,
+    private val accountService: AccountService
+) : PagingSource<DocumentSnapshot, Feed>() {
+
+    override suspend fun load(params: LoadParams<DocumentSnapshot>): LoadResult<DocumentSnapshot, Feed> {
+        return try {
             val currentUserId = accountService.currentUserId
             val currentPage = coroutineScope {
                 params.key?.let { key ->

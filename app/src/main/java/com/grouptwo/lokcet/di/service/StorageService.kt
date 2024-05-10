@@ -1,5 +1,6 @@
 package com.grouptwo.lokcet.di.service
 
+import android.graphics.Bitmap
 import com.grouptwo.lokcet.data.model.UploadImage
 import com.grouptwo.lokcet.utils.DataState
 import kotlinx.coroutines.flow.Flow
@@ -15,4 +16,6 @@ interface StorageService {
     suspend fun deleteImage(imageId: String)
 
     suspend fun getImagesUploadByUser(userId: String): List<UploadImage>
+
+    suspend fun downloadImage(imageUrl: String): Bitmap
 }
