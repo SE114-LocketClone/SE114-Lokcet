@@ -54,6 +54,7 @@
 
     <!-- Error -->
     <string name="not_found_app">Ứng dụng không tồn tại</string>
+    <string name="add_friend_success">Đã gửi lời mời kết bạn thành công</string>
 
 
 </resources>

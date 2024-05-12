@@ -1,11 +1,14 @@
 package com.grouptwo.lokcet
 
+import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.NotificationManager.IMPORTANCE_DEFAULT
 import android.app.PendingIntent
 import android.app.PendingIntent.FLAG_IMMUTABLE
 import android.content.Context
 import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP
+import android.os.Build
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.core.app.NotificationCompat
 import androidx.work.CoroutineWorker
@@ -20,10 +23,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import android.os.Build
-import android.app.NotificationChannel
-import android.app.NotificationManager.IMPORTANCE_DEFAULT
 import kotlin.random.Random
+
 class LokcetMessagingService : FirebaseMessagingService() {
     private val random = Random
 
@@ -35,6 +36,8 @@ class LokcetMessagingService : FirebaseMessagingService() {
         // Get user ID from shared preferences
         val sharedPreferences = this.getSharedPreferences("local_shared_pref", Context.MODE_PRIVATE)
         val userId = sharedPreferences.getString("userId", "")
+        // Make sure user is logged in before storing token
+        if (userId == "") return
         Firebase.firestore.collection("fcmTokens").document(userId!!)
             .set(device_token).await()
         // Store token in shared preferences
@@ -58,6 +61,7 @@ class LokcetMessagingService : FirebaseMessagingService() {
             storeToken(token)
         }
     }
+
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         remoteMessage.notification?.let { message ->
             sendNotification(message)
@@ -94,6 +98,7 @@ class LokcetMessagingService : FirebaseMessagingService() {
 
         manager.notify(random.nextInt(), notificationBuilder.build())
     }
+
     companion object {
         const val CHANNEL_NAME = "FCM notification channel"
     }

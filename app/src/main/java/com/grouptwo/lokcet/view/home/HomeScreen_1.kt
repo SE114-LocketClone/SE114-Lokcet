@@ -1,7 +1,6 @@
 package com.grouptwo.lokcet.view.home
 
 import android.app.Activity
-import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -21,9 +20,12 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.AlertDialog
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Button
@@ -33,29 +35,24 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavDeepLink
 import com.grouptwo.lokcet.R
+import com.grouptwo.lokcet.ui.theme.BlackSecondary
 import com.grouptwo.lokcet.ui.theme.YellowPrimary
 import com.grouptwo.lokcet.ui.theme.fontFamily
 import com.grouptwo.lokcet.utils.noRippleClickable
@@ -69,8 +66,7 @@ import com.yalantis.ucrop.UCrop
 )
 @Composable
 fun HomeScreen1(
-    viewModel: HomeViewModel = hiltViewModel(), navigate: (String) -> Unit,
-    uid: String? = null
+    viewModel: HomeViewModel = hiltViewModel(), navigate: (String) -> Unit, uid: String? = null
 ) {
     val activity = LocalContext.current as Activity
     val cropResultLauncher =
@@ -84,30 +80,93 @@ fun HomeScreen1(
     val uiState by viewModel.uiState.collectAsState()
     val launcher =
         rememberLauncherForActivityResult(contract = ActivityResultContracts.PickVisualMedia()) {
-
             if (it != null) {
                 viewModel.startCropping(activity, it, cropResultLauncher)
             }
         }
 
+    LaunchedEffect(Unit) {
+        // Only run once when the screen is created to show the add friend dialog
+        if (!uid.isNullOrEmpty() && !uiState.isShowAddFriendDialog) {
+            // Get name from uid
+            viewModel.getNameFromUid(uid)
+            viewModel.onShowAddFriendDialog(true)
+        }
+    }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .pointerInput(Unit) {
-                detectVerticalDragGestures(
-                    onVerticalDrag = { _, dragAmount ->
-                        when {
-                            dragAmount < -100 -> {
-                                // Swipe up detected, navigate to feed screen
-                                viewModel.onSwipeUp(navigate)
-                            }
-                            // Add other gesture detections here if needed
-                        }
-                    }
+    if (uiState.isShowAddFriendDialog && uiState.friendName.isNotEmpty()) {
+        AlertDialog(onDismissRequest = {
+            viewModel.onShowAddFriendDialog(false)
+            // Clear uid
+            viewModel.onClearUid()
+        }, title = {
+            Text(
+                text = "Xác nhận thêm ${uiState.friendName} làm bạn bè?", style = TextStyle(
+                    color = Color.White,
+                    fontFamily = fontFamily,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp
+                )
+            )
+        }, confirmButton = {
+            Button(
+                onClick = {
+                    uid?.let { viewModel.onAddFriendClick(it) }
+                    viewModel.onShowAddFriendDialog(false)
+                },
+                colors = ButtonDefaults.buttonColors(YellowPrimary),
+                shape = RoundedCornerShape(50.dp)
+            ) {
+                Text(
+                    text = "Đồng ý", style = TextStyle(
+                        color = Color.White,
+                        fontFamily = fontFamily,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp
+                    )
                 )
             }
-    ) {
+        }, dismissButton = {
+            Button(
+                onClick = {
+                    viewModel.onShowAddFriendDialog(false)
+                    // Clear uid
+                    viewModel.onClearUid()
+                },
+                colors = ButtonDefaults.buttonColors(Color(0xFF272626)),
+                shape = RoundedCornerShape(50.dp)
+            ) {
+                Text(
+                    text = "Huỷ", style = TextStyle(
+                        color = Color.White,
+                        fontFamily = fontFamily,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp
+                    )
+                )
+            }
+        }, modifier = Modifier
+            .wrapContentWidth()
+            .wrapContentHeight()
+            .clip(
+                RoundedCornerShape(50.dp)
+            ), backgroundColor = BlackSecondary
+        )
+    }
+
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .pointerInput(Unit) {
+            detectVerticalDragGestures(onVerticalDrag = { _, dragAmount ->
+                when {
+                    dragAmount < -100 -> {
+                        // Swipe up detected, navigate to feed screen
+                        viewModel.onSwipeUp(navigate)
+                    }
+                    // Add other gesture detections here if needed
+                }
+            })
+        }) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -213,13 +272,13 @@ fun HomeScreen1(
                             badge = {
                                 Box(
                                     modifier = Modifier
-                                        .background(YellowPrimary, shape = CircleShape)
-                                        .size(30.dp),
-                                    contentAlignment = Alignment.Center
+                                        .background(
+                                            YellowPrimary, shape = CircleShape
+                                        )
+                                        .size(30.dp), contentAlignment = Alignment.Center
                                 ) {
                                     Text(
-                                        text = uiState.numOfNewFeeds.toString(),
-                                        style = TextStyle(
+                                        text = uiState.numOfNewFeeds.toString(), style = TextStyle(
                                             color = Color.White,
                                             fontFamily = fontFamily,
                                             fontWeight = FontWeight.Bold,

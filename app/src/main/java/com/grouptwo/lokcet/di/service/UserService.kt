@@ -22,4 +22,6 @@ interface UserService {
     ): Flow<DataState<Int>>
 
     suspend fun generateDynamicLink(userId: String): Uri?
+
+    suspend fun getUserNameFromId(userId: String): Flow<DataState<String>>
 }

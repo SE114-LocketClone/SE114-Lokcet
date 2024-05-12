@@ -18,4 +18,6 @@ data class HomeUiState(
     val savedImageSuccess: Boolean = false,
     val imagePicked: Uri? = null,
     val numOfNewFeeds: Int = 0,
+    val isShowAddFriendDialog: Boolean = false,
+    val friendName : String = "",
 )

@@ -15,6 +15,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.camera.core.CameraSelector
 import androidx.lifecycle.viewModelScope
 import com.grouptwo.lokcet.R
+import com.grouptwo.lokcet.di.service.AccountService
 import com.grouptwo.lokcet.di.service.InternetService
 import com.grouptwo.lokcet.di.service.StorageService
 import com.grouptwo.lokcet.di.service.UserService
@@ -45,6 +46,7 @@ class HomeViewModel @Inject constructor(
     private val userService: UserService,
     private val contentResolver: ContentResolver,
     private val cacheDir: File,
+    private val accountService: AccountService
 ) : LokcetViewModel() {
     private val _uiState = MutableStateFlow(HomeUiState())
     private val networkStatus: StateFlow<ConnectionState> = internetService.networkStatus.stateIn(
@@ -185,8 +187,7 @@ class HomeViewModel @Inject constructor(
                 e: CancellationException
             ) {
                 // Do nothing only make sure not show the "Job was cancelled" notification
-            } catch (e: Exception) {
-                // Show snackbar with throwable message if there is an exception for UX
+            } catch (e: Exception) { // Show snackbar with throwable message if there is an exception for UX
                 SnackbarManager.showMessage(e.toSnackbarMessage())
             }
         }
@@ -356,5 +357,91 @@ class HomeViewModel @Inject constructor(
         val destinationUri = Uri.fromFile(File(activity.cacheDir, "cropped"))
         val intent = UCrop.of(sourceUri, destinationUri).withAspectRatio(1f, 1f).getIntent(activity)
         cropResultLauncher.launch(intent)
+    }
+
+    fun onShowAddFriendDialog(showAddFriendDialog: Boolean) {
+        // Show the AddFriendDialog
+        _uiState.update {
+            it.copy(isShowAddFriendDialog = showAddFriendDialog)
+        }
+    }
+
+    fun getNameFromUid(uid: String) {
+        launchCatching {
+            try {
+                if (_uiState.value.isNetworkAvailable.not()) {
+                    throw Exception("Không có kết nối mạng")
+                }
+                userService.getUserNameFromId(uid).collect { dataState ->
+                    when (dataState) {
+                        is DataState.Loading -> {
+                            _uiState.update {
+                                it.copy(friendName = "")
+                            }
+                        }
+
+                        is DataState.Success -> {
+                            _uiState.update {
+                                it.copy(friendName = dataState.data)
+                            }
+                        }
+
+                        is DataState.Error -> {
+                            throw dataState.exception
+                        }
+                    }
+                }
+            } catch (e: CancellationException) {
+            } catch (e: Exception) {
+                SnackbarManager.showMessage(e.toSnackbarMessage())
+            }
+        }
+    }
+
+    fun onAddFriendClick(friendId: String) {
+        launchCatching {
+            try {
+                if (_uiState.value.isNetworkAvailable.not()) {
+                    throw Exception("Không có kết nối mạng")
+                }
+                val userId = accountService.currentUserId
+                // Check if the friendId is the same as the userId
+                if (userId == friendId) {
+                    throw Exception("Không thể thêm chính mình làm bạn")
+                }
+                userService.addFriend(userId, friendId).collect { dataState ->
+                    when (dataState) {
+                        is DataState.Loading -> {
+                            // Do nothing
+                        }
+
+                        is DataState.Success -> {
+                            // Display a snackbar message
+                            SnackbarManager.showMessage(R.string.add_friend_success)
+                            _uiState.update {
+                                it.copy(isShowAddFriendDialog = false)
+                            }
+                        }
+
+                        is DataState.Error -> {
+                            throw dataState.exception
+                        }
+                    }
+                }
+            } catch (e: CancellationException) {
+                // Do nothing
+            } catch (e: Exception) {
+                _uiState.update {
+                    it.copy(isShowAddFriendDialog = false)
+                }
+                SnackbarManager.showMessage(e.toSnackbarMessage())
+            }
+        }
+    }
+
+    fun onClearUid() {
+        _uiState.update {
+            it.copy(friendName = "")
+        }
     }
 }

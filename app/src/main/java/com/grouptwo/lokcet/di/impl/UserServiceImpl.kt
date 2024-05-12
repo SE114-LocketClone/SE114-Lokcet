@@ -2,6 +2,7 @@ package com.grouptwo.lokcet.di.impl
 
 import android.content.SharedPreferences
 import android.net.Uri
+import android.util.Log
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
@@ -549,6 +550,23 @@ class UserServiceImpl @Inject constructor(
 
         return withContext(Dispatchers.IO) {
             Tasks.await(shortLinkTask).shortLink
+        }
+    }
+
+    override suspend fun getUserNameFromId(userId: String): Flow<DataState<String>> {
+        return flow {
+            try {
+                emit(DataState.Loading)
+                val userDocument = firestore.collection("users").document(userId)
+                val user = userDocument.get().await().toObject(User::class.java)
+                if (user != null) {
+                    emit(DataState.Success(user.firstName + " " + user.lastName))
+                } else {
+                    emit(DataState.Error(Exception("Không tìm thấy người dùng")))
+                }
+            } catch (e: Exception) {
+                emit(DataState.Error(e))
+            }
         }
     }
 
