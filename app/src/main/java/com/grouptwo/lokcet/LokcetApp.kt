@@ -1,7 +1,9 @@
 package com.grouptwo.lokcet
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.content.res.Resources
+import android.net.Uri
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
@@ -22,16 +24,18 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import androidx.navigation.navDeepLink
 import com.grouptwo.lokcet.navigation.Screen
 import com.grouptwo.lokcet.ui.component.global.snackbar.SnackbarManager
 import com.grouptwo.lokcet.ui.theme.BlackSecondary
 import com.grouptwo.lokcet.ui.theme.LokcetTheme
 import com.grouptwo.lokcet.ui.theme.YellowPrimary
 import com.grouptwo.lokcet.view.add_friend.AddFriendScreen
-import com.grouptwo.lokcet.view.add_widget.AddWidgetScreen
 import com.grouptwo.lokcet.view.chat.ChatScreen1
 import com.grouptwo.lokcet.view.chat.ChatScreen2
 import com.grouptwo.lokcet.view.chat.ChatViewModel
@@ -53,10 +57,12 @@ import com.grouptwo.lokcet.view.welcome.WelcomeScreen
 import kotlinx.coroutines.CoroutineScope
 
 @Composable
-fun LokcetApp() {
+fun LokcetApp(
+    deepLink: Uri? = null // Pass Deep Link from main activity (firebase dynamic link)
+) {
     LokcetTheme {
         Surface {
-            val appState = rememberAppState()
+            val appState = rememberAppState(deepLink = deepLink)
             Scaffold(
                 containerColor = BlackSecondary,
                 snackbarHost = {
@@ -91,9 +97,14 @@ fun rememberAppState(
     navController: NavHostController = rememberNavController(),
     snackbarManager: SnackbarManager = SnackbarManager,
     resources: Resources = resources(),
-    coroutineScope: CoroutineScope = rememberCoroutineScope()
-) = remember(snackbarHostState, navController, snackbarManager, resources, coroutineScope) {
-    LokcetAppState(snackbarHostState, navController, snackbarManager, resources, coroutineScope)
+    coroutineScope: CoroutineScope = rememberCoroutineScope(),
+    deepLink: Uri? = null
+) = remember(
+    snackbarHostState, navController, snackbarManager, resources, coroutineScope, deepLink
+) {
+    LokcetAppState(
+        snackbarHostState, navController, snackbarManager, resources, coroutineScope, deepLink
+    )
 }
 
 @Composable
@@ -165,8 +176,7 @@ fun NavGraphBuilder.LokcetGraph(appState: LokcetAppState) {
             appState.navController.getBackStackEntry(Screen.LoginScreen_1.route)
         }
         val vm = hiltViewModel<LoginViewModel>(parentEntry)
-        LoginScreen2(
-            popUp = { appState.popUp() },
+        LoginScreen2(popUp = { appState.popUp() },
             clearAndNavigate = { route -> appState.clearAndNavigate(route) },
             viewModel = vm
         )
@@ -179,10 +189,17 @@ fun NavGraphBuilder.LokcetGraph(appState: LokcetAppState) {
         })
     }
     // Home screens
-    composable(Screen.HomeScreen_1.route) {
+    composable(Screen.HomeScreen_1.route, deepLinks = listOf(navDeepLink {
+        uriPattern = "https://lokcet.page.link/addfriend/{uid}"
+        action = Intent.ACTION_VIEW
+    }), arguments = listOf(navArgument("uid") {
+        type = NavType.StringType
+        defaultValue = ""
+    })) { navBackStackEntry ->
+        val argument = navBackStackEntry.arguments?.getString("uid") ?: ""
         HomeScreen1(navigate = { route ->
             appState.navigate(route)
-        })
+        }, uid = argument)
     }
     composable(Screen.HomeScreen_2.route) { backStackEntry ->
         // Share parent viewmodel with given route
@@ -198,11 +215,9 @@ fun NavGraphBuilder.LokcetGraph(appState: LokcetAppState) {
     }
     // Feed screen
     composable(Screen.FeedScreen.route) {
-        FeedScreen(
-            clearAndNavigate = { route ->
-                appState.clearAndNavigate(route)
-            }
-        )
+        FeedScreen(clearAndNavigate = { route ->
+            appState.clearAndNavigate(route)
+        })
     }
     // Friend screen
     composable(Screen.FriendScreen.route) {

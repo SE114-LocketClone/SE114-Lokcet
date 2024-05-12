@@ -1,6 +1,7 @@
 package com.grouptwo.lokcet.view.home
 
 import android.app.Activity
+import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -53,6 +54,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavDeepLink
 import com.grouptwo.lokcet.R
 import com.grouptwo.lokcet.ui.theme.YellowPrimary
 import com.grouptwo.lokcet.ui.theme.fontFamily
@@ -67,7 +69,8 @@ import com.yalantis.ucrop.UCrop
 )
 @Composable
 fun HomeScreen1(
-    viewModel: HomeViewModel = hiltViewModel(), navigate: (String) -> Unit
+    viewModel: HomeViewModel = hiltViewModel(), navigate: (String) -> Unit,
+    uid: String? = null
 ) {
     val activity = LocalContext.current as Activity
     val cropResultLauncher =

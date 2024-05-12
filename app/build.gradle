@@ -63,6 +63,7 @@ dependencies {
     implementation libs.androidx.constraintlayout
     implementation libs.firebase.storage.ktx
     implementation libs.androidx.lifecycle.runtime.compose
+    implementation libs.androidx.work.runtime.ktx
     kapt libs.hilt.compiler
     implementation libs.glide
     implementation libs.gson
@@ -114,6 +115,11 @@ dependencies {
     implementation libs.compose.emoji.picker
     // Coil for image loading in Widgets
     implementation libs.coil
+    implementation(libs.firebase.messaging.ktx)
+    implementation(libs.androidx.lifecycle.livedata.ktx)
+    implementation libs.firebase.dynamic.links.ktx
+
+
 }
 
 // Allow references to generated code

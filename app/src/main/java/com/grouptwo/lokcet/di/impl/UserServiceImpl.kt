@@ -1,7 +1,13 @@
 package com.grouptwo.lokcet.di.impl
 
 import android.content.SharedPreferences
+import android.net.Uri
+import com.google.android.gms.tasks.Tasks
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
+import com.google.firebase.dynamiclinks.androidParameters
+import com.google.firebase.dynamiclinks.dynamicLink
+import com.google.firebase.dynamiclinks.socialMetaTagParameters
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.GeoPoint
 import com.grouptwo.lokcet.data.model.EmojiReaction
@@ -26,6 +32,7 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import java.util.Date
 import javax.inject.Inject
 
@@ -36,7 +43,8 @@ class UserServiceImpl @Inject constructor(
     private val locationService: LocationService,
     private val contactService: ContactService,
     private val chatService: ChatService,
-    private val sharedPreferences: SharedPreferences
+    private val sharedPreferences: SharedPreferences,
+    private val firebaseDynamicLinks: FirebaseDynamicLinks
 
 ) : UserService {
 
@@ -519,4 +527,29 @@ class UserServiceImpl @Inject constructor(
             awaitClose { channel.close() }
         }
     }
+
+    override suspend fun generateDynamicLink(userId: String): Uri? {
+        val dynamicLink = firebaseDynamicLinks.dynamicLink {
+            link = Uri.parse("https://lokcet.page.link/addfriend/$userId")
+            domainUriPrefix = "https://lokcet.page.link"
+            androidParameters("com.grouptwo.lokcet") {
+                minimumVersion = 1
+            }
+            socialMetaTagParameters {
+                title = "Kết bạn trên Lokcet \uD83D\uDC9B"
+                description =
+                    "Kết bạn trên Lokcet! Mời bạn tham gia vào mạng lưới kết nối của Lokcet và kết bạn với tôi. Cùng nhau khám phá những trải nghiệm mới và chia sẻ những khoảnh khắc đáng nhớ. Bấm vào liên kết này để mở ứng dụng Lokcet và kết bạn ngay: "
+                imageUrl = Uri.parse("https://i.ibb.co/RPCzz9W/app-logo.png")
+            }
+        }.uri
+
+        val shortLinkTask = FirebaseDynamicLinks.getInstance().createDynamicLink()
+            .setLongLink(dynamicLink)
+            .buildShortDynamicLink()
+
+        return withContext(Dispatchers.IO) {
+            Tasks.await(shortLinkTask).shortLink
+        }
+    }
+
 }

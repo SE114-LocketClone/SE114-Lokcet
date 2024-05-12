@@ -1,9 +1,9 @@
 package com.grouptwo.lokcet
 
 import android.content.res.Resources
+import android.net.Uri
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Stable
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.grouptwo.lokcet.ui.component.global.snackbar.SnackbarManager
 import com.grouptwo.lokcet.ui.component.global.snackbar.SnackbarMessage.Companion.toMessage
@@ -19,6 +19,7 @@ class LokcetAppState(
     private val snackbarManager: SnackbarManager,
     private val resources: Resources,
     coroutineScope: CoroutineScope,
+    val deepLink: Uri?
 ) {
     init {
         // Run a coroutine to collect the snackbarMessages from SnackbarManager during the lifecycle of LokcetAppState
@@ -62,4 +63,7 @@ class LokcetAppState(
             }
         }
     }
+
+    // Handle dynamic links from Firebase
+
 }

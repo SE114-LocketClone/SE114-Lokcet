@@ -1,5 +1,7 @@
 package com.grouptwo.lokcet.view.friend
 
+import android.content.ActivityNotFoundException
+import android.content.Intent
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -40,6 +42,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -74,6 +77,7 @@ fun FriendScreen(
     val imeState = rememberImeState()
     val focusManager = LocalFocusManager.current
     var isKeyboardVisible by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
     LaunchedEffect(key1 = imeState.value) {
         if (imeState.value) {
@@ -252,25 +256,33 @@ fun FriendScreen(
                             ) {
                                 BasicShareButton(
                                     drawableResource = R.drawable.icon_messenger,
-                                    action = { /*TODO*/ },
+                                    action = {
+                                      viewModel.onShareClick(context, "com.facebook.orca")
+                                    },
                                     description = "Messenger Icon",
                                     text = "Messenger"
                                 )
                                 BasicShareButton(
                                     drawableResource = R.drawable.icon_instagram,
-                                    action = { /*TODO*/ },
+                                    action = {
+                                             viewModel.onShareClick(context, "com.instagram.android")
+                                    },
                                     description = "Instagram Icon",
                                     text = "Instagram"
                                 )
                                 BasicShareButton(
                                     drawableResource = R.drawable.icon_message,
-                                    action = { /*TODO*/ },
+                                    action = {
+                                             viewModel.onSendSMSClick(context)
+                                    },
                                     description = "Message Icon",
                                     text = "Tin nhắn"
                                 )
                                 BasicShareButton(
                                     drawableResource = R.drawable.icon_other,
-                                    action = { /*TODO*/ },
+                                    action = {
+                                        viewModel.onShareClick(context, "")
+                                    },
                                     description = "Other Icon",
                                     text = "Khác"
                                 )

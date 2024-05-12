@@ -235,3 +235,7 @@ n
 >app/src/main/java/com/grouptwo/lokcet/view/chat/MessageList.kt,d/5/d5285410d5af3f7392a744aa04c4c888648c2be9
 n
 >app/src/main/java/com/grouptwo/lokcet/view/chat/MessageItem.kt,c/1/c1ff55b755dc6a9056e5e10d44f32a38d983502d
+p
+@app/src/main/java/com/grouptwo/lokcet/data/model/Notification.kt,0/0/00702d604e354b58ab99c85eedb0fe890602b709
+o
+?app/src/main/java/com/grouptwo/lokcet/LokcetMessagingService.kt,c/8/c820c4ffa3278a664b7b666bc8264e6000d721a3

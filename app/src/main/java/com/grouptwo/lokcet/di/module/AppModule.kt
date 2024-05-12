@@ -4,6 +4,9 @@ import android.content.ContentResolver
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.paging.PagingConfig
+import com.google.firebase.Firebase
+import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
+import com.google.firebase.dynamiclinks.dynamicLinks
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.gson.Gson
 import com.grouptwo.lokcet.di.paging.FeedRepository
@@ -52,6 +55,11 @@ object AppModule {
     @Provides
     fun provideSharedPref(@ApplicationContext context: Context): SharedPreferences {
         return context.getSharedPreferences("local_shared_pref", Context.MODE_PRIVATE)
+    }
+
+    @Provides
+    fun provideFirebaseDynamicLink(): FirebaseDynamicLinks {
+        return Firebase.dynamicLinks
     }
 
 }

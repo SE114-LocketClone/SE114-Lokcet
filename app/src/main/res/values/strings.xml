@@ -52,5 +52,8 @@
     <!-- Home -->
     <string name="save_image_success">Ảnh đã được lưu vào thư viện</string>
 
+    <!-- Error -->
+    <string name="not_found_app">Ứng dụng không tồn tại</string>
+
 
 </resources>

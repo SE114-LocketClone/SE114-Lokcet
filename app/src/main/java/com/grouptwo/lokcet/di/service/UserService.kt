@@ -1,5 +1,6 @@
 package com.grouptwo.lokcet.di.service
 
+import android.net.Uri
 import com.grouptwo.lokcet.data.model.User
 import com.grouptwo.lokcet.utils.DataState
 import kotlinx.coroutines.flow.Flow
@@ -20,4 +21,5 @@ interface UserService {
         friendIds: List<String>,
     ): Flow<DataState<Int>>
 
+    suspend fun generateDynamicLink(userId: String): Uri?
 }

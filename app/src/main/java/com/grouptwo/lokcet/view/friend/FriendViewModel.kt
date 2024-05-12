@@ -1,6 +1,11 @@
 package com.grouptwo.lokcet.view.friend
 
+import android.content.ActivityNotFoundException
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import androidx.lifecycle.viewModelScope
+import com.grouptwo.lokcet.R
 import com.grouptwo.lokcet.data.model.User
 import com.grouptwo.lokcet.di.service.AccountService
 import com.grouptwo.lokcet.di.service.InternetService
@@ -667,6 +672,63 @@ class FriendViewModel @Inject constructor(
                         }
                     }
                 }
+            }
+        }
+    }
+
+    // Share the dynamic link to add friend
+    fun onShareClick(context: Context, packageName: String) {
+        launchCatching {
+            try {
+                if (_uiState.value.isNetworkAvailable.not()) {
+                    throw Exception("Không có kết nối mạng")
+                }
+                val userId = accountService.currentUserId
+                val dynamicLink = userService.generateDynamicLink(userId)
+                dynamicLink ?: throw Exception("Không thể tạo liên kết")
+                val sendIntent: Intent = Intent().apply {
+                    action = Intent.ACTION_SEND
+                    putExtra(
+                        Intent.EXTRA_TEXT,
+                        "Hãy thêm tôi vào danh sách bạn bè của bạn: ${dynamicLink}"
+                    )
+                    type = "text/plain"
+                    if (packageName.isNotEmpty()) setPackage(packageName)
+                }
+
+                val intentChooser =
+                    Intent.createChooser(sendIntent, null)
+                context.startActivity(intentChooser)
+            } catch (e: ActivityNotFoundException) {
+                // Handle the error
+                SnackbarManager.showMessage(R.string.not_found_app)
+            }
+        }
+    }
+
+    fun onSendSMSClick(context: Context) {
+        launchCatching {
+            try {
+                if (_uiState.value.isNetworkAvailable.not()) {
+                    throw Exception("Không có kết nối mạng")
+                }
+                val userId = accountService.currentUserId
+                val dynamicLink = userService.generateDynamicLink(userId)
+                dynamicLink ?: throw Exception("Không thể tạo liên kết")
+                val smsIntent = Intent(Intent.ACTION_SENDTO).apply {
+                    data = Uri.parse("smsto:") // This ensures only SMS apps respond
+                    putExtra(
+                        "sms_body",
+                        "Hãy thêm tôi vào danh sách bạn bè của bạn: $dynamicLink"
+                    )
+                }
+
+                if (smsIntent.resolveActivity(context.packageManager) != null) {
+                    context.startActivity(smsIntent)
+                }
+            } catch (e: Exception) {
+                // Handle the error
+                SnackbarManager.showMessage(e.toSnackbarMessage())
             }
         }
     }

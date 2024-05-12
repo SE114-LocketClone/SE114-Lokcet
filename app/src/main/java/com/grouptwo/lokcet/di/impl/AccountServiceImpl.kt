@@ -1,5 +1,6 @@
 package com.grouptwo.lokcet.di.impl
 
+import android.content.SharedPreferences
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
@@ -21,7 +22,7 @@ import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 class AccountServiceImpl @Inject constructor(
-    private val auth: FirebaseAuth, private val firestore: FirebaseFirestore
+    private val auth: FirebaseAuth, private val firestore: FirebaseFirestore, private val sharedPreferences: SharedPreferences
 ) : AccountService {
 
     // Check if the user is logged in
@@ -78,6 +79,8 @@ class AccountServiceImpl @Inject constructor(
                 profilePicture = Constants.AVATAR_API_URL + "$firstName $lastName"
             )
             firestore.collection("users").document(user?.uid.orEmpty()).set(userObject).await()
+            // Save the user information to the shared preferences
+            sharedPreferences.edit().putString("userId", user?.uid).apply()
             // If the account is created, send a verification email
             user?.sendEmailVerification()?.await()
         } catch (e: Exception) {
@@ -126,6 +129,8 @@ class AccountServiceImpl @Inject constructor(
     override suspend fun signIn(email: String, password: String) {
         try {
             auth.signInWithEmailAndPassword(email, password).await()
+            // Save the user information to the shared preferences
+            sharedPreferences.edit().putString("userId", auth.currentUser?.uid).apply()
         } catch (e: Exception) {
             when (e) {
                 is FirebaseAuthInvalidUserException -> {
