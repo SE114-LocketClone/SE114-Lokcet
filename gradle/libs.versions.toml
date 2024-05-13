@@ -9,6 +9,7 @@ cameraExtensions = "1.4.0-alpha05"
 coil = "2.6.0"
 compiler = "4.14.2"
 composeEmojiPicker = "1.0.0-alpha16"
+converterGson = "2.11.0"
 firebaseBom = "33.0.0"
 firebaseDynamicLinksKtx = "22.0.0"
 firebaseFirestoreKtx = "24.11.0"
@@ -30,6 +31,7 @@ moshiKotlin = "1.15.0"
 pagingCompose = "3.2.1"
 playServicesLocation = "21.2.0"
 playServicesMaps = "18.2.0"
+retrofit = "2.11.0"
 secretsGradlePlugin = "2.0.1"
 ucrop = "2.2.8-native"
 uiTextGoogleFonts = "1.6.7"
@@ -58,6 +60,7 @@ androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-ru
 androidx-paging-compose = { module = "androidx.paging:paging-compose", version.ref = "pagingCompose" }
 coil = { module = "io.coil-kt:coil", version.ref = "coil" }
 compose-emoji-picker = { module = "com.github.Abhimanyu14:compose-emoji-picker", version.ref = "composeEmojiPicker" }
+converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 firebase-dynamic-links-ktx = { module = "com.google.firebase:firebase-dynamic-links-ktx", version.ref = "firebaseDynamicLinksKtx" }
 firebase-messaging-ktx = { module = "com.google.firebase:firebase-messaging-ktx" }
@@ -89,6 +92,7 @@ androidx-navigation-compose = { group = "androidx.navigation", name = "navigatio
 firebase-auth-ktx = { group = "com.google.firebase", name = "firebase-auth-ktx", version.ref = "firebaseAuthKtx" }
 play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocation" }
 play-services-maps = { module = "com.google.android.gms:play-services-maps", version.ref = "playServicesMaps" }
+retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 secrets-gradle-plugin = { module = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin:secrets-gradle-plugin", version.ref = "secretsGradlePlugin" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 firebase-storage-ktx = { group = "com.google.firebase", name = "firebase-storage-ktx", version.ref = "firebaseStorageKtx" }

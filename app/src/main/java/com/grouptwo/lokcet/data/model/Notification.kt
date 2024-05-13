@@ -1,11 +1,17 @@
 package com.grouptwo.lokcet.data.model
 
-data class NotificationDataModel(
+data class NotificationNotiModel(
     val title: String,
-    val message: String
+    val body: String,
+)
+
+data class NotificationDataModel(
+    val message: String,
+    val image: String, // image url
 )
 
 data class NotificationModel(
-    val data: NotificationDataModel,
-    val to: String
+    val notification: NotificationNotiModel,
+    val to: String,
+    val data: NotificationDataModel
 )

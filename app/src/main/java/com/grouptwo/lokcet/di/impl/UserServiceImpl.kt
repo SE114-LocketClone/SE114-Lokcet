@@ -12,6 +12,10 @@ import com.google.firebase.dynamiclinks.socialMetaTagParameters
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.GeoPoint
 import com.grouptwo.lokcet.data.model.EmojiReaction
+import com.grouptwo.lokcet.data.model.FCMToken
+import com.grouptwo.lokcet.data.model.NotificationDataModel
+import com.grouptwo.lokcet.data.model.NotificationModel
+import com.grouptwo.lokcet.data.model.NotificationNotiModel
 import com.grouptwo.lokcet.data.model.UploadImage
 import com.grouptwo.lokcet.data.model.User
 import com.grouptwo.lokcet.di.service.AccountService
@@ -45,7 +49,8 @@ class UserServiceImpl @Inject constructor(
     private val contactService: ContactService,
     private val chatService: ChatService,
     private val sharedPreferences: SharedPreferences,
-    private val firebaseDynamicLinks: FirebaseDynamicLinks
+    private val firebaseDynamicLinks: FirebaseDynamicLinks,
+    private val notificationServiceRepository: NotificationServiceRepository
 
 ) : UserService {
 
@@ -169,6 +174,31 @@ class UserServiceImpl @Inject constructor(
                             friendRef.update("friendRequests", friendRequests).await()
                             emit(DataState.Success(Unit))
                         }
+                        // Send notification to the friend
+                        val friendToken =
+                            firestore.collection("fcmTokens").document(friendId).get().await()
+                                .toObject(FCMToken::class.java)
+                        if (friendToken != null) {
+                            val notification = NotificationModel(
+                                to = friendToken.token,
+                                notification = NotificationNotiModel(
+                                    title = "Lời mời kết bạn",
+                                    body = "${user.firstName} ${user.lastName} đã gửi lời mời kết bạn",
+                                ),
+                                data = NotificationDataModel(
+                                    message = "${user.firstName} ${user.lastName} đã gửi lời mời kết bạn",
+                                    image = user.profilePicture
+                                )
+                            )
+                            CoroutineScope(Dispatchers.IO).launch {
+                                val result =
+                                    notificationServiceRepository.postNotification(notification)
+                                if (result.isSuccessful) {
+                                    Log.d("Notification", "Notification sent successfully")
+                                } else
+                                    Log.d("Notification", "Notification failed to send")
+                            }
+                        }
                     }
                 } else {
                     emit(DataState.Error(Exception("Không tìm thấy người dùng")))
@@ -207,6 +237,32 @@ class UserServiceImpl @Inject constructor(
                         friendRef.update("friendWaitList", friendFriendWaitList).await()
                         friendRef.update("friends", friendFriends).await()
                         chatService.createChatRoom(friendId)
+                        // Send notification to the friend
+                        val friendToken =
+                            firestore.collection("fcmTokens").document(friendId).get().await()
+                                .toObject(FCMToken::class.java)
+                        if (friendToken != null) {
+                            val notification = NotificationModel(
+                                to = friendToken.token,
+                                notification = NotificationNotiModel(
+                                    title = "Kết bạn thành công",
+                                    body = "${user.firstName} ${user.lastName} đã chấp nhận lời mời kết bạn",
+                                ),
+                                data = NotificationDataModel(
+                                    message = "${user.firstName} ${user.lastName} đã chấp nhận lời mời kết bạn",
+                                    image = user.profilePicture
+                                )
+                            )
+                            CoroutineScope(Dispatchers.IO).launch {
+                                val result =
+                                    notificationServiceRepository.postNotification(notification)
+                                if (result.isSuccessful) {
+                                    Log.d("Notification", "Notification sent successfully")
+                                } else
+                                    Log.d("Notification", "Notification failed to send")
+                            }
+
+                        }
                         emit(DataState.Success(Unit))
                     } else {
                         emit(DataState.Error(Exception("Không tìm thấy người dùng trong danh sách chờ")))
@@ -478,6 +534,30 @@ class UserServiceImpl @Inject constructor(
                         emit(DataState.Success(Unit))
                     } else {
                         emit(DataState.Success(Unit))
+                    }
+                    // Send notification to the feed owner
+                    val feedOwnerToken =
+                        firestore.collection("fcmTokens").document(feed.userId).get().await()
+                            .toObject(FCMToken::class.java)
+                    if (feedOwnerToken != null) {
+                        val notification = NotificationModel(
+                            to = feedOwnerToken.token,
+                            notification = NotificationNotiModel(
+                                title = "React mới",
+                                body = "${currentUser.firstName} ${currentUser.lastName} đã react $emoji ảnh của bạn",
+                            ),
+                            data = NotificationDataModel(
+                                message = "${currentUser.firstName} ${currentUser.lastName} đã react $emoji ảnh của bạn",
+                                image = feed.imageUrl
+                            )
+                        )
+                        CoroutineScope(Dispatchers.IO).launch {
+                            val result = notificationServiceRepository.postNotification(notification)
+                            if (result.isSuccessful) {
+                                Log.d("Notification", "Notification sent successfully")
+                            } else
+                                Log.d("Notification", "Notification failed to send")
+                        }
                     }
                 } else {
                     emit(DataState.Error(Exception("Không tìm thấy bài viết")))

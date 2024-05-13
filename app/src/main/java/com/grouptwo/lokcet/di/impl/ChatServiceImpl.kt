@@ -6,12 +6,17 @@ import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.MetadataChanges
 import com.google.firebase.firestore.Query
 import com.grouptwo.lokcet.data.model.ChatRoom
+import com.grouptwo.lokcet.data.model.FCMToken
 import com.grouptwo.lokcet.data.model.LatestMessage
 import com.grouptwo.lokcet.data.model.Message
+import com.grouptwo.lokcet.data.model.NotificationDataModel
+import com.grouptwo.lokcet.data.model.NotificationModel
+import com.grouptwo.lokcet.data.model.NotificationNotiModel
 import com.grouptwo.lokcet.data.model.UploadImage
 import com.grouptwo.lokcet.data.model.User
 import com.grouptwo.lokcet.di.service.AccountService
 import com.grouptwo.lokcet.di.service.ChatService
+import com.grouptwo.lokcet.di.service.NotificationService
 import com.grouptwo.lokcet.di.service.StorageService
 import com.grouptwo.lokcet.utils.DataState
 import com.grouptwo.lokcet.utils.getFriendId
@@ -32,6 +37,7 @@ class ChatServiceImpl @Inject constructor(
     private val accountService: AccountService,
     private val storageService: StorageService,
     private val firestore: FirebaseFirestore,
+    private val notificationServiceRepository: NotificationServiceRepository,
 ) : ChatService {
     override suspend fun createChatRoom(user2Id: String) {
         try {
@@ -79,6 +85,7 @@ class ChatServiceImpl @Inject constructor(
 //                emit(DataState.Success(Unit))
                 emit(DataState.Loading)
                 val user1Id = accountService.currentUserId
+                val userName = accountService.getCurrentUser().firstName
                 val chatRoomRef = firestore.collection("chatrooms").document(chatRoomId)
                 val messagesRef = chatRoomRef.collection("messages")
                 val newDocRef = messagesRef.document()
@@ -98,10 +105,33 @@ class ChatServiceImpl @Inject constructor(
                 )
                 firestore.collection("latest_messages").document(chatRoomId).set(latestMessage)
                     .await()
-                Log.e("ChatServiceImpl", "sendMessage: $newMessage")
+                // Send notification to receiver
+                val receiverToken =
+                    firestore.collection("fcmTokens").document(newMessage.receiverId).get().await()
+                        .toObject(FCMToken::class.java)
+                if (receiverToken != null) {
+                    val notification = NotificationModel(
+                        to = receiverToken.token, notification = NotificationNotiModel(
+                            title = "${userName} đã gửi tin nhắn cho bạn",
+                            body = newMessage.messageContent,
+
+                            ), data = NotificationDataModel(
+                            message = newMessage.messageContent, image = ""
+                        )
+                    )
+                    CoroutineScope(Dispatchers.IO).launch {
+                        val result = notificationServiceRepository.postNotification(notification)
+                        if (result.isSuccessful) {
+                            Log.e("ChatServiceImpl", "sendMessage: $newMessage")
+                        } else {
+                            Log.e("ChatServiceImpl", "sendMessageError: ${result.errorBody()}")
+                        }
+                    }
+                }
                 emit(DataState.Success(Unit))
+
+
             } catch (e: Exception) {
-                Log.e("ChatServiceImpl", "sendMessage: $e")
                 emit(DataState.Error(e))
             }
         }
@@ -137,6 +167,7 @@ class ChatServiceImpl @Inject constructor(
 //                emit(DataState.Success(Unit))
                 emit(DataState.Loading)
                 val user1Id = accountService.currentUserId
+                val userName = accountService.getCurrentUser().firstName
                 val chatRoomRef = firestore.collection("chatrooms").document(chatRoomId)
                 val messagesRef = chatRoomRef.collection("messages")
                 val newDocRef = messagesRef.document()
@@ -158,7 +189,31 @@ class ChatServiceImpl @Inject constructor(
                 )
                 firestore.collection("latest_messages").document(chatRoomId).set(latestMessage)
                     .await()
+                // Send notification to receiver
+                val receiverToken =
+                    firestore.collection("fcmTokens").document(newMessage.receiverId).get().await()
+                        .toObject(FCMToken::class.java)
+                if (receiverToken != null) {
+                    val notification = NotificationModel(
+                        to = receiverToken.token, notification = NotificationNotiModel(
+                            title = "$userName đã trả lời ảnh của bạn",
+                            body = newMessage.messageContent,
+                        ), data = NotificationDataModel(
+                            message = newMessage.messageContent, image = feed.imageUrl
+                        )
+                    )
+                    CoroutineScope(Dispatchers.IO).launch {
+                        val result = notificationServiceRepository.postNotification(notification)
+                        if (result.isSuccessful) {
+                            Log.e("ChatServiceImpl", "sendReplyMessage: $newMessage")
+                        } else {
+                            Log.e("ChatServiceImpl", "sendReplyMessageError: ${result.errorBody()}")
+                        }
+                    }
+
+                }
                 emit(DataState.Success(Unit))
+
             } catch (e: Exception) {
                 emit(DataState.Error(e))
             }

@@ -5,6 +5,7 @@ import com.grouptwo.lokcet.di.impl.ChatServiceImpl
 import com.grouptwo.lokcet.di.impl.ContactServiceImpl
 import com.grouptwo.lokcet.di.impl.InternetServiceImpl
 import com.grouptwo.lokcet.di.impl.LocationServiceImpl
+import com.grouptwo.lokcet.di.impl.NotificationServiceRepository
 import com.grouptwo.lokcet.di.impl.StorageServiceImpl
 import com.grouptwo.lokcet.di.impl.UserServiceImpl
 import com.grouptwo.lokcet.di.service.AccountService
@@ -12,6 +13,7 @@ import com.grouptwo.lokcet.di.service.ChatService
 import com.grouptwo.lokcet.di.service.ContactService
 import com.grouptwo.lokcet.di.service.InternetService
 import com.grouptwo.lokcet.di.service.LocationService
+import com.grouptwo.lokcet.di.service.NotificationService
 import com.grouptwo.lokcet.di.service.StorageService
 import com.grouptwo.lokcet.di.service.UserService
 import dagger.Binds
@@ -42,4 +44,5 @@ abstract class ServiceModule {
 
     @Binds
     abstract fun provideChatService(impl: ChatServiceImpl): ChatService
+
 }

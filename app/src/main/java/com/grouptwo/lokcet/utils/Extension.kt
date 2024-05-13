@@ -1,6 +1,7 @@
 package com.grouptwo.lokcet.utils
 
 import android.annotation.SuppressLint
+import android.content.SharedPreferences
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
@@ -173,3 +174,8 @@ fun Date.toCustomDateFormat(): String {
     val format = SimpleDateFormat("dd 'tháng' MM 'năm' yyyy", Locale.getDefault())
     return format.format(this)
 }
+
+fun SharedPreferences.saveString(key: String, value: String) {
+    this.edit().putString(key, value).apply()
+}
+

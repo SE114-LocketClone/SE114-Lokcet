@@ -1,6 +1,7 @@
 package com.grouptwo.lokcet.di.impl
 
 import android.content.SharedPreferences
+import android.util.Log
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
@@ -131,6 +132,7 @@ class AccountServiceImpl @Inject constructor(
             auth.signInWithEmailAndPassword(email, password).await()
             // Save the user information to the shared preferences
             sharedPreferences.edit().putString("userId", auth.currentUser?.uid).apply()
+
         } catch (e: Exception) {
             when (e) {
                 is FirebaseAuthInvalidUserException -> {

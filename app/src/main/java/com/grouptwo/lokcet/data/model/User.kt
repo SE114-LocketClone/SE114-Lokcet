@@ -25,3 +25,8 @@ data class User(
     @ServerTimestamp val createdAt: Date = Date(),
     @ServerTimestamp val lastSeen: Date = Date()
 )
+
+data class FCMToken(
+    val token: String = "",
+    @ServerTimestamp val timestamp: Date = Date()
+)
