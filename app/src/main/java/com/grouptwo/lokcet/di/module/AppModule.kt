@@ -9,6 +9,8 @@ import com.google.firebase.Firebase
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.google.firebase.dynamiclinks.dynamicLinks
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.messaging.FirebaseMessaging
+import com.google.firebase.messaging.messaging
 import com.google.gson.Gson
 import com.grouptwo.lokcet.di.impl.NotificationServiceRepository
 import com.grouptwo.lokcet.di.paging.FeedRepository
@@ -87,5 +89,10 @@ object AppModule {
         notificationService: NotificationService
     ): NotificationServiceRepository {
         return NotificationServiceRepository(notificationService)
+    }
+
+    @Provides
+    fun provideFirebaseMessaging(): FirebaseMessaging {
+        return Firebase.messaging
     }
 }

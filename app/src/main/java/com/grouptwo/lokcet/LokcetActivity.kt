@@ -76,7 +76,6 @@ class LokcetActivity : ComponentActivity() {
                 // Example shown below with Firestore
                 // Add token and timestamp to Firestore for this user
                 val deviceToken = FCMToken(token = token)
-
                 // Get user ID from Firebase Auth or your own server
                 if (!userId.isNullOrEmpty()) {
                     Firebase.firestore.collection("fcmTokens").document(userId)

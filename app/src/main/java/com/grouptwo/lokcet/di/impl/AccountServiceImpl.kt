@@ -1,7 +1,6 @@
 package com.grouptwo.lokcet.di.impl
 
 import android.content.SharedPreferences
-import android.util.Log
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
@@ -13,6 +12,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.GeoPoint
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.SetOptions
+import com.google.firebase.messaging.FirebaseMessaging
+import com.grouptwo.lokcet.data.model.FCMToken
 import com.grouptwo.lokcet.data.model.User
 import com.grouptwo.lokcet.di.service.AccountService
 import com.grouptwo.lokcet.utils.Constants
@@ -23,7 +24,10 @@ import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 class AccountServiceImpl @Inject constructor(
-    private val auth: FirebaseAuth, private val firestore: FirebaseFirestore, private val sharedPreferences: SharedPreferences
+    private val auth: FirebaseAuth,
+    private val firestore: FirebaseFirestore,
+    private val sharedPreferences: SharedPreferences,
+    private val firebaseMessaging: FirebaseMessaging
 ) : AccountService {
 
     // Check if the user is logged in
@@ -80,8 +84,15 @@ class AccountServiceImpl @Inject constructor(
                 profilePicture = Constants.AVATAR_API_URL + "$firstName $lastName"
             )
             firestore.collection("users").document(user?.uid.orEmpty()).set(userObject).await()
+            // Get the token to send to the server
+            val token = firebaseMessaging.token.await()
+            // Save the token to the shared preferences
+            sharedPreferences.edit().putString("deviceToken", token).apply()
             // Save the user information to the shared preferences
             sharedPreferences.edit().putString("userId", user?.uid).apply()
+            // Save to the server
+            val tokenStore = FCMToken(token = token)
+            firestore.collection("fcmTokens").document(user?.uid.orEmpty()).set(tokenStore).await()
             // If the account is created, send a verification email
             user?.sendEmailVerification()?.await()
         } catch (e: Exception) {
@@ -132,7 +143,14 @@ class AccountServiceImpl @Inject constructor(
             auth.signInWithEmailAndPassword(email, password).await()
             // Save the user information to the shared preferences
             sharedPreferences.edit().putString("userId", auth.currentUser?.uid).apply()
-
+            // Get the token to send to the server
+            val token = firebaseMessaging.token.await()
+            // Save the token to the shared preferences
+            sharedPreferences.edit().putString("deviceToken", token).apply()
+            // Save to the server
+            val tokenStore = FCMToken(token = token)
+            firestore.collection("fcmTokens").document(auth.currentUser?.uid.orEmpty())
+                .set(tokenStore).await()
         } catch (e: Exception) {
             when (e) {
                 is FirebaseAuthInvalidUserException -> {
@@ -177,7 +195,8 @@ class AccountServiceImpl @Inject constructor(
         return try {
             // First update the server time
             val serverTimeRef = firestore.collection("serverTime").document("current")
-            serverTimeRef.set(mapOf("time" to FieldValue.serverTimestamp()), SetOptions.merge()).await()
+            serverTimeRef.set(mapOf("time" to FieldValue.serverTimestamp()), SetOptions.merge())
+                .await()
             // Get the server time
             val snapshot = serverTimeRef.get().await()
             snapshot.getTimestamp("time")

@@ -1,5 +1,6 @@
 package com.grouptwo.lokcet.view.splash
 
+import android.content.SharedPreferences
 import com.grouptwo.lokcet.di.service.AccountService
 import com.grouptwo.lokcet.navigation.Screen
 import com.grouptwo.lokcet.view.LokcetViewModel
