@@ -4,6 +4,7 @@ import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Matrix
 import android.net.Uri
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
@@ -19,6 +20,7 @@ import androidx.camera.core.CameraControl
 import androidx.camera.core.CameraInfoUnavailableException
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.FocusMeteringAction
+import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.ImageProxy
@@ -69,7 +71,8 @@ import com.grouptwo.lokcet.utils.afterMeasured
 import com.grouptwo.lokcet.utils.noRippleClickable
 import kotlinx.coroutines.launch
 import java.nio.ByteBuffer
-import java.time.LocalTime
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 
 @SuppressLint("ClickableViewAccessibility")
 @Composable
@@ -89,14 +92,18 @@ fun CameraView(
         interpolator = LinearInterpolator()
         duration = 300 // The duration of the zoom effect
     }
-
+    val luminosity = remember { mutableStateOf(0f) }
     val cameraProviderFuture = remember { ProcessCameraProvider.getInstance(context) }
     val cameraProvider: ProcessCameraProvider by rememberUpdatedState(newValue = cameraProviderFuture.get())
     var cameraControl: CameraControl? = null
     var camera: Camera? = null
     val preview = remember { Preview.Builder().setTargetAspectRatio(AspectRatio.RATIO_4_3).build() }
     val imageCapture =
-        remember { ImageCapture.Builder().setTargetAspectRatio(AspectRatio.RATIO_4_3).build() }
+        remember {
+            ImageCapture.Builder().setTargetAspectRatio(AspectRatio.RATIO_4_3).setFlashMode(
+                ImageCapture.FLASH_MODE_AUTO
+            ).build()
+        }
     // Add ScaleGestureDetector here
     val scaleGestureDetector = remember {
         ScaleGestureDetector(context, object : ScaleGestureDetector.OnScaleGestureListener {
@@ -115,22 +122,38 @@ fun CameraView(
     LaunchedEffect(lensFacing) {
         // Check if camera is bound then unbind all use cases
         cameraProvider.unbindAll()
+        val imageAnalysis = ImageAnalysis.Builder()
+            .setTargetAspectRatio(AspectRatio.RATIO_4_3)
+            .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+            .build()
+
+        val cameraExecutor = Executors.newSingleThreadExecutor()
+
+        imageAnalysis.setAnalyzer(cameraExecutor, LuminosityAnalyzer { luma ->
+            luminosity.value = luma
+        })
         camera = cameraProvider.bindToLifecycle(
             lifecycleOwner,
             if (lensFacing == CameraSelector.LENS_FACING_BACK) CameraSelector.DEFAULT_BACK_CAMERA
             else CameraSelector.DEFAULT_FRONT_CAMERA,
             preview,
+            imageAnalysis,
             imageCapture
         )
         cameraControl = camera!!.cameraControl
-
-        val flashEnabled =
-            LocalTime.now().hour !in 6..18 && lensFacing != CameraSelector.LENS_FACING_FRONT
-        cameraControl!!.enableTorch(flashEnabled)
     }
 
     fun captureImage() {
         val imageCaptured = imageCapture ?: return
+        // Check if the camera supports flash
+        if (camera?.cameraInfo?.hasFlashUnit() == true) {
+            // If the luminosity is less than 0.5, turn on the flash
+            if (luminosity.value < 0.5 && lensFacing != CameraSelector.LENS_FACING_FRONT) {
+                imageCaptured.flashMode = ImageCapture.FLASH_MODE_ON
+            } else {
+                imageCaptured.flashMode = ImageCapture.FLASH_MODE_OFF
+            }
+        }
         imageCaptured.takePicture(ContextCompat.getMainExecutor(context),
             object : ImageCapture.OnImageCapturedCallback() {
                 override fun onCaptureSuccess(image: ImageProxy) {
@@ -138,6 +161,24 @@ fun CameraView(
                     val bytes = ByteArray(buffer.remaining())
                     buffer.get(bytes)
                     var bitmapImage = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+                    val matrix = Matrix()
+                    val rotationDegrees = image.imageInfo.rotationDegrees // Get the rotation degree
+                    if (lensFacing == CameraSelector.LENS_FACING_FRONT) {
+                        matrix.preScale(-1f, 1f)
+                        matrix.postRotate(-rotationDegrees.toFloat()) // Rotate the image for front camera
+                    } else {
+                        matrix.postRotate(rotationDegrees.toFloat()) // Rotate the image for back camera
+                    }
+                    bitmapImage = Bitmap.createBitmap(
+                        bitmapImage,
+                        0,
+                        0,
+                        bitmapImage.width,
+                        bitmapImage.height,
+                        matrix,
+                        true
+                    )
+                    // Rotate the image
                     onImageCapture(bitmapImage)
                     image.close()
                 }
@@ -264,5 +305,27 @@ fun CameraView(
                         onSwitchCamera()
                     })
         }
+    }
+}
+
+class LuminosityAnalyzer(private val onFrameAnalyzed: (Float) -> Unit) : ImageAnalysis.Analyzer {
+    private var lastAnalyzedTimestamp = 0L
+
+    // This should be a value between 0 and 1. The lower the value, the more likely the flash will be turned on.
+    private val luminosityThreshold = 0.5f
+
+
+    override fun analyze(image: ImageProxy) {
+        val currentTimestamp = System.currentTimeMillis()
+        if (currentTimestamp - lastAnalyzedTimestamp >= TimeUnit.SECONDS.toMillis(1)) {
+            val buffer = image.planes[0].buffer
+            val data = ByteArray(buffer.remaining()).apply { buffer.get(this) }
+            val pixels = data.map { it.toInt() and 0xFF }
+            val luma = pixels.average()
+
+            onFrameAnalyzed((luma / 255.0).toFloat())
+            lastAnalyzedTimestamp = currentTimestamp
+        }
+        image.close()
     }
 }

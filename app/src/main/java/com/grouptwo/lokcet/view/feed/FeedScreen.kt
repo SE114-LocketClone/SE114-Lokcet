@@ -306,7 +306,7 @@ fun FeedScreen(
                                         // Return VerticalPager with the feed list and the feed state
                                         VerticalPager(
                                             state = pagerState,
-                                            pageSpacing = 300.dp,
+                                            pageSpacing = 200.dp,
                                         ) { page ->
                                             // Set current user
                                             val feed = feedState[page]
