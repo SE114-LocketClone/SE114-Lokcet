@@ -6,6 +6,8 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.work.ExistingPeriodicWorkPolicy
@@ -17,7 +19,6 @@ import com.google.firebase.firestore.firestore
 import com.google.firebase.messaging.messaging
 import com.grouptwo.lokcet.data.model.FCMToken
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
@@ -29,6 +30,38 @@ class LokcetActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         WindowCompat.setDecorFitsSystemWindows(this.window, false)
         super.onCreate(savedInstanceState)
+        // Place this code on top to immediately get the deep link and show the correct screen
+//        FirebaseDynamicLinks.getInstance()
+//            .getDynamicLink(intent)
+//            .addOnSuccessListener(this) { pendingDynamicLinkData ->
+//                val deepLink: Uri? = pendingDynamicLinkData?.link
+//                setContent {
+//                    LokcetApp(deepLink)
+//                }
+//            }
+//            .addOnFailureListener(this) { e ->
+//                Log.w(
+//                    "LokcetActivity",
+//                    "getDynamicLink:onFailure",
+//                    e
+//                )
+//                // On failure, set deepLink to null
+//                setContent {
+//                    LokcetApp(null)
+//                }
+//            }
+        val deepLinkState =  mutableStateOf<Uri?>(null)
+
+        setContent {
+            LokcetApp(deepLinkState.value)
+        }
+
+        FirebaseDynamicLinks.getInstance()
+            .getDynamicLink(intent)
+            .addOnSuccessListener(this) { pendingDynamicLinkData ->
+                // Update the deepLinkState with the fetched deep link
+                deepLinkState.value = pendingDynamicLinkData?.link
+            }
         val saveRequest =
             PeriodicWorkRequestBuilder<UpdateTokenWorker>(730, TimeUnit.HOURS)
                 .build()
@@ -36,30 +69,11 @@ class LokcetActivity : ComponentActivity() {
         WorkManager.getInstance(this).enqueueUniquePeriodicWork(
             "saveRequest", ExistingPeriodicWorkPolicy.UPDATE, saveRequest
         )
-        lifecycleScope.launch {
+        lifecycleScope.launch(Dispatchers.IO) {
             Log.d("LokcetActivity", "onCreate: Starting")
             getAndStoreRegToken()
             Log.d("LokcetActivity", "onCreate: Finished")
         }
-        FirebaseDynamicLinks.getInstance()
-            .getDynamicLink(intent)
-            .addOnSuccessListener(this) { pendingDynamicLinkData ->
-                val deepLink: Uri? = pendingDynamicLinkData?.link
-                setContent {
-                    LokcetApp(deepLink)
-                }
-            }
-            .addOnFailureListener(this) { e ->
-                Log.w(
-                    "LokcetActivity",
-                    "getDynamicLink:onFailure",
-                    e
-                )
-                // On failure, set deepLink to null
-                setContent {
-                    LokcetApp(null)
-                }
-            }
     }
 
     private suspend fun getAndStoreRegToken() {

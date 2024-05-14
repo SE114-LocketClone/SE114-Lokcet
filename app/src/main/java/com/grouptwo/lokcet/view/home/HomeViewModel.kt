@@ -404,12 +404,16 @@ class HomeViewModel @Inject constructor(
                 if (_uiState.value.isNetworkAvailable.not()) {
                     throw Exception("Không có kết nối mạng")
                 }
-                val userId = accountService.currentUserId
+                val currentUser = accountService.getCurrentUser()
                 // Check if the friendId is the same as the userId
-                if (userId == friendId) {
+                if (currentUser.id == friendId) {
                     throw Exception("Không thể thêm chính mình làm bạn")
                 }
-                userService.addFriend(userId, friendId).collect { dataState ->
+                // Check if the friendId is already in the friend list
+                if(friendId  in currentUser.friends) {
+                    throw Exception("Người dùng đã nằm trong danh sách bạn bè")
+                }
+                userService.addFriend(currentUser.id, friendId).collect { dataState ->
                     when (dataState) {
                         is DataState.Loading -> {
                             // Do nothing
