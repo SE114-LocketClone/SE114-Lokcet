@@ -190,6 +190,7 @@ fun HomeScreen1(
                         .size(50.dp)
                         .noRippleClickable {
                             // Navigate to the user profile screen
+                            viewModel.onUserSettingClick(navigate)
                         })
                 Button(
                     onClick = {

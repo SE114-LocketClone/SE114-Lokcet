@@ -74,6 +74,15 @@
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/yellow_primary" />
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.grouptwo.lokcet.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
     </application>
 
 </manifest>

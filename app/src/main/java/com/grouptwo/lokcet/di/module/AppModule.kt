@@ -95,4 +95,5 @@ object AppModule {
     fun provideFirebaseMessaging(): FirebaseMessaging {
         return Firebase.messaging
     }
+
 }

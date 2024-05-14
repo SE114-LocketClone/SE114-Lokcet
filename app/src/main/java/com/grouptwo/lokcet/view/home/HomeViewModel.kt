@@ -108,6 +108,10 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    fun onUserSettingClick(navigate: (String) -> Unit) {
+        // Navigate to the SettingScreen
+        navigate(Screen.SettingScreen.route)
+    }
     fun onClickToUploadImage(clearAndNavigate: (String) -> Unit) {
         launchCatching {
             try {

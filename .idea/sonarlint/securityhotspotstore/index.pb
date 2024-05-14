@@ -243,3 +243,7 @@ w
 Gapp/src/main/java/com/grouptwo/lokcet/di/service/NotificationService.kt,c/4/c4c42a3e39a6bdd77201e33178a188019d5e385e
 ~
 Napp/src/main/java/com/grouptwo/lokcet/di/impl/NotificationServiceRepository.kt,c/d/cdf0e062a3d0cb80dd5c51e8dac67f8246aa80e9
+v
+Fapp/src/main/java/com/grouptwo/lokcet/view/setting/SettingViewModel.kt,1/1/110adbd755e2014c5761791e0b14f610be320d1e
+t
+Dapp/src/main/java/com/grouptwo/lokcet/view/setting/SettingUiState.kt,1/c/1c2155b064bc42b93610bedddadea433d6b3398c

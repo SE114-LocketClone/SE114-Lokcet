@@ -233,7 +233,7 @@ fun FriendDropdown(
                                                     .size(38.dp)
                                                     .clip(shape = CircleShape)
                                                     .border(
-                                                        width = 2.dp,
+                                                        width = 1.dp,
                                                         color = YellowPrimary,
                                                         shape = CircleShape
                                                     )
@@ -251,7 +251,7 @@ fun FriendDropdown(
                                         )
                                     }
                                     Image(
-                                        painter = painterResource(id = R.drawable.arrow_right),
+                                        painter = painterResource(id = R.drawable.right_direction),
                                         contentDescription = "Next Icon",
                                         modifier = Modifier.size(20.dp),
                                         colorFilter = ColorFilter.tint(Color.White)

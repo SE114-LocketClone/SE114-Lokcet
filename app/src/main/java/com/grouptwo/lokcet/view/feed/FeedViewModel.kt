@@ -2,13 +2,16 @@ package com.grouptwo.lokcet.view.feed
 
 import android.content.ContentResolver
 import android.content.ContentValues
+import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
-import androidx.compose.ui.res.stringResource
+import androidx.core.content.FileProvider
 import androidx.lifecycle.viewModelScope
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.PagingData
@@ -38,6 +41,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import java.io.File
 import java.io.FileOutputStream
+import java.net.URL
 import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException
 
@@ -51,7 +55,7 @@ class FeedViewModel @Inject constructor(
     private val chatService: ChatService,
     private val sharedPreferences: SharedPreferences,
     private val storageService: StorageService,
-    private val contentResolver: ContentResolver
+    private val contentResolver: ContentResolver,
 ) : LokcetViewModel() {
     private val _uiState = MutableStateFlow(FeedUiState())
     val uiState: StateFlow<FeedUiState> = _uiState.asStateFlow()
@@ -365,12 +369,18 @@ class FeedViewModel @Inject constructor(
                         put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
                         // Check android version
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {  // If Android 10 or higher
-                            put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
+                            put(
+                                MediaStore.Images.Media.RELATIVE_PATH,
+                                Environment.DIRECTORY_PICTURES
+                            )
                         }
                     }
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                         val uri =
-                            contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+                            contentResolver.insert(
+                                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                                values
+                            )
                         uri?.let {
                             val outputStream = contentResolver.openOutputStream(uri)
                             outputStream?.let {
@@ -400,6 +410,42 @@ class FeedViewModel @Inject constructor(
     fun onShowGridView(showGridView: Boolean) {
         _uiState.update {
             it.copy(isShowGridView = showGridView)
+        }
+    }
+
+    fun onShareFeedImage(context: Context, feed: Feed) {
+        launchCatching {
+            try {
+                if (_uiState.value.isNetworkAvailable.not()) {
+                    throw Exception("Không có kết nối mạng")
+                }
+                val image = storageService.downloadImage(feed.uploadImage.imageUrl)
+                val cachePath = File(context.cacheDir, "my_images/")
+                cachePath.mkdirs()
+                val filePath = File(cachePath, "image.jpg")
+                val fos = FileOutputStream(filePath)
+                image.compress(Bitmap.CompressFormat.JPEG, 100, fos)
+                fos.close()
+                // Share image
+                val uri = FileProvider.getUriForFile(
+                    context,
+                    context.packageName + ".provider",
+                    filePath
+                )
+                val shareIntent = Intent().apply {
+                    action = Intent.ACTION_SEND
+                    putExtra(Intent.EXTRA_STREAM, uri)
+                    type = "image/jpg"
+                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                }
+                val shareIntentChooser = Intent.createChooser(shareIntent, "Share Image")
+                context.startActivity(shareIntentChooser)
+            } catch (e: CancellationException) {
+                // Do nothing
+            } catch (e: Exception) {
+                Log.e("FeedViewModel", "onShareFeedImage: $e")
+                SnackbarManager.showMessage(e.toSnackbarMessage())
+            }
         }
     }
 }

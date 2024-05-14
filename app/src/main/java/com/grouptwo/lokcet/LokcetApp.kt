@@ -52,6 +52,7 @@ import com.grouptwo.lokcet.view.register.RegisterScreen2
 import com.grouptwo.lokcet.view.register.RegisterScreen3
 import com.grouptwo.lokcet.view.register.RegisterScreen4
 import com.grouptwo.lokcet.view.register.RegisterViewModel
+import com.grouptwo.lokcet.view.setting.SettingScreen
 import com.grouptwo.lokcet.view.splash.SplashScreen
 import com.grouptwo.lokcet.view.welcome.WelcomeScreen
 import kotlinx.coroutines.CoroutineScope
@@ -239,6 +240,11 @@ fun NavGraphBuilder.LokcetGraph(appState: LokcetAppState) {
         }
         val vm = hiltViewModel<ChatViewModel>(parentEntry)
         ChatScreen2(viewModel = vm, popUp = { appState.popUp() })
+    }
+
+    // Setting screen
+    composable(Screen.SettingScreen.route) {
+        SettingScreen()
     }
 }
 
