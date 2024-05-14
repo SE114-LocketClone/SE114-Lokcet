@@ -585,7 +585,7 @@ class UserServiceImpl @Inject constructor(
                         async {
                             val visibleToAllImagesCount = firestore.collection("images")
                                 .whereEqualTo("userId", friendId)
-                                .whereEqualTo("isVisibleToAll", true)
+                                .whereEqualTo("visibleToAll", true)
                                 .whereGreaterThan("createdAt", lastCheckedDate)
                                 .get().await().size()
 

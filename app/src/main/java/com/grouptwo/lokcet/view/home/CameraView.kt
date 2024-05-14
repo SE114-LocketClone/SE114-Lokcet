@@ -1,7 +1,9 @@
 package com.grouptwo.lokcet.view.home
 
+import android.Manifest
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
@@ -11,7 +13,9 @@ import android.view.ScaleGestureDetector
 import android.view.ViewGroup
 import android.view.animation.LinearInterpolator
 import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.activity.compose.ManagedActivityResultLauncher
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.AspectRatio
@@ -108,9 +112,17 @@ fun CameraView(
     val scaleGestureDetector = remember {
         ScaleGestureDetector(context, object : ScaleGestureDetector.OnScaleGestureListener {
             override fun onScale(detector: ScaleGestureDetector): Boolean {
-                val zoomRatio = camera?.cameraInfo?.zoomState?.value?.zoomRatio ?: 0f
-                val scale = detector.scaleFactor
-                cameraControl?.setZoomRatio(zoomRatio * scale)
+//                val zoomRatio = camera?.cameraInfo?.zoomState?.value?.zoomRatio ?: 0f
+//                val scale = detector.scaleFactor
+//                cameraControl?.setZoomRatio(zoomRatio * scale)
+//                return true
+                val zoomState = camera?.cameraInfo?.zoomState?.value
+                val isZoomSupported = zoomState?.maxZoomRatio?.let { it > 1 } ?: false
+                if (isZoomSupported) {
+                    val zoomRatio = camera?.cameraInfo?.zoomState?.value?.zoomRatio ?: 0f
+                    val scale = detector.scaleFactor
+                    cameraControl?.setZoomRatio(zoomRatio * scale)
+                }
                 return true
             }
 
@@ -119,28 +131,47 @@ fun CameraView(
             override fun onScaleEnd(detector: ScaleGestureDetector) {}
         })
     }
+    val cameraPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            // Permission is granted. Continue with your operation.
+        } else {
+            // Permission is denied. Show a warning to the user.
+            Toast.makeText(context, "Cần cấp quyền truy cập camera", Toast.LENGTH_LONG).show()
+        }
+    }
+
     LaunchedEffect(lensFacing) {
-        // Check if camera is bound then unbind all use cases
-        cameraProvider.unbindAll()
-        val imageAnalysis = ImageAnalysis.Builder()
-            .setTargetAspectRatio(AspectRatio.RATIO_4_3)
-            .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
-            .build()
+        if (ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.CAMERA
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            // Check if camera is bound then unbind all use cases
+            cameraProvider.unbindAll()
+            val imageAnalysis = ImageAnalysis.Builder()
+                .setTargetAspectRatio(AspectRatio.RATIO_4_3)
+                .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                .build()
 
-        val cameraExecutor = Executors.newSingleThreadExecutor()
+            val cameraExecutor = Executors.newSingleThreadExecutor()
 
-        imageAnalysis.setAnalyzer(cameraExecutor, LuminosityAnalyzer { luma ->
-            luminosity.value = luma
-        })
-        camera = cameraProvider.bindToLifecycle(
-            lifecycleOwner,
-            if (lensFacing == CameraSelector.LENS_FACING_BACK) CameraSelector.DEFAULT_BACK_CAMERA
-            else CameraSelector.DEFAULT_FRONT_CAMERA,
-            preview,
-            imageAnalysis,
-            imageCapture
-        )
-        cameraControl = camera!!.cameraControl
+            imageAnalysis.setAnalyzer(cameraExecutor, LuminosityAnalyzer { luma ->
+                luminosity.value = luma
+            })
+            camera = cameraProvider.bindToLifecycle(
+                lifecycleOwner,
+                if (lensFacing == CameraSelector.LENS_FACING_BACK) CameraSelector.DEFAULT_BACK_CAMERA
+                else CameraSelector.DEFAULT_FRONT_CAMERA,
+                preview,
+                imageAnalysis,
+                imageCapture
+            )
+            cameraControl = camera!!.cameraControl
+        } else {
+            cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
+        }
     }
 
     fun captureImage() {

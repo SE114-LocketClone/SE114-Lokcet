@@ -1,10 +1,11 @@
 
-kotlin:S6619“";Remove this useless elvis operation ?:, it always succeeds.(ó¢¦‘8Šáù”÷1J$80d02470-e62e-46f5-842d-8e1cd34b45c8
-vkotlin:S1481["1Remove this unused "zoomAnimator" local variable.(£ê‰±8›áù”÷1J$fdb9a01f-0c63-4b64-9d64-612f135d4c16
-mkotlin:S1874d"#Deprecated code should not be used.(ËáĞ¸şÿÿÿÿ8¤áù”÷1J$fa5be6ad-e507-4856-8e6b-c1011d786a81
-hkotlin:S1874g"#Deprecated code should not be used.(§šÌÛ8¤áù”÷1J$e5e8184b-9491-4c75-85b1-a36a133e9b3d
-gkotlin:S1874~"#Deprecated code should not be used.(”¿ùO8¤áù”÷1J$161a4fc8-370b-4b59-918c-06f6066b9b64
-œkotlin:S3776O"RRefactor this method to reduce its Cognitive Complexity from 28 to the 15 allowed.(³ÊæÌÿÿÿÿÿ8¦áù”÷1J$2529ebd1-8ade-40fb-b2a3-897caec8d8ef
-Ÿkotlin:S1186w"ZAdd a nested comment explaining why this function is empty or complete the implementation.(Š¿ñâ8«áù”÷1J$228138b1-8cce-4553-9606-ad48ff3cc0e1
-rkotlin:S6518¢",Replace function call with indexed accessor.(šù„Ï8­áù”÷1J$67b0541e-a281-454f-bfc2-a526f1ff81f9
-Lkotlin:S6518Â",Replace function call with indexed accessor.(Á‚Ã‰8øÛË•÷1
+[kotlin:S6619²";Remove this useless elvis operation ?:, it always succeeds.(ó¢¦‘8À¥¸®÷1
+hkotlin:S125s"Remove this commented out code.(ø®Ÿªÿÿÿÿÿ8‹¸®÷1J$296c4de1-1261-4dbc-b866-f8163b993e7b
+vkotlin:S1481_"1Remove this unused "zoomAnimator" local variable.(£ê‰±8ï®÷1J$6fca9d02-67f2-4db3-b7ef-c7d4c3e8e7ee
+mkotlin:S1874h"#Deprecated code should not be used.(ËáĞ¸şÿÿÿÿ8ˆï®÷1J$2b3971e3-3c41-45ef-906d-b22281a8116a
+hkotlin:S1874k"#Deprecated code should not be used.(§šÌÛ8ˆï®÷1J$a7b55346-1d5c-494f-876c-202b06406119
+Bkotlin:S1874š"#Deprecated code should not be used.(”¿ùO8€¦¸®÷1
+œkotlin:S3776S"RRefactor this method to reduce its Cognitive Complexity from 38 to the 15 allowed.(³ÊæÌÿÿÿÿÿ8‹ï®÷1J$ccd439d6-322e-4ae3-b851-afc1569ce3a1
+zkotlin:S1186ƒ"ZAdd a nested comment explaining why this function is empty or complete the implementation.(Š¿ñâ8‡¦¸®÷1
+Lkotlin:S6518Á",Replace function call with indexed accessor.(šù„Ï8‰¦¸®÷1
+Lkotlin:S6518á",Replace function call with indexed accessor.(Á‚Ã‰8Š¦¸®÷1
