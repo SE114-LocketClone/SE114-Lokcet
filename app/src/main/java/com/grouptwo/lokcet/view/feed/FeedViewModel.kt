@@ -448,4 +448,49 @@ class FeedViewModel @Inject constructor(
             }
         }
     }
+
+    fun onShowDeleteDialog(showDeleteDialog: Boolean) {
+        _uiState.update {
+            it.copy(isShowDeleteDialog = showDeleteDialog)
+        }
+    }
+    fun deleteFeed(feed: Feed) {
+        launchCatching {
+            try {
+                if (_uiState.value.isNetworkAvailable.not()) {
+                    throw Exception("Không có kết nối mạng")
+                }
+                // Show progress bar
+                _uiState.update {
+                    it.copy(showOptionMenu = false)
+                }
+                // Call API to delete feed
+                storageService.deleteImage(feed.uploadImage.imageId).collect { dataState ->
+                    when (dataState) {
+                        is DataState.Loading -> {
+                            // Do nothing
+                        }
+
+                        is DataState.Success -> {
+                            // Reset emoji animation
+                            _uiState.update {
+                                it.copy(isShowDeleteDialog = false)
+                            }
+                            SnackbarManager.showMessage(R.string.delete_feed_success)
+                            // Request feed again
+                            requestFeed()
+                        }
+
+                        is DataState.Error -> {
+                            throw dataState.exception
+                        }
+                    }
+                }
+            } catch (e: CancellationException) {
+                // Do nothing
+            } catch (e: Exception) {
+                SnackbarManager.showMessage(e.toSnackbarMessage())
+            }
+        }
+    }
 }

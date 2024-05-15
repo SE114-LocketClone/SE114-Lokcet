@@ -30,4 +30,5 @@ data class FeedUiState(
     val friendAvatar: Map<String, String> = emptyMap(),
     val showOptionMenu: Boolean = false,
     val isShowGridView: Boolean = false,
+    val isShowDeleteDialog: Boolean = false,
 )

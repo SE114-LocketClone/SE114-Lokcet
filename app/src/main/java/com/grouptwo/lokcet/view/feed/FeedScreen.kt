@@ -26,7 +26,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.pager.VerticalPager
@@ -40,6 +42,7 @@ import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -115,7 +118,7 @@ fun FeedScreen(
         skipPartiallyExpanded = true,
     )
     val scrollState = rememberScrollState()
-val context = LocalContext.current
+    val context = LocalContext.current
     // Launch the effect to get current user feed
 
     when (uiState.value.friendList) {
@@ -408,7 +411,9 @@ val context = LocalContext.current
                                                     Spacer(modifier = Modifier.height(16.dp))
                                                     // Owner of feed cannot react to their own feed
                                                     Row(
-                                                        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                                                        modifier = Modifier
+                                                            .fillMaxWidth()
+                                                            .padding(horizontal = 16.dp),
                                                         horizontalArrangement = Arrangement.SpaceBetween,
                                                         verticalAlignment = Alignment.CenterVertically
                                                     ) {
@@ -497,7 +502,8 @@ val context = LocalContext.current
                                                                 .size(45.dp)
                                                                 .clickable {
                                                                     feedState[pagerState.currentPage]?.let {
-                                                                        viewModel.onShareFeedImage(context,
+                                                                        viewModel.onShareFeedImage(
+                                                                            context,
                                                                             it
                                                                         )
                                                                     }
@@ -826,7 +832,7 @@ val context = LocalContext.current
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .heightIn(max = 100.dp)
+                                .heightIn(max = 400.dp)
                         ) {
                             Column(
                                 modifier = Modifier.wrapContentSize()
@@ -854,7 +860,107 @@ val context = LocalContext.current
                                         )
                                     )
                                 }
+                                if (feedState[pagerState.currentPage]?.uploadImage!!.userId == uiState.value.ownerUser?.id) {
+                                    Button(
+                                        onClick = {
+                                            viewModel.onShowDeleteDialog(true)
+                                        }, colors = ButtonDefaults.buttonColors(
+                                            backgroundColor = BlackSecondary,
+                                            contentColor = Color.White
+                                        ), modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(16.dp)
+                                    ) {
+                                        Text(
+                                            text = "Xóa ảnh", style = TextStyle(
+                                                fontSize = 16.sp,
+                                                fontFamily = fontFamily,
+                                                fontWeight = FontWeight.Bold,
+                                                color = Color.Red,
+                                                textAlign = TextAlign.Center
+                                            )
+                                        )
+                                    }
+                                }
                             }
+                        }
+                        if (uiState.value.isShowDeleteDialog) {
+                            AlertDialog(
+                                onDismissRequest = {
+                                    // Dismiss the dialog when the user presses back button or touches outside.
+                                    viewModel.onShowDeleteDialog(false)
+                                },
+                                containerColor = BlackSecondary,
+                                title = {
+                                    Text(
+                                        "Xác nhận xóa ảnh", style = TextStyle(
+                                            color = Color.White,
+                                            fontFamily = fontFamily,
+                                            fontWeight = FontWeight.Bold,
+                                            fontSize = 18.sp
+                                        )
+                                    )
+                                },
+                                text = {
+                                    Text(
+                                        "Bạn có chắc chắn muốn xóa ảnh này không?\nNếu xóa, ảnh sẽ không thể khôi phục lại.",
+                                        style = TextStyle(
+                                            color = Color.White,
+                                            fontFamily = fontFamily,
+                                            fontWeight = FontWeight.Bold,
+                                            fontSize = 16.sp
+                                        )
+                                    )
+                                },
+                                confirmButton = {
+                                    Button(
+                                        onClick = {
+                                            // Delete the feed and then dismiss the dialog.
+                                            feedState[pagerState.currentPage]?.let {
+                                                viewModel.deleteFeed(it)
+                                            }
+                                        },
+                                        colors = ButtonDefaults.buttonColors(YellowPrimary),
+                                        shape = RoundedCornerShape(50.dp),
+                                        modifier = Modifier.padding(8.dp)
+                                    ) {
+                                        Text(
+                                            "Xóa", style = TextStyle(
+                                                color = Color.White,
+                                                fontFamily = fontFamily,
+                                                fontWeight = FontWeight.Bold,
+                                                fontSize = 16.sp
+                                            )
+                                        )
+                                    }
+                                },
+                                dismissButton = {
+                                    Button(
+                                        onClick = {
+                                            // Dismiss the dialog when the user presses back button or touches outside.
+                                            viewModel.onShowDeleteDialog(false)
+                                        },
+                                        colors = ButtonDefaults.buttonColors(Color(0xFF272626)),
+                                        shape = RoundedCornerShape(50.dp),
+                                        modifier = Modifier.padding(8.dp)
+                                    ) {
+                                        Text(
+                                            "Hủy bỏ", style = TextStyle(
+                                                color = Color.White,
+                                                fontFamily = fontFamily,
+                                                fontWeight = FontWeight.Bold,
+                                                fontSize = 16.sp
+                                            )
+                                        )
+                                    }
+                                },
+                                modifier = Modifier
+                                    .wrapContentWidth()
+                                    .wrapContentHeight()
+                                    .clip(
+                                        RoundedCornerShape(50.dp)
+                                    ),
+                            )
                         }
                     }
                 }

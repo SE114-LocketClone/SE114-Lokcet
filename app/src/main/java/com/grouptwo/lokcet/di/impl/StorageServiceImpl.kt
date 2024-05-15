@@ -14,6 +14,8 @@ import com.grouptwo.lokcet.utils.DataState
 import com.grouptwo.lokcet.utils.getImageNameFromUrl
 import com.grouptwo.lokcet.utils.toBitmap
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flow
@@ -77,8 +79,69 @@ class StorageServiceImpl @Inject constructor(
     }
 
 
-    override suspend fun deleteImage(imageId: String) {
-        TODO("Not yet implemented")
+    override suspend fun deleteImage(imageId: String): Flow<DataState<Unit>> {
+        return flow {
+            try {
+                emit(DataState.Loading)
+                // Get image from Firestore
+                val image = firestore.collection("images").document(imageId).get().await()
+                val imageName = image.getString("imageUrl")?.getImageNameFromUrl()
+
+                coroutineScope {
+                    val deleteFromFirestore = async { firestore.collection("images").document(imageId).delete().await() }
+                    val deleteFromStorage = async { storage.reference.child("images/$imageName").delete().await() }
+                    val removeFromUploadImageList = async {
+                        firestore.collection("users").document(auth.currentUser?.uid.orEmpty())
+                            .update("uploadImageList", FieldValue.arrayRemove(image.getString("imageUrl").orEmpty())).await()
+                    }
+
+                    val deleteReactions = async {
+                        val reactionDocs = firestore.collection("reactions").whereEqualTo("imageId", imageId).get().await().documents
+                        reactionDocs.forEach { firestore.collection("reactions").document(it.id).delete().await() }
+                    }
+
+                    val deleteChatroomMessages = async {
+                        val chatRoomDocs = firestore.collection("chatrooms").get().await().documents
+                        chatRoomDocs.forEach { chatRoomDoc ->
+                            val messageDocs = firestore.collection("chatrooms").document(chatRoomDoc.id).collection("messages").get().await().documents
+                            messageDocs.forEach { messageDoc ->
+                                val messageMap = messageDoc.get("feed") as Map<*, *>
+                                if (messageMap["imageId"] == imageId) {
+                                    Log.e("Delete", "deleteImage: ${messageDoc.id}")
+                                    firestore.collection("chatrooms").document(chatRoomDoc.id).collection("messages").document(messageDoc.id).delete().await()
+                                    // Delete in latest_messages
+                                    firestore.collection("latest_messages").document(chatRoomDoc.id).delete().await()
+                                    Log.e("Delete", "deleteImageLatest: ${chatRoomDoc.id}")
+                                }
+                            }
+                        }
+                    }
+
+                    val deleteLatestMessages = async {
+                        val chatRoomDocs = firestore.collection("latest_messages").get().await().documents
+                        chatRoomDocs.forEach { chatRoomDoc ->
+                            val messageMap = chatRoomDoc.get("message") as Map<*, *>
+                            if (messageMap["imageId"] == imageId) {
+                                Log.e("Delete", "deleteImage: ${chatRoomDoc.id}")
+                                firestore.collection("latest_messages").document(chatRoomDoc.id).delete().await()
+                            }
+                        }
+                    }
+
+                    // Await all operations
+                    deleteFromFirestore.await()
+                    deleteFromStorage.await()
+                    removeFromUploadImageList.await()
+                    deleteReactions.await()
+                    deleteChatroomMessages.await()
+                    deleteLatestMessages.await()
+                }
+                emit(DataState.Success(Unit))
+            } catch (e: Exception) {
+                // Handle any other exceptions
+                emit(DataState.Error(e))
+            }
+        }
     }
 
     override suspend fun getImagesUploadByUser(userId: String): List<UploadImage> {

@@ -115,7 +115,8 @@ fun HomeScreen1(
                     viewModel.onShowAddFriendDialog(false)
                 },
                 colors = ButtonDefaults.buttonColors(YellowPrimary),
-                shape = RoundedCornerShape(50.dp)
+                shape = RoundedCornerShape(50.dp),
+                modifier = Modifier.padding(8.dp)
             ) {
                 Text(
                     text = "Đồng ý", style = TextStyle(
@@ -134,7 +135,8 @@ fun HomeScreen1(
                     viewModel.onClearUid()
                 },
                 colors = ButtonDefaults.buttonColors(Color(0xFF272626)),
-                shape = RoundedCornerShape(50.dp)
+                shape = RoundedCornerShape(50.dp),
+                modifier = Modifier.padding(8.dp)
             ) {
                 Text(
                     text = "Huỷ", style = TextStyle(
