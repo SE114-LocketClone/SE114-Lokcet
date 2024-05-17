@@ -882,6 +882,7 @@ fun FeedScreen(
                                         )
                                     }
                                 }
+                                Spacer(modifier = Modifier.height(32.dp))
                             }
                         }
                         if (uiState.value.isShowDeleteDialog) {
@@ -903,7 +904,7 @@ fun FeedScreen(
                                 },
                                 text = {
                                     Text(
-                                        "Bạn có chắc chắn muốn xóa ảnh này không?\nNếu xóa, ảnh sẽ không thể khôi phục lại.",
+                                        "Bạn có chắc chắn muốn xóa ảnh này?\nNếu xóa, ảnh sẽ không thể khôi phục lại.",
                                         style = TextStyle(
                                             color = Color.White,
                                             fontFamily = fontFamily,

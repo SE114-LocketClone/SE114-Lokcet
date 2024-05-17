@@ -53,6 +53,11 @@ import com.grouptwo.lokcet.view.register.RegisterScreen3
 import com.grouptwo.lokcet.view.register.RegisterScreen4
 import com.grouptwo.lokcet.view.register.RegisterViewModel
 import com.grouptwo.lokcet.view.setting.SettingScreen
+import com.grouptwo.lokcet.view.setting.SettingScreen1
+import com.grouptwo.lokcet.view.setting.SettingScreen2
+import com.grouptwo.lokcet.view.setting.SettingScreen3
+import com.grouptwo.lokcet.view.setting.SettingScreen4
+import com.grouptwo.lokcet.view.setting.SettingViewModel
 import com.grouptwo.lokcet.view.splash.SplashScreen
 import com.grouptwo.lokcet.view.welcome.WelcomeScreen
 import kotlinx.coroutines.CoroutineScope
@@ -244,7 +249,37 @@ fun NavGraphBuilder.LokcetGraph(appState: LokcetAppState) {
 
     // Setting screen
     composable(Screen.SettingScreen.route) {
-        SettingScreen()
+        SettingScreen(navigate = { route ->
+            appState.navigate(route)
+        }, popUp = { appState.popUp() })
+    }
+    composable(Screen.SettingScreen_1.route) { backStackEntry ->
+        val parentEntry = remember(backStackEntry) {
+            appState.navController.getBackStackEntry(Screen.SettingScreen.route)
+        }
+        val vm = hiltViewModel<SettingViewModel>(parentEntry)
+        SettingScreen1(popUp = { appState.popUp() }, viewModel = vm)
+    }
+    composable(Screen.SettingScreen_2.route) { backStackEntry ->
+        val parentEntry = remember(backStackEntry) {
+            appState.navController.getBackStackEntry(Screen.SettingScreen.route)
+        }
+        val vm = hiltViewModel<SettingViewModel>(parentEntry)
+        SettingScreen2(popUp = { appState.popUp() }, viewModel = vm)
+    }
+    composable(Screen.SettingScreen_3.route) { backStackEntry ->
+        val parentEntry = remember(backStackEntry) {
+            appState.navController.getBackStackEntry(Screen.SettingScreen.route)
+        }
+        val vm = hiltViewModel<SettingViewModel>(parentEntry)
+        SettingScreen3(popUp = { appState.popUp() }, viewModel = vm)
+    }
+    composable(Screen.SettingScreen_4.route) { backStackEntry ->
+        val parentEntry = remember(backStackEntry) {
+            appState.navController.getBackStackEntry(Screen.SettingScreen.route)
+        }
+        val vm = hiltViewModel<SettingViewModel>(parentEntry)
+        SettingScreen4(popUp = { appState.popUp() }, viewModel = vm)
     }
 }
 

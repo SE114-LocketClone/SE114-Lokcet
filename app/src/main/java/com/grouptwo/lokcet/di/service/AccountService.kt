@@ -1,8 +1,10 @@
 package com.grouptwo.lokcet.di.service
 
+import android.graphics.Bitmap
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.GeoPoint
 import com.grouptwo.lokcet.data.model.User
+import com.grouptwo.lokcet.utils.DataState
 import kotlinx.coroutines.flow.Flow
 
 interface AccountService {
@@ -29,4 +31,31 @@ interface AccountService {
     suspend fun isEmailUsed(email: String): Boolean
     suspend fun isPhoneUsed(phone: String): Boolean
     suspend fun getCurrentServerTime(): Timestamp? // return null if failed
+
+    suspend fun updateProfile(
+        firstName: String,
+        lastName: String,
+        phoneNumber: String
+    ): Flow<DataState<User>>
+
+    suspend fun reportProblem(
+        problem: String, email: String, userId: String
+    ): Flow<DataState<Unit>>
+
+    suspend fun makeSuggestions(
+        suggestion: String, email: String, userId: String
+    ): Flow<DataState<Unit>>
+
+    suspend fun deleteAccount(
+        userId: String
+    ): Flow<DataState<Unit>>
+
+    suspend fun uploadProfileImage(
+        userId: String,
+        image: ByteArray,
+    ): Flow<DataState<String>>
+
+    suspend fun deleteProfileImage(
+        userId: String, firstName: String, lastName: String
+    ): Flow<DataState<String>>
 }

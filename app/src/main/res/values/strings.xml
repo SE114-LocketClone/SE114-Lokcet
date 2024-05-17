@@ -58,6 +58,12 @@
 
     <!-- Success -->
     <string name="delete_feed_success">Xóa bài viết thành công</string>
+    <string name="change_name_success">Thay đổi tên thành công</string>
+    <string name="change_phone_success">Thay đổi số điện thoại thành công</string>
+    <string name="report_problem_success">Báo cáo vấn đề thành công</string>
+    <string name="make_suggestion_success">Gửi ý kiến thành công</string>
+    <string name="upload_image_success">Thay đổi ảnh đại diện thành công</string>
+    <string name="delete_image_success">Xoá ảnh đại diện thành công</string>
 
 
 </resources>

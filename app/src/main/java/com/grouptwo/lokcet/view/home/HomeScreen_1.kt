@@ -282,7 +282,7 @@ fun HomeScreen1(
                                 ) {
                                     Text(
                                         text = uiState.numOfNewFeeds.toString(), style = TextStyle(
-                                            color = Color.White,
+                                            color = BlackSecondary,
                                             fontFamily = fontFamily,
                                             fontWeight = FontWeight.Bold,
                                             fontSize = 16.sp

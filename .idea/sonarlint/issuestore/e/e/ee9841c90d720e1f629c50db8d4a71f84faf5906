@@ -1,11 +1,11 @@
 
-[kotlin:S6619²";Remove this useless elvis operation ?:, it always succeeds.(ó¢¦‘8À¥¸®÷1
-hkotlin:S125s"Remove this commented out code.(ø®Ÿªÿÿÿÿÿ8‹¸®÷1J$296c4de1-1261-4dbc-b866-f8163b993e7b
-vkotlin:S1481_"1Remove this unused "zoomAnimator" local variable.(£ê‰±8ï®÷1J$6fca9d02-67f2-4db3-b7ef-c7d4c3e8e7ee
-mkotlin:S1874h"#Deprecated code should not be used.(ËáĞ¸şÿÿÿÿ8ˆï®÷1J$2b3971e3-3c41-45ef-906d-b22281a8116a
-hkotlin:S1874k"#Deprecated code should not be used.(§šÌÛ8ˆï®÷1J$a7b55346-1d5c-494f-876c-202b06406119
-Bkotlin:S1874š"#Deprecated code should not be used.(”¿ùO8€¦¸®÷1
-œkotlin:S3776S"RRefactor this method to reduce its Cognitive Complexity from 38 to the 15 allowed.(³ÊæÌÿÿÿÿÿ8‹ï®÷1J$ccd439d6-322e-4ae3-b851-afc1569ce3a1
-zkotlin:S1186ƒ"ZAdd a nested comment explaining why this function is empty or complete the implementation.(Š¿ñâ8‡¦¸®÷1
-Lkotlin:S6518Á",Replace function call with indexed accessor.(šù„Ï8‰¦¸®÷1
-Lkotlin:S6518á",Replace function call with indexed accessor.(Á‚Ã‰8Š¦¸®÷1
+kotlin:S6619²";Remove this useless elvis operation ?:, it always succeeds.(ó¢¦‘8À¥¸®÷1J$328cb189-d36a-4536-a111-b5a07a019621
+hkotlin:S125s"Remove this commented out code.(ø®Ÿªÿÿÿÿÿ8‹¸®÷1J$b1463761-31b1-47a4-bad3-2f64dcb03237
+vkotlin:S1481_"1Remove this unused "zoomAnimator" local variable.(£ê‰±8ï®÷1J$f927d49d-5cb0-432f-a5c2-1cdad4f5e2b8
+mkotlin:S1874h"#Deprecated code should not be used.(ËáĞ¸şÿÿÿÿ8ˆï®÷1J$2ae280fa-03c4-4da2-9be7-0162ae546934
+hkotlin:S1874k"#Deprecated code should not be used.(§šÌÛ8ˆï®÷1J$d13777d8-e04a-4ae0-91e1-905922bc0e86
+hkotlin:S1874š"#Deprecated code should not be used.(”¿ùO8€¦¸®÷1J$b9f662be-570d-43c3-90a1-3c84ebadbea4
+œkotlin:S3776S"RRefactor this method to reduce its Cognitive Complexity from 38 to the 15 allowed.(³ÊæÌÿÿÿÿÿ8‹ï®÷1J$042b29fb-934e-401b-8922-275e5cd5df90
+ kotlin:S1186ƒ"ZAdd a nested comment explaining why this function is empty or complete the implementation.(Š¿ñâ8‡¦¸®÷1J$de154b6f-334f-4c66-97e2-777da7ac5ea2
+rkotlin:S6518Á",Replace function call with indexed accessor.(šù„Ï8‰¦¸®÷1J$6498c5cd-ed63-461f-9851-1cf9104c01c1
+rkotlin:S6518á",Replace function call with indexed accessor.(Á‚Ã‰8Š¦¸®÷1J$663d185b-da1b-4170-9a19-39135d68954f

@@ -37,5 +37,10 @@ sealed class Screen(val route: String) {
 
     // Setting Screen
     object SettingScreen : Screen("setting_screen")
+    object SettingScreen_1 : Screen("setting_screen_1")
+    object SettingScreen_2 : Screen("setting_screen_2")
+    object SettingScreen_3 : Screen("setting_screen_3")
+    object SettingScreen_4 : Screen("setting_screen_4")
+
 
 }

@@ -247,3 +247,13 @@ v
 Fapp/src/main/java/com/grouptwo/lokcet/view/setting/SettingViewModel.kt,1/1/110adbd755e2014c5761791e0b14f610be320d1e
 t
 Dapp/src/main/java/com/grouptwo/lokcet/view/setting/SettingUiState.kt,1/c/1c2155b064bc42b93610bedddadea433d6b3398c
+u
+Eapp/src/main/java/com/grouptwo/lokcet/view/setting/SettingScreen_1.kt,a/7/a7c6a4c1d188ecd1a44d5ab7fcc80f0e957c2b5a
+u
+Eapp/src/main/java/com/grouptwo/lokcet/view/setting/SettingScreen_2.kt,f/9/f91223023788e7fe23a8fd9664b0d1ef3c12715d
+u
+Eapp/src/main/java/com/grouptwo/lokcet/view/setting/SettingScreen_3.kt,2/0/208993a5935b4b920e1c1412f8298165038d9e3b
+k
+;app/src/main/java/com/grouptwo/lokcet/data/model/Problem.kt,7/2/726991de9c36bb6a128b544aa4ca0795a950a18b
+u
+Eapp/src/main/java/com/grouptwo/lokcet/view/setting/SettingScreen_4.kt,a/8/a8aed25990a1b9ec948469bfcf3273d42411ba0e

@@ -149,23 +149,17 @@ class UserServiceImpl @Inject constructor(
                 if (user != null && friend != null) {
                     val userFriends = user.friends.toMutableList()
                     val friendFriends = friend.friends.toMutableList()
-                    if (userFriends.contains(friendId) || friendFriends.contains(userId)) {
+                    if (userFriends.contains(friendId) && friendFriends.contains(userId)) {
                         emit(DataState.Error(Exception("Đã kết bạn với người này")))
+                        return@flow
                     } else {
                         val friendWaitList = user.friendWaitList.toMutableList()
                         val friendRequests = friend.friendRequests.toMutableList()
                         // Check if the friend is in the user's friend wait list and the user is in the friend's friend request list
                         if (friendWaitList.contains(friendId) && friendRequests.contains(userId)) {
                             // Remove the friend from the user's friend wait list and the user from the friend's friend request list
-                            friendWaitList.remove(friendId)
-                            friendRequests.remove(userId)
-                            userFriends.add(friendId)
-                            friendFriends.add(userId)
-                            userRef.update("friendWaitList", friendWaitList).await()
-                            userRef.update("friends", userFriends).await()
-                            friendRef.update("friendRequests", friendRequests).await()
-                            friendRef.update("friends", friendFriends).await()
-                            emit(DataState.Success(Unit))
+                            emit(DataState.Error(Exception("Đã gửi lời mời kết bạn")))
+                            return@flow
                         } else {
                             // Add the friend to the user's friend wait list and the user to the friend's friend request list
                             friendWaitList.add(friendId)
@@ -202,6 +196,7 @@ class UserServiceImpl @Inject constructor(
                     }
                 } else {
                     emit(DataState.Error(Exception("Không tìm thấy người dùng")))
+                    return@flow // Exit the flow if the user or friend is not found
                 }
             } catch (e: Exception) {
                 emit(DataState.Error(e))
@@ -266,9 +261,11 @@ class UserServiceImpl @Inject constructor(
                         emit(DataState.Success(Unit))
                     } else {
                         emit(DataState.Error(Exception("Không tìm thấy người dùng trong danh sách chờ")))
+                        return@flow
                     }
                 } else {
                     emit(DataState.Error(Exception("Không tìm thấy người dùng")))
+                    return@flow
                 }
             } catch (e: Exception) {
                 emit(DataState.Error(e))
@@ -301,9 +298,11 @@ class UserServiceImpl @Inject constructor(
                         emit(DataState.Success(Unit))
                     } else {
                         emit(DataState.Error(Exception("Không tìm thấy người dùng trong danh sách chờ")))
+                        return@flow
                     }
                 } else {
                     emit(DataState.Error(Exception("Không tìm thấy người dùng")))
+                    return@flow
                 }
 
             } catch (e: Exception) {
@@ -335,9 +334,11 @@ class UserServiceImpl @Inject constructor(
                         emit(DataState.Success(Unit))
                     } else {
                         emit(DataState.Error(Exception("Không tìm thấy người dùng trong danh sách bạn bè")))
+                        return@flow
                     }
                 } else {
                     emit(DataState.Error(Exception("Không tìm thấy người dùng")))
+                    return@flow
                 }
             } catch (e: Exception) {
                 emit(DataState.Error(e))
@@ -449,6 +450,7 @@ class UserServiceImpl @Inject constructor(
                         emit(DataState.Success(Unit))
                     } else {
                         emit(DataState.Error(Exception("Không tìm thấy người dùng trong danh sách chờ")))
+                        return@flow
                     }
                 }
             } catch (
@@ -561,6 +563,7 @@ class UserServiceImpl @Inject constructor(
                     }
                 } else {
                     emit(DataState.Error(Exception("Không tìm thấy bài viết")))
+                    return@flow
                 }
             } catch (e: Exception) {
                 emit(DataState.Error(e))
@@ -643,6 +646,7 @@ class UserServiceImpl @Inject constructor(
                     emit(DataState.Success(user.firstName + " " + user.lastName))
                 } else {
                     emit(DataState.Error(Exception("Không tìm thấy người dùng")))
+                    return@flow
                 }
             } catch (e: Exception) {
                 emit(DataState.Error(e))
