@@ -155,9 +155,14 @@ class UserServiceImpl @Inject constructor(
                     } else {
                         val friendWaitList = user.friendWaitList.toMutableList()
                         val friendRequests = friend.friendRequests.toMutableList()
+                        val userRequests = user.friendRequests.toMutableList()
+                        val userWaitList = friend.friendWaitList.toMutableList()
                         // Check if the friend is in the user's friend wait list and the user is in the friend's friend request list
                         if (friendWaitList.contains(friendId) && friendRequests.contains(userId)) {
-                            // Remove the friend from the user's friend wait list and the user from the friend's friend request list
+                            emit(DataState.Error(Exception("Đã gửi lời mời kết bạn")))
+                            return@flow
+                        } else if (userRequests.contains(friendId) && userWaitList.contains(userId)) {
+                            // Check if the user is in the friend's friend wait list and the friend is in the user's friend request list
                             emit(DataState.Error(Exception("Đã gửi lời mời kết bạn")))
                             return@flow
                         } else {
@@ -174,12 +179,10 @@ class UserServiceImpl @Inject constructor(
                                 .toObject(FCMToken::class.java)
                         if (friendToken != null) {
                             val notification = NotificationModel(
-                                to = friendToken.token,
-                                notification = NotificationNotiModel(
+                                to = friendToken.token, notification = NotificationNotiModel(
                                     title = "Lời mời kết bạn",
                                     body = "${user.firstName} ${user.lastName} đã gửi lời mời kết bạn",
-                                ),
-                                data = NotificationDataModel(
+                                ), data = NotificationDataModel(
                                     message = "${user.firstName} ${user.lastName} đã gửi lời mời kết bạn",
                                     image = user.profilePicture
                                 )
@@ -189,8 +192,7 @@ class UserServiceImpl @Inject constructor(
                                     notificationServiceRepository.postNotification(notification)
                                 if (result.isSuccessful) {
                                     Log.d("Notification", "Notification sent successfully")
-                                } else
-                                    Log.d("Notification", "Notification failed to send")
+                                } else Log.d("Notification", "Notification failed to send")
                             }
                         }
                     }
@@ -238,12 +240,10 @@ class UserServiceImpl @Inject constructor(
                                 .toObject(FCMToken::class.java)
                         if (friendToken != null) {
                             val notification = NotificationModel(
-                                to = friendToken.token,
-                                notification = NotificationNotiModel(
+                                to = friendToken.token, notification = NotificationNotiModel(
                                     title = "Kết bạn thành công",
                                     body = "${user.firstName} ${user.lastName} đã chấp nhận lời mời kết bạn",
-                                ),
-                                data = NotificationDataModel(
+                                ), data = NotificationDataModel(
                                     message = "${user.firstName} ${user.lastName} đã chấp nhận lời mời kết bạn",
                                     image = user.profilePicture
                                 )
@@ -253,8 +253,7 @@ class UserServiceImpl @Inject constructor(
                                     notificationServiceRepository.postNotification(notification)
                                 if (result.isSuccessful) {
                                     Log.d("Notification", "Notification sent successfully")
-                                } else
-                                    Log.d("Notification", "Notification failed to send")
+                                } else Log.d("Notification", "Notification failed to send")
                             }
 
                         }
@@ -527,9 +526,8 @@ class UserServiceImpl @Inject constructor(
                         // Update the emoji id in firestore
                         firestore.collection("reactions")
                             .whereEqualTo("userId", accountService.currentUserId)
-                            .whereEqualTo("emojiId", emoji)
-                            .whereEqualTo("imageId", feedId).get().await().documents.firstOrNull()
-                            ?.let {
+                            .whereEqualTo("emojiId", emoji).whereEqualTo("imageId", feedId).get()
+                            .await().documents.firstOrNull()?.let {
                                 firestore.collection("reactions").document(it.id)
                                     .update("reactionId", it.id).await()
                             }
@@ -543,22 +541,20 @@ class UserServiceImpl @Inject constructor(
                             .toObject(FCMToken::class.java)
                     if (feedOwnerToken != null) {
                         val notification = NotificationModel(
-                            to = feedOwnerToken.token,
-                            notification = NotificationNotiModel(
+                            to = feedOwnerToken.token, notification = NotificationNotiModel(
                                 title = "React mới",
                                 body = "${currentUser.firstName} ${currentUser.lastName} đã react $emoji ảnh của bạn",
-                            ),
-                            data = NotificationDataModel(
+                            ), data = NotificationDataModel(
                                 message = "${currentUser.firstName} ${currentUser.lastName} đã react $emoji ảnh của bạn",
                                 image = feed.imageUrl
                             )
                         )
                         CoroutineScope(Dispatchers.IO).launch {
-                            val result = notificationServiceRepository.postNotification(notification)
+                            val result =
+                                notificationServiceRepository.postNotification(notification)
                             if (result.isSuccessful) {
                                 Log.d("Notification", "Notification sent successfully")
-                            } else
-                                Log.d("Notification", "Notification failed to send")
+                            } else Log.d("Notification", "Notification failed to send")
                         }
                     }
                 } else {
@@ -586,17 +582,17 @@ class UserServiceImpl @Inject constructor(
                 for (friendId in friendIds) {
                     deferredResults.add(coroutineScope {
                         async {
-                            val visibleToAllImagesCount = firestore.collection("images")
-                                .whereEqualTo("userId", friendId)
-                                .whereEqualTo("visibleToAll", true)
-                                .whereGreaterThan("createdAt", lastCheckedDate)
-                                .get().await().size()
+                            val visibleToAllImagesCount =
+                                firestore.collection("images").whereEqualTo("userId", friendId)
+                                    .whereEqualTo("visibleToAll", true)
+                                    .whereGreaterThan("createdAt", lastCheckedDate).get().await()
+                                    .size()
 
-                            val visibleToUserImagesCount = firestore.collection("images")
-                                .whereEqualTo("userId", friendId)
-                                .whereArrayContains("visibleUserIds", currentUserId)
-                                .whereGreaterThan("createdAt", lastCheckedDate)
-                                .get().await().size()
+                            val visibleToUserImagesCount =
+                                firestore.collection("images").whereEqualTo("userId", friendId)
+                                    .whereArrayContains("visibleUserIds", currentUserId)
+                                    .whereGreaterThan("createdAt", lastCheckedDate).get().await()
+                                    .size()
 
                             visibleToAllImagesCount + visibleToUserImagesCount
                         }
@@ -627,9 +623,9 @@ class UserServiceImpl @Inject constructor(
             }
         }.uri
 
-        val shortLinkTask = FirebaseDynamicLinks.getInstance().createDynamicLink()
-            .setLongLink(dynamicLink)
-            .buildShortDynamicLink()
+        val shortLinkTask =
+            FirebaseDynamicLinks.getInstance().createDynamicLink().setLongLink(dynamicLink)
+                .buildShortDynamicLink()
 
         return withContext(Dispatchers.IO) {
             Tasks.await(shortLinkTask).shortLink
