@@ -12,9 +12,7 @@ class NotificationServiceRepository @Inject constructor(
 ) {
 
     suspend fun postNotification(notification: NotificationModel): Response<ResponseBody> {
-        Log.d("NotificationServiceRepository", "postNotification: $notification")
         val response = retrofit.postNotification(notification)
-        Log.d("NotificationServiceRepository", "postNotification: $response")
         return response
     }
 }

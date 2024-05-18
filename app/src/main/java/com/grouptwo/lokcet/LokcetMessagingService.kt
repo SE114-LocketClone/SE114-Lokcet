@@ -46,13 +46,11 @@ class LokcetMessagingService(
 
     override fun onNewToken(token: String) {
         // Store new token
-        Log.d("FCM", "Refreshed token: $token")
     }
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         val imageUrl = remoteMessage.data["image"] ?: ""
         remoteMessage.notification?.let { message ->
-            Log.d("FCM", "Message notification body: ${message.body}")
             sendNotification(message, imageUrl)
         }
     }
@@ -133,7 +131,6 @@ class UpdateTokenWorker(appContext: Context, workerParams: WorkerParameters) :
         Firebase.firestore.collection("fcmTokens").document(userId!!)
             .set(FCMToken(token = token)).await()
         preferences.edit().putString("deviceToken", token).apply()
-        Log.d("FCM", "Token stored on firestore: $token")
         // Indicate whether the work finished successfully with the Result
         return Result.success()
     }

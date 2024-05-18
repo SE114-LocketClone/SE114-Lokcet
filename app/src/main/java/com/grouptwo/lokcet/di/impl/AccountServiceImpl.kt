@@ -404,7 +404,6 @@ class AccountServiceImpl @Inject constructor(
                     .await()
                 emit(DataState.Success(imageUrl))
             } catch (e: Exception) {
-                Log.e("deleteProfileImage", e.toString())
                 emit(DataState.Error(e))
 
             }

@@ -72,9 +72,7 @@ class LokcetActivity : ComponentActivity() {
             "saveRequest", ExistingPeriodicWorkPolicy.UPDATE, saveRequest
         )
         lifecycleScope.launch(Dispatchers.IO) {
-            Log.d("LokcetActivity", "onCreate: Starting")
             getAndStoreRegToken()
-            Log.d("LokcetActivity", "onCreate: Finished")
         }
     }
 
@@ -85,7 +83,6 @@ class LokcetActivity : ComponentActivity() {
         val preferences = this.getSharedPreferences("local_shared_pref", Context.MODE_PRIVATE)
         val tokenStored = preferences.getString("deviceToken", "")
         val userId = preferences.getString("userId", "")
-        Log.d("LokcetActivity", "user ID: $userId")
         lifecycleScope.launch {
             if (tokenStored == "" || tokenStored != token) {
                 // If you have your own server, call API to send the above token and Date() for this user's device
@@ -96,7 +93,6 @@ class LokcetActivity : ComponentActivity() {
                 if (!userId.isNullOrEmpty()) {
                     Firebase.firestore.collection("fcmTokens").document(userId)
                         .set(deviceToken).await()
-                    Log.d("LokcetActivity", "Token stored on firestore: $token")
                     preferences.edit().putString("deviceToken", token).apply()
                 }
             }

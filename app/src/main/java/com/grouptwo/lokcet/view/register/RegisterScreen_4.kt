@@ -168,7 +168,7 @@ fun RegisterScreen4(
                 onClick = {
                     viewModel.onPhoneNumberClick(clearAndNavigate)
                 }, modifier = Modifier
-                    .width(294.dp)
+                    .fillMaxWidth()
                     .heightIn(min = 46.dp), colors = buttonColor
             ) {
                 Row(

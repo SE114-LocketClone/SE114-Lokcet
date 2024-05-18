@@ -121,11 +121,6 @@ class ChatServiceImpl @Inject constructor(
                     )
                     CoroutineScope(Dispatchers.IO).launch {
                         val result = notificationServiceRepository.postNotification(notification)
-                        if (result.isSuccessful) {
-                            Log.e("ChatServiceImpl", "sendMessage: $newMessage")
-                        } else {
-                            Log.e("ChatServiceImpl", "sendMessageError: ${result.errorBody()}")
-                        }
                     }
                 }
                 emit(DataState.Success(Unit))
@@ -204,11 +199,6 @@ class ChatServiceImpl @Inject constructor(
                     )
                     CoroutineScope(Dispatchers.IO).launch {
                         val result = notificationServiceRepository.postNotification(notification)
-                        if (result.isSuccessful) {
-                            Log.e("ChatServiceImpl", "sendReplyMessage: $newMessage")
-                        } else {
-                            Log.e("ChatServiceImpl", "sendReplyMessageError: ${result.errorBody()}")
-                        }
                     }
 
                 }
@@ -325,8 +315,6 @@ class ChatServiceImpl @Inject constructor(
                 }
             }
         } catch (e: Exception) {
-            // Handle the exception
-            Log.d("ChatServiceImpl", "markLastMessageAsSeen: $e")
             throw e
         }
     }
