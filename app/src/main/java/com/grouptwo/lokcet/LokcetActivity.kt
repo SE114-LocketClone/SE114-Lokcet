@@ -54,6 +54,8 @@ class LokcetActivity : ComponentActivity() {
 
         setContent {
             LokcetApp(deepLinkState.value)
+            // Reset deeplink after use
+            deepLink.value = null
         }
 
         FirebaseDynamicLinks.getInstance()

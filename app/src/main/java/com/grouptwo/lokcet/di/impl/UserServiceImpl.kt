@@ -85,7 +85,7 @@ class UserServiceImpl @Inject constructor(
                                     "id", accountService.currentUserId
                                 ) // Exclude the current user
                                     .get().await().toObjects(User::class.java).filter { user ->
-                                        user.id !in friendList && user.id !in friendWaitList && user.id !in friendRequests
+                                  user.isDeleted != true     user.id !in friendList && user.id !in friendWaitList && user.id !in friendRequests
                                     }
                             }
                             // Perform query to get the suggest friend list based on user has account with phoneNumber in contactList
