@@ -42,5 +42,4 @@ sealed class Screen(val route: String) {
     object SettingScreen_3 : Screen("setting_screen_3")
     object SettingScreen_4 : Screen("setting_screen_4")
 
-
 }

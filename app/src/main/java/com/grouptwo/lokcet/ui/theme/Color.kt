@@ -3,7 +3,7 @@ package com.grouptwo.lokcet.ui.theme
 import androidx.compose.ui.graphics.Color
 
 // Primary colors
-val YellowPrimary  = Color(0xFFE5A500)
+val YellowPrimary = Color(0xFFE5A500)
 val GrayPrimary = Color(0xFF948F8F)
 val WhitePrimary = Color(0xFFFFFFFF)
 

@@ -1,6 +1,5 @@
 package com.grouptwo.lokcet.view.register
 
-import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import com.grouptwo.lokcet.R

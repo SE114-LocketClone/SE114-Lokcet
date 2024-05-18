@@ -2,7 +2,6 @@ package com.grouptwo.lokcet.di.impl
 
 import android.graphics.Bitmap
 import android.icu.text.SimpleDateFormat
-import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -88,39 +87,55 @@ class StorageServiceImpl @Inject constructor(
                 val imageName = image.getString("imageUrl")?.getImageNameFromUrl()
 
                 coroutineScope {
-                    val deleteFromFirestore = async { firestore.collection("images").document(imageId).delete().await() }
-                    val deleteFromStorage = async { storage.reference.child("images/$imageName").delete().await() }
+                    val deleteFromFirestore =
+                        async { firestore.collection("images").document(imageId).delete().await() }
+                    val deleteFromStorage =
+                        async { storage.reference.child("images/$imageName").delete().await() }
                     val removeFromUploadImageList = async {
                         firestore.collection("users").document(auth.currentUser?.uid.orEmpty())
-                            .update("uploadImageList", FieldValue.arrayRemove(image.getString("imageUrl").orEmpty())).await()
+                            .update(
+                                "uploadImageList",
+                                FieldValue.arrayRemove(image.getString("imageUrl").orEmpty())
+                            ).await()
                     }
 
                     val deleteReactions = async {
-                        val reactionDocs = firestore.collection("reactions").whereEqualTo("imageId", imageId).get().await().documents
-                        reactionDocs.forEach { firestore.collection("reactions").document(it.id).delete().await() }
+                        val reactionDocs =
+                            firestore.collection("reactions").whereEqualTo("imageId", imageId).get()
+                                .await().documents
+                        reactionDocs.forEach {
+                            firestore.collection("reactions").document(it.id).delete().await()
+                        }
                     }
 
                     val deleteChatroomMessages = async {
                         val chatRoomDocs = firestore.collection("chatrooms").get().await().documents
                         chatRoomDocs.forEach { chatRoomDoc ->
-                            val messageDocs = firestore.collection("chatrooms").document(chatRoomDoc.id).collection("messages").get().await().documents
+                            val messageDocs =
+                                firestore.collection("chatrooms").document(chatRoomDoc.id)
+                                    .collection("messages").get().await().documents
                             messageDocs.forEach { messageDoc ->
                                 val messageMap = messageDoc.get("feed") as Map<*, *>
                                 if (messageMap["imageId"] == imageId) {
-                                    firestore.collection("chatrooms").document(chatRoomDoc.id).collection("messages").document(messageDoc.id).delete().await()
+                                    firestore.collection("chatrooms").document(chatRoomDoc.id)
+                                        .collection("messages").document(messageDoc.id).delete()
+                                        .await()
                                     // Delete in latest_messages
-                                    firestore.collection("latest_messages").document(chatRoomDoc.id).delete().await()
+                                    firestore.collection("latest_messages").document(chatRoomDoc.id)
+                                        .delete().await()
                                 }
                             }
                         }
                     }
 
                     val deleteLatestMessages = async {
-                        val chatRoomDocs = firestore.collection("latest_messages").get().await().documents
+                        val chatRoomDocs =
+                            firestore.collection("latest_messages").get().await().documents
                         chatRoomDocs.forEach { chatRoomDoc ->
                             val messageMap = chatRoomDoc.get("message") as Map<*, *>
                             if (messageMap["imageId"] == imageId) {
-                                firestore.collection("latest_messages").document(chatRoomDoc.id).delete().await()
+                                firestore.collection("latest_messages").document(chatRoomDoc.id)
+                                    .delete().await()
                             }
                         }
                     }

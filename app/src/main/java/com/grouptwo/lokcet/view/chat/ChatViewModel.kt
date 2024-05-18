@@ -1,6 +1,5 @@
 package com.grouptwo.lokcet.view.chat
 
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.grouptwo.lokcet.di.service.AccountService
 import com.grouptwo.lokcet.di.service.ChatService

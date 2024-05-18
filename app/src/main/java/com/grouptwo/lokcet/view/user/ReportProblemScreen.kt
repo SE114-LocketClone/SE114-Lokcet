@@ -1,13 +1,6 @@
 package com.grouptwo.lokcet.view.user
 
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.Modifier
-import com.grouptwo.lokcet.ui.component.global.ime.rememberImeState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
@@ -29,11 +23,14 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -42,9 +39,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.grouptwo.lokcet.R
 import com.grouptwo.lokcet.ui.component.global.composable.BasicIconButton
-import com.grouptwo.lokcet.ui.theme.BlackSecondary
+import com.grouptwo.lokcet.ui.component.global.ime.rememberImeState
 import com.grouptwo.lokcet.ui.theme.YellowPrimary
 import com.grouptwo.lokcet.ui.theme.fontFamily
+
 @Composable
 fun ReportProblemScreen() {
     val imeState = rememberImeState()
@@ -101,21 +99,27 @@ fun ReportProblemScreen() {
                 mutableStateOf("")
             }
             Spacer(modifier = Modifier.height(24.dp))
-            TextField(value = email,
-                onValueChange ={email=it},
+            TextField(
+                value = email,
+                onValueChange = { email = it },
                 singleLine = true,
                 textStyle = TextStyle(
                     fontSize = 23.sp,
                     fontFamily = fontFamily,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFFFFFFFF)),
-                placeholder = { Text(
-                    text = "Your email address", style = TextStyle(
-                        color = Color(0xFF737070),
-                        fontFamily = fontFamily,
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.Bold))},
-                modifier= Modifier
+                    color = Color(0xFFFFFFFF)
+                ),
+                placeholder = {
+                    Text(
+                        text = "Your email address", style = TextStyle(
+                            color = Color(0xFF737070),
+                            fontFamily = fontFamily,
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    )
+                },
+                modifier = Modifier
                     .fillMaxWidth()
                     .heightIn(min = 62.dp),
                 colors = textFieldColors,
@@ -125,35 +129,44 @@ fun ReportProblemScreen() {
             var suggest by remember {
                 mutableStateOf("")
             }
-            TextField(value = suggest,
-                onValueChange ={suggest=it},
+            TextField(
+                value = suggest,
+                onValueChange = { suggest = it },
                 textStyle = TextStyle(
                     fontSize = 15.sp,
                     fontFamily = fontFamily,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFFFFFFFF)),
-                placeholder = { Text(
-                    text = "Your suggestion", style = TextStyle(
-                        color = Color(0xFF737070),
-                        fontFamily = fontFamily,
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.Bold))},
-                modifier= Modifier
+                    color = Color(0xFFFFFFFF)
+                ),
+                placeholder = {
+                    Text(
+                        text = "Your suggestion", style = TextStyle(
+                            color = Color(0xFF737070),
+                            fontFamily = fontFamily,
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    )
+                },
+                modifier = Modifier
                     .fillMaxWidth()
                     .heightIn(min = 199.dp),
                 colors = textFieldColors,
                 shape = RoundedCornerShape(18.dp),
             )
             Spacer(modifier = Modifier.weight(0.1f))
-            val buttonColor=ButtonDefaults.buttonColors(YellowPrimary)
-            Button(onClick = { /*TODO*/ },
+            val buttonColor = ButtonDefaults.buttonColors(YellowPrimary)
+            Button(
+                onClick = { /*TODO*/ },
                 Modifier
                     .width(294.dp)
                     .heightIn(min = 46.dp)
-                    .padding(top=10.dp),
-                colors = buttonColor)
+                    .padding(top = 10.dp),
+                colors = buttonColor
+            )
             {
-                Text(text = "Gửi",
+                Text(
+                    text = "Gửi",
                     style = TextStyle(
                         fontSize = 26.sp,
                         fontFamily = fontFamily,

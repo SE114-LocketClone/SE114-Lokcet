@@ -1,4 +1,3 @@
 
-`kotlin:S6619¬";Remove this useless elvis operation ?:, it always succeeds.(“Œ™ıÿÿÿÿ8Îàª©ø1
-—kotlin:S1192­"QDefine a constant instead of duplicating this literal "Arrow Right Icon" 6 times.(¥ñÏÊ8ˆÌÒ¦ø1J$3ad94780-faa4-40b7-97b9-8999bc613ad7
-—kotlin:S3776L"RRefactor this method to reduce its Cognitive Complexity from 24 to the 15 allowed.(ÊÕìÉ8«áÈ¦ø1J$9ffd13a1-233d-4e84-9db8-b85efb377767
+qkotlin:S1192®"QDefine a constant instead of duplicating this literal "Arrow Right Icon" 6 times.(¥ñÏÊ8ˆëÌø1
+—kotlin:S3776L"RRefactor this method to reduce its Cognitive Complexity from 24 to the 15 allowed.(ÊÕìÉ8«áÈ¦ø1J$a703450f-2117-4989-9c55-6d91095337ad

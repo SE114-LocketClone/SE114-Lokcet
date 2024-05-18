@@ -10,7 +10,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
-import android.util.Log
 import androidx.activity.result.ActivityResultLauncher
 import androidx.camera.core.CameraSelector
 import androidx.lifecycle.viewModelScope
@@ -111,6 +110,7 @@ class HomeViewModel @Inject constructor(
         // Navigate to the SettingScreen
         navigate(Screen.SettingScreen.route)
     }
+
     fun onClickToUploadImage(clearAndNavigate: (String) -> Unit) {
         launchCatching {
             try {
@@ -413,7 +413,7 @@ class HomeViewModel @Inject constructor(
                     throw Exception("Không thể thêm chính mình làm bạn")
                 }
                 // Check if the friendId is already in the friend list
-                if(friendId  in currentUser.friends) {
+                if (friendId in currentUser.friends) {
                     throw Exception("Người dùng đã nằm trong danh sách bạn bè")
                 }
                 userService.addFriend(currentUser.id, friendId).collect { dataState ->

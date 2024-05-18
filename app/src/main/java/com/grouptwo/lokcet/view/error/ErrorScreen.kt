@@ -50,8 +50,7 @@ fun ErrorScreen(
         ) {
             Spacer(modifier = Modifier.weight(0.1f))
             Text(
-                text = "Oops! Something went wrong",
-                style = TextStyle(
+                text = "Oops! Something went wrong", style = TextStyle(
                     textAlign = TextAlign.Center,
                     color = Color.White,
                     fontSize = 22.sp,

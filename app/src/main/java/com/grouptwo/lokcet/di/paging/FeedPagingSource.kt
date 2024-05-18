@@ -135,7 +135,10 @@ class FeedPagingSource(
                     val visibleToAllImages = friendIds.map { friendId ->
                         async {
                             firestore.collection("images").whereEqualTo("userId", friendId)
-                                .whereEqualTo("visibleToAll", true) // This is the key to get images that are visible to all users
+                                .whereEqualTo(
+                                    "visibleToAll",
+                                    true
+                                ) // This is the key to get images that are visible to all users
                                 .orderBy("createdAt", Query.Direction.DESCENDING)
                                 .startAfter(key).limit(Constants.PAGE_SIZE).get().await().documents
                         }
@@ -144,7 +147,10 @@ class FeedPagingSource(
                     val visibleToUserImages = friendIds.map { friendId ->
                         async {
                             firestore.collection("images").whereEqualTo("userId", friendId)
-                                .whereArrayContains("visibleUserIds", currentUserId) // This is the key to get images that are visible to the current user
+                                .whereArrayContains(
+                                    "visibleUserIds",
+                                    currentUserId
+                                ) // This is the key to get images that are visible to the current user
                                 .orderBy("createdAt", Query.Direction.DESCENDING)
                                 .startAfter(key).limit(Constants.PAGE_SIZE).get().await().documents
                         }

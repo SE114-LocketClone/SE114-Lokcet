@@ -13,7 +13,7 @@ interface StorageService {
         visibleUserIds: List<String> = emptyList(),
     ): Flow<DataState<Unit>>
 
-    suspend fun deleteImage(imageId: String) : Flow<DataState<Unit>>
+    suspend fun deleteImage(imageId: String): Flow<DataState<Unit>>
 
     suspend fun getImagesUploadByUser(userId: String): List<UploadImage>
 

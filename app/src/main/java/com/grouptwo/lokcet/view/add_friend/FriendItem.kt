@@ -96,7 +96,7 @@ fun FriendItem(
                     // Do nothing
                 },
                 colors = ButtonDefaults.buttonColors(Color(color = 0xFFE5A500)),
-                ) {
+            ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center

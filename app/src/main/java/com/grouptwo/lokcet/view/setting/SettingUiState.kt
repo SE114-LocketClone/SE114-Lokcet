@@ -6,8 +6,8 @@ import com.grouptwo.lokcet.data.model.User
 
 data class SettingUiState(
     val currentUser: User? = null,
-    val firstName : String = "",
-    val lastName : String = "",
+    val firstName: String = "",
+    val lastName: String = "",
     val phoneNumber: String = "",
     val email: String = "",
     val avatarUrl: String = "",
@@ -41,7 +41,7 @@ data class SettingUiState(
     val isShowDeleteAccountDialog: Boolean = false,
 
     // Image upload
-    val imagePickedUrl : Uri? = null,
+    val imagePickedUrl: Uri? = null,
     val isImageUpload: Boolean = false,
     val pickedImage: Bitmap? = null,
 

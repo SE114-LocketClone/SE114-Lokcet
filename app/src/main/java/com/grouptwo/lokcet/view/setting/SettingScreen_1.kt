@@ -1,8 +1,5 @@
 package com.grouptwo.lokcet.view.setting
 
-import android.app.Activity
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -32,7 +29,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -45,7 +41,6 @@ import com.grouptwo.lokcet.ui.component.global.ime.rememberImeState
 import com.grouptwo.lokcet.ui.theme.BlackSecondary
 import com.grouptwo.lokcet.ui.theme.YellowPrimary
 import com.grouptwo.lokcet.ui.theme.fontFamily
-import com.yalantis.ucrop.UCrop
 
 @Composable
 fun SettingScreen1(
@@ -163,7 +158,7 @@ fun SettingScreen1(
             Spacer(modifier = Modifier.weight(0.1f))
             Button(
                 onClick = {
-                          viewModel.onNameChange()
+                    viewModel.onNameChange()
                 },
                 Modifier
                     .fillMaxWidth()

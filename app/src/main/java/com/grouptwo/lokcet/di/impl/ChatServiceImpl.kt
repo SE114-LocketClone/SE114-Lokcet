@@ -1,6 +1,5 @@
 package com.grouptwo.lokcet.di.impl
 
-import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.MetadataChanges
@@ -16,7 +15,6 @@ import com.grouptwo.lokcet.data.model.UploadImage
 import com.grouptwo.lokcet.data.model.User
 import com.grouptwo.lokcet.di.service.AccountService
 import com.grouptwo.lokcet.di.service.ChatService
-import com.grouptwo.lokcet.di.service.NotificationService
 import com.grouptwo.lokcet.di.service.StorageService
 import com.grouptwo.lokcet.utils.DataState
 import com.grouptwo.lokcet.utils.getFriendId

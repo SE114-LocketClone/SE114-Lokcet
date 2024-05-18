@@ -65,7 +65,8 @@ fun ChatItem(
                 horizontalArrangement = Arrangement.Start
             ) {
                 // Avatar
-                GlideImage(imageModel = { friend.profilePicture },
+                GlideImage(
+                    imageModel = { friend.profilePicture },
                     imageOptions = ImageOptions(
                         contentScale = ContentScale.Crop, alignment = Alignment.Center
                     ),

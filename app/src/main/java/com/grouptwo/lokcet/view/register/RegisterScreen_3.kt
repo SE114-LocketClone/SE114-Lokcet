@@ -41,7 +41,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.grouptwo.lokcet.R
 import com.grouptwo.lokcet.ui.component.global.composable.BasicIconButton
 import com.grouptwo.lokcet.ui.component.global.ime.rememberImeState
-import com.grouptwo.lokcet.ui.component.global.permission.RequestLocationPermission
 import com.grouptwo.lokcet.ui.theme.BlackSecondary
 import com.grouptwo.lokcet.ui.theme.YellowPrimary
 import com.grouptwo.lokcet.ui.theme.fontFamily

@@ -20,4 +20,5 @@ data class ChatUiState(
     val isButtonSendEnable: Boolean = false,
     val messageInput: String = "",
 )
+
 class LatestMessageWrapper(val latestMessage: LatestMessage)

@@ -537,7 +537,11 @@ class SettingViewModel @Inject constructor(
                     it.copy(isImageUpload = true, isShowAvatarBottomDialog = false)
                 }
                 val userId = accountService.currentUserId
-                accountService.deleteProfileImage(userId, _uiState.value.firstName, _uiState.value.lastName).collect {
+                accountService.deleteProfileImage(
+                    userId,
+                    _uiState.value.firstName,
+                    _uiState.value.lastName
+                ).collect {
                     when (it) {
                         is DataState.Success -> {
                             val data = it.data
@@ -574,6 +578,7 @@ class SettingViewModel @Inject constructor(
             )
         }
     }
+
     fun onBackClick(popUp: () -> Unit) {
         popUp()
     }

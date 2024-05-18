@@ -6,11 +6,9 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
-import android.util.Log
 import androidx.core.content.FileProvider
 import androidx.lifecycle.viewModelScope
 import androidx.paging.ExperimentalPagingApi
@@ -41,7 +39,6 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import java.io.File
 import java.io.FileOutputStream
-import java.net.URL
 import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException
 
@@ -442,7 +439,7 @@ class FeedViewModel @Inject constructor(
             } catch (e: CancellationException) {
                 // Do nothing
             } catch (e: Exception) {
-            SnackbarManager.showMessage(e.toSnackbarMessage())
+                SnackbarManager.showMessage(e.toSnackbarMessage())
             }
         }
     }
@@ -452,6 +449,7 @@ class FeedViewModel @Inject constructor(
             it.copy(isShowDeleteDialog = showDeleteDialog)
         }
     }
+
     fun deleteFeed(feed: Feed) {
         launchCatching {
             try {

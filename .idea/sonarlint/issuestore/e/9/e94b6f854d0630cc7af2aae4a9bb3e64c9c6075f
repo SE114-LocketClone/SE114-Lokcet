@@ -1,10 +1,12 @@
 
-ckotlin:S125@"Remove this commented out code.(Ãœ¢Ý8ò°–þö1J$45bafdd3-78c0-4637-ab35-28f82f37b3a0
-dkotlin:S125‘"Remove this commented out code.(Ãœ¢Ý8ó°–þö1J$88c589bd-f5da-4f9c-9072-07a8e35b0737
-dkotlin:S125Ž"Remove this commented out code.(¤ãˆÊ8¢¿íþö1J$4bc6ee97-2126-4348-991a-e2863556e2ac
-Škotlin:S6309:"@Functions returning "Flow" or "Channel" should not be suspending(Øõùãþÿÿÿÿ8€±–þö1J$51f862bb-3028-4f5a-9c6e-39eb11d79c23
-†kotlin:S6309Œ"@Functions returning "Flow" or "Channel" should not be suspending(Î±µ…8€±–þö1J$506c1f1d-5f6c-4df1-a6ba-8d01e6e04775
-†kotlin:S6309ß"@Functions returning "Flow" or "Channel" should not be suspending(ØÖ‰Ò8¯¿íþö1J$82b25b8a-a1d4-42dc-bf09-13a9fa9ab332
-‹kotlin:S6309Î"@Functions returning "Flow" or "Channel" should not be suspending(ÊÃ™£ýÿÿÿÿ8¯¿íþö1J$661d02bc-5fc1-44b5-a9e7-6a1dfb8fac43
-…kotlin:S6309ð"@Functions returning "Flow" or "Channel" should not be suspending(ƒ²µQ8¯¿íþö1J$3063cb61-a3b0-463d-9c14-2a4dd4f700d9
-˜kotlin:S3776ß"RRefactor this method to reduce its Cognitive Complexity from 16 to the 15 allowed.(ØÖ‰Ò8¶¿íþö1J$02a4134c-2ad6-4395-a178-263607385193
+ckotlin:S125>"Remove this commented out code.(Ãœ¢Ý8ò°–þö1J$d356c329-740c-415c-a467-122be47b69d8
+dkotlin:S125Š"Remove this commented out code.(Ãœ¢Ý8ó°–þö1J$8b57ed89-d2af-4f48-bb2f-24802096079b
+dkotlin:S125‚"Remove this commented out code.(¤ãˆÊ8¢¿íþö1J$52ca80cb-c1a7-43c9-b6e6-6b980aedac32
+Škotlin:S63098"@Functions returning "Flow" or "Channel" should not be suspending(Øõùãþÿÿÿÿ8€±–þö1J$9e7bcfb2-dcf0-4a5a-9e6d-1044702bfa90
+†kotlin:S6309…"@Functions returning "Flow" or "Channel" should not be suspending(Î±µ…8€±–þö1J$86872b27-4e87-4b90-846b-74ac42d4fa17
+†kotlin:S6309Ó"@Functions returning "Flow" or "Channel" should not be suspending(ØÖ‰Ò8¯¿íþö1J$4605945f-ed84-4ea6-aa7a-a33ba06d6601
+‹kotlin:S6309À"@Functions returning "Flow" or "Channel" should not be suspending(ÊÃ™£ýÿÿÿÿ8¯¿íþö1J$e9ef538d-e0f9-4f77-bc66-406dc32e1b3c
+…kotlin:S6309â"@Functions returning "Flow" or "Channel" should not be suspending(ƒ²µQ8¯¿íþö1J$95d12eff-290e-4c07-921e-aa1b0c423ca0
+pkotlin:S1481y"+Remove this unused "result" local variable.(‹ƒô…8»ÁÔÌø1J$c4117210-0760-4122-a94f-1a1a54a2007b
+qkotlin:S1481Ç"+Remove this unused "result" local variable.(‹ƒô…8¼ÁÔÌø1J$ac5364eb-2156-4a4d-a2ad-b40393ded558
+˜kotlin:S3776Ó"RRefactor this method to reduce its Cognitive Complexity from 16 to the 15 allowed.(ØÖ‰Ò8¶¿íþö1J$ad952f11-0087-439e-ad06-e5b6ccf6bbfa

@@ -1,11 +1,11 @@
 
-kotlin:S6619²";Remove this useless elvis operation ?:, it always succeeds.(ó¢¦‘8À¥¸®÷1J$328cb189-d36a-4536-a111-b5a07a019621
-hkotlin:S125s"Remove this commented out code.(ø®Ÿªÿÿÿÿÿ8‹¸®÷1J$b1463761-31b1-47a4-bad3-2f64dcb03237
-vkotlin:S1481_"1Remove this unused "zoomAnimator" local variable.(£ê‰±8ï®÷1J$f927d49d-5cb0-432f-a5c2-1cdad4f5e2b8
-mkotlin:S1874h"#Deprecated code should not be used.(ËáĞ¸şÿÿÿÿ8ˆï®÷1J$2ae280fa-03c4-4da2-9be7-0162ae546934
-hkotlin:S1874k"#Deprecated code should not be used.(§šÌÛ8ˆï®÷1J$d13777d8-e04a-4ae0-91e1-905922bc0e86
-hkotlin:S1874š"#Deprecated code should not be used.(”¿ùO8€¦¸®÷1J$b9f662be-570d-43c3-90a1-3c84ebadbea4
-œkotlin:S3776S"RRefactor this method to reduce its Cognitive Complexity from 38 to the 15 allowed.(³ÊæÌÿÿÿÿÿ8‹ï®÷1J$042b29fb-934e-401b-8922-275e5cd5df90
- kotlin:S1186ƒ"ZAdd a nested comment explaining why this function is empty or complete the implementation.(Š¿ñâ8‡¦¸®÷1J$de154b6f-334f-4c66-97e2-777da7ac5ea2
-rkotlin:S6518Á",Replace function call with indexed accessor.(šù„Ï8‰¦¸®÷1J$6498c5cd-ed63-461f-9851-1cf9104c01c1
-rkotlin:S6518á",Replace function call with indexed accessor.(Á‚Ã‰8Š¦¸®÷1J$663d185b-da1b-4170-9a19-39135d68954f
+kotlin:S6619²";Remove this useless elvis operation ?:, it always succeeds.(ó¢¦‘8À¥¸®÷1J$10c7c777-e28c-482a-a248-9783eca22e99
+hkotlin:S125s"Remove this commented out code.(ø®Ÿªÿÿÿÿÿ8‹¸®÷1J$f3a35025-bec8-4970-a868-db5eef51f749
+vkotlin:S1481_"1Remove this unused "zoomAnimator" local variable.(£ê‰±8ï®÷1J$e0083209-07db-4dd0-b8c6-a800cd8172d2
+mkotlin:S1874h"#Deprecated code should not be used.(ËáĞ¸şÿÿÿÿ8ˆï®÷1J$54c6d865-a324-43eb-821e-dc93d1d444b5
+hkotlin:S1874k"#Deprecated code should not be used.(§šÌÛ8ˆï®÷1J$df51c404-6d8b-48ba-ad91-4395f6735064
+hkotlin:S1874š"#Deprecated code should not be used.(”¿ùO8€¦¸®÷1J$f29e5776-cba5-4829-90df-e4c7f960a8c4
+œkotlin:S3776S"RRefactor this method to reduce its Cognitive Complexity from 38 to the 15 allowed.(³ÊæÌÿÿÿÿÿ8‹ï®÷1J$0dda20fa-9633-4047-9885-d0219e2b3292
+ kotlin:S1186ƒ"ZAdd a nested comment explaining why this function is empty or complete the implementation.(Š¿ñâ8‡¦¸®÷1J$e9f85507-79e7-48f8-8d6b-31f57165c5b4
+rkotlin:S6518Á",Replace function call with indexed accessor.(šù„Ï8‰¦¸®÷1J$d0400b75-c793-43d4-ab12-9aaa7a010810
+rkotlin:S6518á",Replace function call with indexed accessor.(Á‚Ã‰8Š¦¸®÷1J$2fd5f3e9-13b9-43a7-9486-ea76cf1d4930

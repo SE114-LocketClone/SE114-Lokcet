@@ -12,7 +12,6 @@ import android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Build
-import android.util.Log
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.core.app.NotificationCompat
 import androidx.work.CoroutineWorker

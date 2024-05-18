@@ -34,20 +34,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.grouptwo.lokcet.R
 import com.grouptwo.lokcet.ui.component.global.composable.BasicIconButton
 import com.grouptwo.lokcet.ui.component.global.ime.rememberImeState
-import com.grouptwo.lokcet.ui.theme.BlackSecondary
 import com.grouptwo.lokcet.ui.theme.YellowPrimary
 import com.grouptwo.lokcet.ui.theme.fontFamily
 
-@Preview(
-    showBackground = true,
-    backgroundColor = 0xFF272626,
-)
 @Composable
 fun ChangeNameScreen() {
     val imeState = rememberImeState()

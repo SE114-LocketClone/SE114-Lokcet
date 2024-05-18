@@ -1,4 +1,3 @@
 
-`kotlin:S6310H"Avoid hardcoded dispatchers.(©ÓœW8”øš¬÷1J$c2d44182-1564-41b6-a0f3-08fe45508e6d
-_kotlin:S1128
-"Remove this unused import.(ÀÄ8Ô’ü¥ø1J$09307303-5f6b-4c21-aae9-5cc02fc66409
+`kotlin:S6310H"Avoid hardcoded dispatchers.(©ÓœW8‘ÁĞÌø1J$a9a88441-3bee-41d3-b6c0-845f23c5e875
+•kotlin:S6311H"QRemove this dispatcher. It is pointless when used with only suspending functions.(©ÓœW8’ÁĞÌø1J$2741c941-ee0d-4af1-b931-de38c070c9f8

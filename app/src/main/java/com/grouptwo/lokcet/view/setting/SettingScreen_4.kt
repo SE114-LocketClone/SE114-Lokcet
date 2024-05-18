@@ -103,7 +103,7 @@ fun SettingScreen4(
             Spacer(modifier = Modifier.height(24.dp))
             TextField(
                 value = uiState.value.email,
-                onValueChange = {  },
+                onValueChange = { },
                 readOnly = true,
                 singleLine = true,
                 textStyle = TextStyle(
@@ -152,7 +152,8 @@ fun SettingScreen4(
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .heightIn(min = 199.dp).padding(bottom = 16.dp),
+                    .heightIn(min = 199.dp)
+                    .padding(bottom = 16.dp),
                 colors = textFieldColors,
                 shape = RoundedCornerShape(18.dp),
             )
@@ -167,7 +168,7 @@ fun SettingScreen4(
                 colors = buttonColor
             )
             {
-                if (uiState.value.isMakeSuggestionLoading ) {
+                if (uiState.value.isMakeSuggestionLoading) {
                     // Show loading icon
                     CircularProgressIndicator(
                         color = BlackSecondary, modifier = Modifier.size(40.dp)

@@ -3,11 +3,9 @@ package com.grouptwo.lokcet
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.work.ExistingPeriodicWorkPolicy
@@ -50,12 +48,12 @@ class LokcetActivity : ComponentActivity() {
 //                    LokcetApp(null)
 //                }
 //            }
-        val deepLinkState =  mutableStateOf<Uri?>(null)
+        val deepLinkState = mutableStateOf<Uri?>(null)
 
         setContent {
             LokcetApp(deepLinkState.value)
             // Reset deeplink after use
-            deepLink.value = null
+            deepLinkState.value = null
         }
 
         FirebaseDynamicLinks.getInstance()

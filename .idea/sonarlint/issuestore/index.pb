@@ -257,3 +257,5 @@ k
 ;app/src/main/java/com/grouptwo/lokcet/data/model/Problem.kt,7/2/726991de9c36bb6a128b544aa4ca0795a950a18b
 u
 Eapp/src/main/java/com/grouptwo/lokcet/view/setting/SettingScreen_4.kt,a/8/a8aed25990a1b9ec948469bfcf3273d42411ba0e
+|
+Lapp/src/main/java/com/grouptwo/lokcet/ui/component/welcome/AutoFlushImage.kt,8/f/8f8d0bb06166cf6e8e9cb435f118258e06ed488b

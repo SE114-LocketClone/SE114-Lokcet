@@ -1,7 +1,5 @@
 package com.grouptwo.lokcet.view.friend
 
-import android.content.ActivityNotFoundException
-import android.content.Intent
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -257,7 +255,7 @@ fun FriendScreen(
                                 BasicShareButton(
                                     drawableResource = R.drawable.icon_messenger,
                                     action = {
-                                      viewModel.onShareClick(context, "com.facebook.orca")
+                                        viewModel.onShareClick(context, "com.facebook.orca")
                                     },
                                     description = "Messenger Icon",
                                     text = "Messenger"
@@ -265,7 +263,7 @@ fun FriendScreen(
                                 BasicShareButton(
                                     drawableResource = R.drawable.icon_instagram,
                                     action = {
-                                             viewModel.onShareClick(context, "com.instagram.android")
+                                        viewModel.onShareClick(context, "com.instagram.android")
                                     },
                                     description = "Instagram Icon",
                                     text = "Instagram"
@@ -273,7 +271,7 @@ fun FriendScreen(
                                 BasicShareButton(
                                     drawableResource = R.drawable.icon_message,
                                     action = {
-                                             viewModel.onSendSMSClick(context)
+                                        viewModel.onSendSMSClick(context)
                                     },
                                     description = "Message Icon",
                                     text = "Tin nhắn"

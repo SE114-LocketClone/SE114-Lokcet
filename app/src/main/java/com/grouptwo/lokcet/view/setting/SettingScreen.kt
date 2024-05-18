@@ -168,9 +168,10 @@ fun SettingScreen(
                                     ), color = YellowPrimary
                             )
                         } else {
-                            GlideImage(imageModel = {
-                                uiState.value.avatarUrl ?: ""
-                            },
+                            GlideImage(
+                                imageModel = {
+                                    uiState.value.avatarUrl ?: ""
+                                },
                                 imageOptions = ImageOptions(
                                     contentScale = ContentScale.Crop, alignment = Alignment.Center
                                 ),

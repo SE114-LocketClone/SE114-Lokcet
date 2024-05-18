@@ -154,7 +154,8 @@ fun SettingScreen3(
                 minLines = 5,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .heightIn(min = 199.dp).padding(bottom = 16.dp),
+                    .heightIn(min = 199.dp)
+                    .padding(bottom = 16.dp),
                 colors = textFieldColors,
                 shape = RoundedCornerShape(18.dp),
             )

@@ -182,7 +182,8 @@ fun NavGraphBuilder.LokcetGraph(appState: LokcetAppState) {
             appState.navController.getBackStackEntry(Screen.LoginScreen_1.route)
         }
         val vm = hiltViewModel<LoginViewModel>(parentEntry)
-        LoginScreen2(popUp = { appState.popUp() },
+        LoginScreen2(
+            popUp = { appState.popUp() },
             clearAndNavigate = { route -> appState.clearAndNavigate(route) },
             viewModel = vm
         )

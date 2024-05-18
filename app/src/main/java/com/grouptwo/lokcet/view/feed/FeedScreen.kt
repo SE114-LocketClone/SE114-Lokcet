@@ -503,8 +503,7 @@ fun FeedScreen(
                                                                 .clickable {
                                                                     feedState[pagerState.currentPage]?.let {
                                                                         viewModel.onShareFeedImage(
-                                                                            context,
-                                                                            it
+                                                                            context, it
                                                                         )
                                                                     }
                                                                 },
@@ -640,15 +639,14 @@ fun FeedScreen(
                         Column(
                             modifier = Modifier.wrapContentSize(),
                         ) {
-                            ComposeEmojiPickerBottomSheetUI(
-                                onEmojiClick = { emoji ->
-                                    viewModel.onShowEmojiPicker(false)
-                                    feedState[pagerState.currentPage]?.let {
-                                        viewModel.onEmojiSelected(
-                                            emoji.character, it
-                                        )
-                                    }
-                                },
+                            ComposeEmojiPickerBottomSheetUI(onEmojiClick = { emoji ->
+                                viewModel.onShowEmojiPicker(false)
+                                feedState[pagerState.currentPage]?.let {
+                                    viewModel.onEmojiSelected(
+                                        emoji.character, it
+                                    )
+                                }
+                            },
                                 searchText = uiState.value.searchText,
                                 updateSearchText = { updatedSearchText ->
                                     viewModel.onSearchEmoji(updatedSearchText)

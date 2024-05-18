@@ -1,5 +1,3 @@
 
-dkotlin:S1128"Remove this unused import.(™¤ëûÿÿÿÿ8°”šÛö1J$a4793f23-b50d-48fe-8621-c11da2b2af23
-^kotlin:S1128"Remove this unused import.(Ş‚½8°”šÛö1J$a6290ed6-af66-4597-b82e-5231eff87358
-’kotlin:S1192¬"LDefine a constant instead of duplicating this literal "People Icon" 4 times.(¹Èı8§¸¿‚ò1J$31afc2e3-ef9c-4dfa-830c-c8faf82e36ee
-—kotlin:S3776B"RRefactor this method to reduce its Cognitive Complexity from 67 to the 15 allowed.(‹Çü¼8®¸¿‚ò1J$18c99db6-b1c5-4538-9bb4-2a1c6d88f44f
+’kotlin:S1192ª"LDefine a constant instead of duplicating this literal "People Icon" 4 times.(¹Èı8§¸¿‚ò1J$50ad5346-79bf-4a16-b8d8-6e978be4506b
+—kotlin:S3776@"RRefactor this method to reduce its Cognitive Complexity from 67 to the 15 allowed.(‹Çü¼8®¸¿‚ò1J$16937232-6ca1-4b17-9c19-577eacafaa82

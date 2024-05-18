@@ -2,7 +2,6 @@ package com.grouptwo.lokcet.di.impl
 
 import android.content.SharedPreferences
 import android.icu.text.SimpleDateFormat
-import android.util.Log
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
