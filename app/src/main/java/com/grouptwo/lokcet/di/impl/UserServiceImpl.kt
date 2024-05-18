@@ -190,9 +190,6 @@ class UserServiceImpl @Inject constructor(
                             CoroutineScope(Dispatchers.IO).launch {
                                 val result =
                                     notificationServiceRepository.postNotification(notification)
-                                if (result.isSuccessful) {
-                                    Log.d("Notification", "Notification sent successfully")
-                                } else Log.d("Notification", "Notification failed to send")
                             }
                         }
                     }
@@ -251,9 +248,6 @@ class UserServiceImpl @Inject constructor(
                             CoroutineScope(Dispatchers.IO).launch {
                                 val result =
                                     notificationServiceRepository.postNotification(notification)
-                                if (result.isSuccessful) {
-                                    Log.d("Notification", "Notification sent successfully")
-                                } else Log.d("Notification", "Notification failed to send")
                             }
 
                         }
@@ -552,9 +546,6 @@ class UserServiceImpl @Inject constructor(
                         CoroutineScope(Dispatchers.IO).launch {
                             val result =
                                 notificationServiceRepository.postNotification(notification)
-                            if (result.isSuccessful) {
-                                Log.d("Notification", "Notification sent successfully")
-                            } else Log.d("Notification", "Notification failed to send")
                         }
                     }
                 } else {

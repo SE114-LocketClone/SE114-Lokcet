@@ -101,7 +101,6 @@ class FeedViewModel @Inject constructor(
                         }
                     } else {
                         // Request feed for selected friend only
-                        Log.d("FeedViewModel", "requestFeed: ${_uiState.value.selectedFriend}")
                         feedRepository.getFeeds(listOf(_uiState.value.selectedFriend!!.id))
                             .distinctUntilChanged().cachedIn(viewModelScope).collect {
                                 _feedState.value = it
@@ -443,8 +442,7 @@ class FeedViewModel @Inject constructor(
             } catch (e: CancellationException) {
                 // Do nothing
             } catch (e: Exception) {
-                Log.e("FeedViewModel", "onShareFeedImage: $e")
-                SnackbarManager.showMessage(e.toSnackbarMessage())
+            SnackbarManager.showMessage(e.toSnackbarMessage())
             }
         }
     }

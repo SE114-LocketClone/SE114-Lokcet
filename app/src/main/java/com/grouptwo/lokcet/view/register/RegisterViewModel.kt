@@ -152,7 +152,6 @@ class RegisterViewModel @Inject constructor(
                 if (accountService.isPhoneUsed(phoneNumber)) {
                     SnackbarManager.showMessage(R.string.phone_used)
                 } else {
-                    Log.d("RegisterViewModel", "Phone number: $phoneNumber")
                     // Call create account function
                     accountService.createAccount(
                         email = email,

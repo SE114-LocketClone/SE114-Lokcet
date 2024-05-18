@@ -70,7 +70,6 @@ fun Particles(
         val particles = remember { calculateParticleParams(quantity, emoji) }
         // Get the screen height
         val screenHeight = LocalConfiguration.current.screenHeightDp
-        Log.d("EmojiParticle", "Screen height: $screenHeight")
         val transitionState = remember {
             MutableTransitionState(MIN_HEIGHT).apply {
                 targetState = MAX_HEIGHT

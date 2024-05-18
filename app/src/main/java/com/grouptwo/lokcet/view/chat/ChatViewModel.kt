@@ -186,10 +186,6 @@ class ChatViewModel @Inject constructor(
                             _uiState.update {
                                 it.copy(latestMessageMap = latestMessageMap)
                             }
-                            Log.d(
-                                "ChatViewModel",
-                                "getLatestMessage: ${uiState.value.latestMessageMap}"
-                            )
                         }
 
                         is DataState.Error -> {

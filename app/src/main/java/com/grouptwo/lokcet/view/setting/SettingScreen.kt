@@ -611,7 +611,7 @@ fun SettingScreen(
                 confirmButton = {
                     Button(
                         onClick = {
-                            // Delete the feed and then dismiss the dialog.
+                            // Delete the feed and then dismiss the dia
                             viewModel.onClickDeleteAccount(navigate)
                         },
                         colors = ButtonDefaults.buttonColors(YellowPrimary),

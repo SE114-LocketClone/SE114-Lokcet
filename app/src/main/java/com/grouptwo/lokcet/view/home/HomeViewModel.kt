@@ -81,7 +81,6 @@ class HomeViewModel @Inject constructor(
                 }
             )
         }
-        Log.d("Camera Switched", _uiState.value.lensFacing.toString())
     }
 
     fun onImageCaptured(imageCapture: Bitmap, navigate: (String) -> Unit) {

@@ -107,11 +107,9 @@ class StorageServiceImpl @Inject constructor(
                             messageDocs.forEach { messageDoc ->
                                 val messageMap = messageDoc.get("feed") as Map<*, *>
                                 if (messageMap["imageId"] == imageId) {
-                                    Log.e("Delete", "deleteImage: ${messageDoc.id}")
                                     firestore.collection("chatrooms").document(chatRoomDoc.id).collection("messages").document(messageDoc.id).delete().await()
                                     // Delete in latest_messages
                                     firestore.collection("latest_messages").document(chatRoomDoc.id).delete().await()
-                                    Log.e("Delete", "deleteImageLatest: ${chatRoomDoc.id}")
                                 }
                             }
                         }
@@ -122,7 +120,6 @@ class StorageServiceImpl @Inject constructor(
                         chatRoomDocs.forEach { chatRoomDoc ->
                             val messageMap = chatRoomDoc.get("message") as Map<*, *>
                             if (messageMap["imageId"] == imageId) {
-                                Log.e("Delete", "deleteImage: ${chatRoomDoc.id}")
                                 firestore.collection("latest_messages").document(chatRoomDoc.id).delete().await()
                             }
                         }
@@ -155,7 +152,6 @@ class StorageServiceImpl @Inject constructor(
             // get the image name from url
             val imageName = imageUrl.getImageNameFromUrl()
             // get the image from storage
-            Log.d("TAG", "downloadImage: $imageName")
             val imageRef = storage.child("images/$imageName")
             val image = imageRef.getBytes(2 * 1024 * 1024).await()
             if (image.isEmpty()) {
